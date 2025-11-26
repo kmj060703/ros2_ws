@@ -9,7 +9,20 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(turtlebot3_msgs REQUIRED) #의존성 추가
+include_directories(include)
 
+add_executable(master_jo src/master_jo.cpp)
+add_executable(psd_jo src/psd_jo.cpp)
+
+ament_target_dependencies(master_jo rclcpp std_msgs turtlebot3_msgs)
+ament_target_dependencies(psd_jo rclcpp std_msgs turtlebot3_msgs)
+
+install(TARGETS
+  master_jo
+  psd_jo
+  DESTINATION lib/${PROJECT_NAME}
+)
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
