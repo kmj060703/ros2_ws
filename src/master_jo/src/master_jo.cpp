@@ -1,4 +1,4 @@
-#include "master_jo.hpp"
+#include "../include/master_jo/master_jo.hpp"
 
 MasterJo::MasterJo()
 : Node("master_jo")

@@ -12,14 +12,23 @@ find_package(std_msgs REQUIRED)
 find_package(turtlebot3_msgs REQUIRED) #의존성 추가
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 include_directories(include)
 
 add_executable(master_jo src/master_jo.cpp)
 add_executable(psd_jo src/psd_jo.cpp)
 add_executable(imu_jo src/imu_jo.cpp)
-ament_target_dependencies(imu_jo rclcpp std_msgs sensor_msgs geometry_msgs)
+
 ament_target_dependencies(master_jo rclcpp std_msgs turtlebot3_msgs)
 ament_target_dependencies(psd_jo rclcpp std_msgs turtlebot3_msgs)
+ament_target_dependencies(imu_jo
+  rclcpp
+  sensor_msgs
+  geometry_msgs
+  tf2
+  tf2_geometry_msgs
+)
 
 install(TARGETS
   master_jo
