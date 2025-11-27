@@ -22,7 +22,7 @@ void PsdJo::topic_callback(const std_msgs::msg::UInt16MultiArray::SharedPtr msg)
     auto msg_l = std_msgs::msg::Int32();
     auto msg_r = std_msgs::msg::Int32();
 
-    if (front_adc > detect_object)
+    if (front_adc > detect_object_f)
     {
         flag_f++;
         if (flag_f > 5)
@@ -34,10 +34,10 @@ void PsdJo::topic_callback(const std_msgs::msg::UInt16MultiArray::SharedPtr msg)
     {
         flag_f = 0;
     }
-    if (left_adc > detect_object)
+    if (left_adc > detect_object_l)
     {
         flag_l++;
-        if (flag_l > 5)
+        if (flag_l > 3)
         {
             msg_l.data = 1;
         }
@@ -46,10 +46,10 @@ void PsdJo::topic_callback(const std_msgs::msg::UInt16MultiArray::SharedPtr msg)
     {
         flag_l = 0;
     }
-    if (right_adc > detect_object)
+    if (right_adc > detect_object_r)
     {
         flag_r++;
-        if (flag_r > 5)
+        if (flag_r > 3)
         {
             msg_r.data = 1;
         }
