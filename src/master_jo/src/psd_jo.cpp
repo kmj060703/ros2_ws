@@ -14,13 +14,13 @@ PsdJo::PsdJo() : Node("psd_jo")
 
 void PsdJo::topic_callback(const std_msgs::msg::UInt16MultiArray::SharedPtr msg) const
 {
-  uint16_t left = msg->data[0];
-  uint16_t front = msg->data[1];
+  uint16_t front = msg->data[0];
+  uint16_t left = msg->data[1];
   uint16_t right = msg->data[2];
 
   RCLCPP_INFO(this->get_logger(), 
     "PSD 값 | 정면: %d | 왼쪽: %d | 오른쪽: %d", // 가까우면 값 커짐
-    left, front, right);
+    front, left, right);
 
   /*
   if (front < 200) {
