@@ -70,7 +70,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
         cv::Mat yuyv(msg->height, msg->width, CV_8UC2, (void *)msg->data.data());
         cv::Mat frame;
-        cv::cvtColor(yuyv, frame, cv::COLOR_YUV2HSV_YUY2);
+        cv::cvtColor(yuyv, frame, cv::COLOR_YUV2RGB_YUY2);
 
         if (frame.empty())
         {
