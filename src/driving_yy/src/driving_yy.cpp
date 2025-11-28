@@ -36,13 +36,13 @@ void DrivingYY::psd_front_callback(const std_msgs::msg::Int32::SharedPtr msg)
 void DrivingYY::psd_left_callback(const std_msgs::msg::Int32::SharedPtr msg)
 {
     is_left_danger_ = msg->data;
-    RCLCPP_WARN(this->get_logger(), "왼쪽 장애물 감지 여부: %d", is_left_danger_);
+    // RCLCPP_INFO(this->get_logger(), "왼쪽 장애물 감지 여부: %d", is_left_danger_);
 }
 
 void DrivingYY::psd_right_callback(const std_msgs::msg::Int32::SharedPtr msg)
 {
     is_right_danger_ = msg->data;
-    RCLCPP_WARN(this->get_logger(), "오른쪽 장애물 감지 여부: %d", is_right_danger_);
+    // RCLCPP_INFO(this->get_logger(), "오른쪽 장애물 감지 여부: %d", is_right_danger_);
 }
 
 int main(int argc, char **argv)

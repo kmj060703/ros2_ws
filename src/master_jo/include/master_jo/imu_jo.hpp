@@ -14,6 +14,8 @@ private:
     void topic_callback(const sensor_msgs::msg::Imu::SharedPtr msg);
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
     rclcpp::Publisher<geometry_msgs::msg::Vector3>::SharedPtr angle_pub_;
+    double yaw_offset_ = 0.0;
+    bool first_run_ = true;
 };
 
 #endif
