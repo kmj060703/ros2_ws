@@ -2,47 +2,23 @@
 #include <thread>
 #include <mutex>
 
-std::mutex frame_mutex;
-cv::Mat latest_frame;
-cv::Mat latest_birdeye;
-
 /* 이미지가 YUYV 4:2:2 포맷으로 퍼블리시되고 있다
 OpenCV cv::imshow에서 바로 BGR8으로 처리하려고 하면 채널 수 불일치 오류가 나
 run : ros2 run vision_hyun vision_hyun_node */
 
+std::mutex frame_mutex;
+cv::Mat latest_frame;
+cv::Mat latest_birdeye;
+cv::Mat yellow_mask;
+cv::Mat white_mask;
+
 // 640 360
-
-// 사다리꼴 원본 좌표
-
-// 사다리꼴 원본 좌표 (feed 640x360 기준)
-float distort_L_top_x = 160.0;                   // 왼쪽 위
-float distort_L_top_y = 250.0;                   // 위쪽 y
-float distort_R_top_x = 640.0 - distort_L_top_x; // 오른쪽 위
-float distort_R_top_y = distort_L_top_y;
-
-float distort_L_under_x = 72.0;                      // 왼쪽 아래
-float distort_L_under_y = 360.0;                     // 아래쪽 y
-float distort_R_under_x = 640.0 - distort_L_under_x; // 오른쪽 아래
-float distort_R_under_y = distort_L_under_y;
-
-// 직사각형 목적지 좌표 (이미지 전체 640x360)
-float flat_L_top_x = 120.0; // 좌상
-float flat_L_top_y = 0.0;
-
-float flat_R_top_x = 640 - flat_L_top_x; // 우상
-float flat_R_top_y = 0.0;
-
-float flat_L_under_x = 120.0; // 좌하
-float flat_L_under_y = 360.0;
-
-float flat_R_under_x = 640 - flat_L_under_x; // 우하
-float flat_R_under_y = 360.0;
 
 void gui_thread()
 {
     while (rclcpp::ok())
     {
-        cv::Mat frame_copy, bird_copy;
+        cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy;
 
         {
             std::lock_guard<std::mutex> lock(frame_mutex);
@@ -50,6 +26,10 @@ void gui_thread()
                 frame_copy = latest_frame.clone();
             if (!latest_birdeye.empty())
                 bird_copy = latest_birdeye.clone();
+            if (!yellow_mask.empty())
+                yellow_mask_copy = yellow_mask.clone();
+            if (!white_mask.empty())
+                white_mask_copy = white_mask.clone();
         }
 
         if (!frame_copy.empty())
@@ -62,6 +42,18 @@ void gui_thread()
         {
             cv::line(bird_copy, cv::Point(320, 0), cv::Point(320, 640), cv::Scalar(0, 0, 255), 1);
             cv::imshow("Bird's-Eye View", bird_copy);
+        }
+
+        if (!yellow_mask_copy.empty())
+        {
+            cv::line(yellow_mask_copy, cv::Point(320, 0), cv::Point(320, 640), cv::Scalar(255, 255, 255), 1);
+            cv::imshow("yellow_mask", yellow_mask_copy);
+        }
+
+        if (!white_mask_copy.empty())
+        {
+            cv::line(white_mask_copy, cv::Point(320, 0), cv::Point(320, 640), cv::Scalar(255, 255, 255), 1);
+            cv::imshow("white_mask", white_mask_copy);
         }
 
         cv::waitKey(1);
@@ -86,6 +78,8 @@ ImageViewer::ImageViewer()
 
     cv::namedWindow("Spedal Feed");
     cv::namedWindow("Bird's-Eye View");
+    cv::namedWindow("yellow_mask");
+    cv::namedWindow("white_mask");
 }
 
 void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
@@ -148,6 +142,21 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
             cv::Mat birdeye_hsv;
             cv::cvtColor(birdeye, birdeye_hsv, cv::COLOR_BGR2HSV);
+
+            cv::inRange(birdeye_hsv, lower_white, upper_white, white_mask);
+            cv::inRange(birdeye_hsv, lower_yellow, upper_yellow, yellow_mask);
+
+            cv::Mat k = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
+            for (int i = 0; i < 5; i++)
+            {
+                cv::dilate(yellow_mask, yellow_mask, k);
+                cv::dilate(white_mask, white_mask, k);
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                cv::erode(yellow_mask, yellow_mask, k);
+                cv::erode(white_mask, white_mask, k);
+            }
         }
 
         // Publish processed frame
