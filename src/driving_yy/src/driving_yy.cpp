@@ -18,7 +18,13 @@ DrivingYY::DrivingYY() : Node("driving_yy")
     psd_right_sub_ = this->create_subscription<std_msgs::msg::Int32>(
         "psd_result_right", 10, std::bind(&DrivingYY::psd_right_callback, this, _1));
 
+    flag_sub_ = this->create_subscription<std_msgs::msg::Int32>(
+        "master_jo_flag",
+        10,
+        std::bind(&DrivingYY::flag_callback, this, _1));
+
     RCLCPP_INFO(this->get_logger(), "DrivingYY Start");
+    RCLCPP_INFO(this->get_logger(), "초기 미션 플래그: %d", mission_flag_);
 }
 
 void DrivingYY::imu_callback(const geometry_msgs::msg::Vector3::SharedPtr msg)
@@ -43,6 +49,12 @@ void DrivingYY::psd_right_callback(const std_msgs::msg::Int32::SharedPtr msg)
 {
     is_right_danger_ = msg->data;
     // RCLCPP_INFO(this->get_logger(), "오른쪽 장애물 감지 여부: %d", is_right_danger_);
+}
+
+void DrivingYY::flag_callback(const std_msgs::msg::Int32::SharedPtr msg)
+{
+    mission_flag_ = msg->data;
+    RCLCPP_INFO(this->get_logger(), "플래그: %d", mission_flag_);
 }
 
 int main(int argc, char **argv)

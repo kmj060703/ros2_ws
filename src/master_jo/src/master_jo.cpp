@@ -1,4 +1,4 @@
-#include "../include/master_jo/master_jo.hpp"
+#include "master_jo/master_jo.hpp"
 #include <string>
 #include <vector>
 #include <sstream>
@@ -11,7 +11,9 @@ MasterJo::MasterJo()
       10,
       std::bind(&MasterJo::yolo_callback, this, std::placeholders::_1));
 
-  RCLCPP_INFO(this->get_logger(), "MasterJo_YOLO start");
+  flag_pub_ = this->create_publisher<std_msgs::msg::Int32>("master_jo_flag", 10);
+
+  RCLCPP_INFO(this->get_logger(), "MasterJo_YOLO Start");
 }
 
 void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
@@ -27,27 +29,84 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
 
     if (confidence >= 0.8)
     {
-      RCLCPP_INFO(this->get_logger(), "표지판 감지 %s || 신뢰도: %.2f", object_name.c_str(), confidence);
+      int detected_flag = 0;
 
       if (object_name == "T")
       {
-        RCLCPP_WARN(this->get_logger(), "T자 구간 진입");
+        flag_T++;
+        if (flag_T > 4)
+        {
+          detected_flag = 1;
+        }
       }
-      else if (object_name == "L")
+      else
       {
-        RCLCPP_WARN(this->get_logger(), "좌회전");
+        flag_T = 0;
       }
-      else if (object_name == "R")
+
+      if (object_name == "L")
       {
-        RCLCPP_WARN(this->get_logger(), "우회전");
+        flag_L++;
+        if (flag_L > 4)
+        {
+          detected_flag = 2;
+        }
       }
-      else if (object_name == "D")
+      else
       {
-        RCLCPP_WARN(this->get_logger(), "장애물 구간 진입");
+        flag_L = 0;
       }
-      else if (object_name == "P")
+
+      if (object_name == "R")
       {
-        RCLCPP_WARN(this->get_logger(), "주차 구간 진입");
+        flag_R++;
+        if (flag_R > 4)
+        {
+          detected_flag = 3;
+        }
+      }
+      else
+      {
+        flag_R = 0;
+      }
+
+      if (object_name == "D")
+      {
+        flag_D++;
+        if (flag_D > 4)
+        {
+          detected_flag = 4;
+        }
+      }
+      else
+      {
+        flag_D = 0;
+      }
+
+      if (object_name == "P")
+      {
+        flag_P++;
+        if (flag_P > 4)
+        {
+          detected_flag = 5;
+        }
+      }
+      else
+      {
+        flag_P = 0;
+      }
+
+      if (detected_flag != 0)
+      {
+        if (current_mission_flag_ != detected_flag)
+        {
+          current_mission_flag_ = detected_flag;
+          RCLCPP_WARN(this->get_logger(), "구간 변경: %s || 플래그: %d", object_name.c_str(), current_mission_flag_);
+        }
+
+        auto flag_msg = std_msgs::msg::Int32();
+        flag_msg.data = current_mission_flag_;
+        flag_pub_->publish(flag_msg);
       }
     }
   }
@@ -56,8 +115,7 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<MasterJo>();
-  rclcpp::spin(node);
+  rclcpp::spin(std::make_shared<MasterJo>());
   rclcpp::shutdown();
   return 0;
 }

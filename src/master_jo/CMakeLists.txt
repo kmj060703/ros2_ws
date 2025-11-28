@@ -12,8 +12,6 @@ find_package(std_msgs REQUIRED)
 find_package(turtlebot3_msgs REQUIRED) #의존성 추가
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(tf2 REQUIRED)
-find_package(tf2_geometry_msgs REQUIRED)
 include_directories(include)
 
 add_executable(master_jo src/master_jo.cpp)
@@ -26,8 +24,11 @@ ament_target_dependencies(imu_jo
   rclcpp
   sensor_msgs
   geometry_msgs
-  tf2
-  tf2_geometry_msgs
+)
+
+install(
+  DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
 )
 
 install(TARGETS
@@ -36,6 +37,7 @@ install(TARGETS
   imu_jo
   DESTINATION lib/${PROJECT_NAME}
 )
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
