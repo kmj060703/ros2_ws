@@ -25,27 +25,39 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
   {
     float confidence = std::stof(conf_str);
 
-    if (confidence >= 0.7) // 신뢰도가 70% 이상일 때
+    if (confidence >= 0.8)
     {
-      RCLCPP_INFO(this->get_logger(), "표지판 감지 [%s] (신뢰도: %.2f)", object_name.c_str(), confidence);
+      RCLCPP_INFO(this->get_logger(), "표지판 감지 %s || 신뢰도: %.2f", object_name.c_str(), confidence);
 
-      if (object_name == "R")
+      if (object_name == "T")
       {
-        RCLCPP_WARN(this->get_logger(), "우회전");
+        RCLCPP_WARN(this->get_logger(), "T자 구간 진입");
       }
       else if (object_name == "L")
       {
         RCLCPP_WARN(this->get_logger(), "좌회전");
       }
+      else if (object_name == "R")
+      {
+        RCLCPP_WARN(this->get_logger(), "우회전");
+      }
+      else if (object_name == "D")
+      {
+        RCLCPP_WARN(this->get_logger(), "장애물 구간 진입");
+      }
+      else if (object_name == "P")
+      {
+        RCLCPP_WARN(this->get_logger(), "주차 구간 진입");
+      }
     }
   }
 }
 
-  int main(int argc, char *argv[])
-  {
-    rclcpp::init(argc, argv);
-    auto node = std::make_shared<MasterJo>();
-    rclcpp::spin(node);
-    rclcpp::shutdown();
-    return 0;
-  }
+int main(int argc, char *argv[])
+{
+  rclcpp::init(argc, argv);
+  auto node = std::make_shared<MasterJo>();
+  rclcpp::spin(node);
+  rclcpp::shutdown();
+  return 0;
+}
