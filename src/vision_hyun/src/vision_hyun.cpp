@@ -2,7 +2,6 @@
 #include <thread>
 #include <mutex>
 
-// 640 360
 std::mutex frame_mutex;
 cv::Mat latest_frame;
 cv::Mat latest_birdeye;
@@ -11,6 +10,33 @@ cv::Mat latest_birdeye;
 OpenCV cv::imshow에서 바로 BGR8으로 처리하려고 하면 채널 수 불일치 오류가 나
 run : ros2 run vision_hyun vision_hyun_node */
 
+// 640 360
+
+// 사다리꼴 원본 좌표
+
+// 사다리꼴 원본 좌표 (feed 640x360 기준)
+float distort_L_top_x = 160.0;                   // 왼쪽 위
+float distort_L_top_y = 250.0;                   // 위쪽 y
+float distort_R_top_x = 640.0 - distort_L_top_x; // 오른쪽 위
+float distort_R_top_y = distort_L_top_y;
+
+float distort_L_under_x = 72.0;                      // 왼쪽 아래
+float distort_L_under_y = 360.0;                     // 아래쪽 y
+float distort_R_under_x = 640.0 - distort_L_under_x; // 오른쪽 아래
+float distort_R_under_y = distort_L_under_y;
+
+// 직사각형 목적지 좌표 (이미지 전체 640x360)
+float flat_L_top_x = 120.0; // 좌상
+float flat_L_top_y = 0.0;
+
+float flat_R_top_x = 640 - flat_L_top_x; // 우상
+float flat_R_top_y = 0.0;
+
+float flat_L_under_x = 120.0; // 좌하
+float flat_L_under_y = 360.0;
+
+float flat_R_under_x = 640 - flat_L_under_x; // 우하
+float flat_R_under_y = 360.0;
 
 void gui_thread()
 {
@@ -28,12 +54,13 @@ void gui_thread()
 
         if (!frame_copy.empty())
         {
-            cv::line(frame_copy, cv::Point(270, 0), cv::Point(270, 640), cv::Scalar(0, 0, 255), 3);
+            cv::line(frame_copy, cv::Point(320, 0), cv::Point(320, 640), cv::Scalar(0, 0, 255), 1);
             cv::imshow("Spedal Feed", frame_copy);
         }
 
         if (!bird_copy.empty())
         {
+            cv::line(bird_copy, cv::Point(320, 0), cv::Point(320, 640), cv::Scalar(0, 0, 255), 1);
             cv::imshow("Bird's-Eye View", bird_copy);
         }
 
@@ -66,11 +93,24 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
     try
     {
         RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
-                             "Receiving images: %dx%d", msg->width, msg->height);
+                             "Receiving images: %dx%d, encoding: %s",
+                             msg->width, msg->height, msg->encoding.c_str());
 
-        cv::Mat yuyv(msg->height, msg->width, CV_8UC2, (void *)msg->data.data());
         cv::Mat frame;
-        cv::cvtColor(yuyv, frame, cv::COLOR_YUV2HSV_YUY2);
+
+        // RGB 또는 BGR 인코딩에 따라 처리
+        if (msg->encoding == "rgb8")
+        {
+            // RGB8 데이터를 받아서 BGR로 변환
+            cv::Mat rgb_frame(msg->height, msg->width, CV_8UC3, (void *)msg->data.data());
+            cv::cvtColor(rgb_frame, frame, cv::COLOR_RGB2BGR);
+        }
+
+        else
+        {
+            RCLCPP_WARN(this->get_logger(), "Unsupported encoding: %s", msg->encoding.c_str());
+            return;
+        }
 
         if (frame.empty())
         {
@@ -84,23 +124,30 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             latest_frame = frame.clone();
 
             // Bird's-Eye View
-            cv::Mat hsv_frame;
-            cv::cvtColor(frame, hsv_frame, cv::COLOR_BGR2HSV);
+            cv::Mat birdeye;
 
+            // 원본 이미지에서 사다리꼴 영역 (소실점 기준으로 도로/관심 영역)
+            // src_pts
             cv::Point2f src_pts[4] = {
-                cv::Point2f(72.5, 103.125),
-                cv::Point2f(247.5, 103.125),
-                cv::Point2f(35, 161.0625),
-                cv::Point2f(285, 161.0625)};
+                cv::Point2f(distort_L_top_x, distort_L_top_y),     // 왼쪽 위
+                cv::Point2f(distort_R_top_x, distort_R_top_y),     // 오른쪽 위
+                cv::Point2f(distort_L_under_x, distort_L_under_y), // 왼쪽 아래
+                cv::Point2f(distort_R_under_x, distort_R_under_y)  // 오른쪽 아래
+            };
 
             cv::Point2f dst_pts[4] = {
-                cv::Point2f(64.5, 45),
-                cv::Point2f(255.5, 45),
-                cv::Point2f(64.5, 135),
-                cv::Point2f(255.5, 135)};
+                cv::Point2f(flat_L_top_x, flat_L_top_y),     // 왼쪽 위
+                cv::Point2f(flat_R_top_x, flat_R_top_y),     // 오른쪽 위
+                cv::Point2f(flat_L_under_x, flat_L_under_y), // 왼쪽 아래
+                cv::Point2f(flat_R_under_x, flat_R_under_y)  // 오른쪽 아래
+            };
 
             cv::Mat M = cv::getPerspectiveTransform(src_pts, dst_pts);
-            cv::warpPerspective(hsv_frame, latest_birdeye, M, cv::Size(640, 360));
+            cv::warpPerspective(frame, birdeye, M, cv::Size(640, 360));
+            latest_birdeye = birdeye.clone();
+
+            cv::Mat birdeye_hsv;
+            cv::cvtColor(birdeye, birdeye_hsv, cv::COLOR_BGR2HSV);
         }
 
         // Publish processed frame

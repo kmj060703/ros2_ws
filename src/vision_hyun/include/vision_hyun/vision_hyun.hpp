@@ -16,6 +16,7 @@
 extern std::mutex frame_mutex;
 extern cv::Mat latest_frame;
 extern cv::Mat latest_birdeye;
+cv::Mat birdeye; 
 
 class ImageViewer : public rclcpp::Node
 {
