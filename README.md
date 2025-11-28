@@ -5,6 +5,7 @@ source install/setup.bash && ros2 launch usb_cam camera.launch.py
 ```
 
 ### turtlebot_vision 실행 방법
+#### sudo apt install python3-pip
 #### pip uninstall -y opencv-python opencv-contrib-python numpy
 #### pip install numpy==1.23.5
 #### pip install opencv-python==4.6.0.66
