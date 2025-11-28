@@ -9,6 +9,28 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(image_transport REQUIRED)
+find_package(OpenCV REQUIRED)
+
+add_executable(vision_hyun_node src/vision_hyun.cpp)
+ament_target_dependencies(
+  vision_hyun_node
+  rclcpp
+  std_msgs
+  sensor_msgs
+  geometry_msgs
+  cv_bridge
+  image_transport
+  OpenCV
+)
+
+install(
+  TARGETS vision_hyun_node
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

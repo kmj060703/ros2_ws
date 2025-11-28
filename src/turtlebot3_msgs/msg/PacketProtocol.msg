@@ -1,0 +1,13 @@
+int32 start
+int32 red_flag
+int32[] red_co
+int32 yellow_flag
+int32[] yellow_co
+int32 white_flag
+int32[] white_co
+int32 traffic_flag
+int32 traffic_color
+int32 sign_flag
+int32 what_sign
+int32 gate
+int32 block
