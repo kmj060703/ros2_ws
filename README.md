@@ -1,6 +1,6 @@
 ### turtlebot 카메라 실행 방법 
 ```bash
-cd usb_cam/ && colcon build
+cd ros2_ws && colcon build
 source install/setup.bash && ros2 launch usb_cam camera.launch.py
 ```
 
