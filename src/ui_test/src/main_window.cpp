@@ -129,6 +129,100 @@ void MainWindow::on_doubleSpinBox_2_valueChanged(double arg1)
     std::cout<<"angular.z changed"<<std::endl;
 }
 
+void MainWindow::on_pushButton_12_clicked()
+{
+    // save
+    QString path = QDir::homePath() + "/ros2_ws/src/ui_test/work/";
+    QDir().mkpath(path); 
+
+    QString filePath = QFileDialog::getSaveFileName(
+    this,
+    "파일 저장",
+    path,
+    "Text Files (*.txt)");
+
+    if (filePath.isEmpty()) return;
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qDebug() << "cannot open file";
+        return;
+    }
+
+    QTextStream out(&file);
+    out << "left_right=" << left_right_ << "\n";
+    out << "forw_back=" << forw_back_ << "\n";
+    out << "start_flag=" << start_flag_ << "\n";
+    out << "state_flag=" << state_flag_ << "\n";
+    out << "x=" << x_ << "\n";
+    out << "z=" << z_ << "\n";
+
+    file.close();
+    qDebug() << "saved to" << filePath;
+}
+
+
+void MainWindow::on_pushButton_13_clicked()
+{
+    QString path = QDir::homePath() + "/ros2_ws/src/ui_test/work/";
+    QDir().mkpath(path); 
+
+    QString filePath = QFileDialog::getSaveFileName(
+    this,
+    "파일 열기",
+    path,
+    "Text Files (*.txt)");
+
+    if (filePath.isEmpty()) return;
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug() << "cannot open file";
+        return;
+    }
+
+    QTextStream in(&file);
+    while (!in.atEnd())
+    {
+        QString line = in.readLine();
+        
+        if (line.startsWith("left_right="))
+            left_right_ = line.split("=")[1].toInt();
+        else if (line.startsWith("forw_back="))
+            forw_back_ = line.split("=")[1].toInt();
+        else if (line.startsWith("start_flag="))
+            start_flag_ = line.split("=")[1].toInt();
+        else if (line.startsWith("state_flag="))
+            state_flag_ = line.split("=")[1].toInt();
+        else if (line.startsWith("x="))
+            x_ = line.split("=")[1].toDouble();
+        else if (line.startsWith("z="))
+            z_ = line.split("=")[1].toDouble();
+    }
+
+    ui->doubleSpinBox->setValue(x_);
+    ui->doubleSpinBox_2->setValue(z_);
+
+    file.close();
+    qDebug() << "loaded from" << filePath;
+}
+
+void MainWindow::on_pushButton_14_clicked()
+{
+    //set 0
+    left_right_=0;
+    forw_back_=0;
+    x_=0;
+    z_=0;
+    ui->doubleSpinBox->setValue(x_);
+    ui->doubleSpinBox_2->setValue(z_);
+    start_flag_=0;
+    std::cout<<"set 0"<<std::endl;
+
+}
+
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
   if(event->key() == Qt::Key_W)

@@ -16,10 +16,14 @@
 #include <QMainWindow>
 #include "QIcon"
 #include <QWidget>
+#include <QFileDialog>
 #include <QKeyEvent>
+#include <QDebug>
 #include "qnode.hpp"
 #include "ui_mainwindow.h"
 #include "controlitem.hpp"
+#include <QFile>
+#include <QFileSystemWatcher>
 
 /*****************************************************************************
 ** Interface [MainWindow]
@@ -62,6 +66,12 @@ private slots:
   void on_doubleSpinBox_valueChanged(double arg1);
 
   void on_doubleSpinBox_2_valueChanged(double arg1);
+
+  void on_pushButton_12_clicked();
+    
+  void on_pushButton_13_clicked();
+
+  void on_pushButton_14_clicked();
 
 private:
   Ui::MainWindowDesign* ui;
