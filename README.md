@@ -6,6 +6,7 @@ source install/setup.bash && ros2 launch usb_cam camera.launch.py
 
 ### turtlebot_vision 실행 방법
 ```bash
+turtlebot_vision.py에서 절대경로 설정 바꿔주기
 ros2 run turtlebot_vision vision_subscriber
 ```
 
