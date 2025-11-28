@@ -5,8 +5,12 @@ source install/setup.bash && ros2 launch usb_cam camera.launch.py
 ```
 
 ### turtlebot_vision 실행 방법
+# pip uninstall -y opencv-python opencv-contrib-python numpy
+# pip install numpy==1.23.5
+# pip install opencv-python==4.6.0.66
+# pip install opencv-python==4.6.0.66
+# turtlebot_vision.py에서 절대경로 설정 바꿔주기
 ```bash
-turtlebot_vision.py에서 절대경로 설정 바꿔주기
 ros2 run turtlebot_vision vision_subscriber
 ```
 
