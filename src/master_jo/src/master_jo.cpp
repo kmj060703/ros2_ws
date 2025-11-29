@@ -11,14 +11,15 @@ MasterJo::MasterJo()
       10,
       std::bind(&MasterJo::yolo_callback, this, std::placeholders::_1));
 
-  vision_sub_ = this->create_subscription<std_msgs::msg::Int32>(
-      "MasterJo_VISION",
+  vision_sub_ = this->create_subscription<autorace_interfaces::msg::VisionHyun>(
+      "/vision/line_diff_info",
       10,
       std::bind(&MasterJo::vision_callback, this, std::placeholders::_1));
 
   flag_pub_ = this->create_publisher<std_msgs::msg::Int32>("master_jo_flag", 10);
+  pixel_diff_pub_ = this->create_publisher<autorace_interfaces::msg::MasterJo>("pixel_diff", 10);
 
-  RCLCPP_INFO(this->get_logger(), "MasterJo_YOLO Start");
+  RCLCPP_INFO(this->get_logger(), "MasterJo_YOLO & MasterJo_VISION Start");
 }
 
 void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
@@ -117,8 +118,21 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
   }
 }
 
-void MasterJo::vision_callback(const std_msgs::msg::Int32::SharedPtr msg)
+void MasterJo::vision_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg)
 {
+  int center_x = msg->center_x;
+  int yellow_diff = msg->yellow_diff;
+  int white_diff = msg->white_diff;
+  int yellow_x = msg->yellow_x;
+  int white_x = msg->white_x;
+
+  int pixel_diff = center_x - 320;
+
+  auto diff_msg = autorace_interfaces::msg::MasterJo();
+
+  diff_msg.pixel_diff = pixel_diff;
+
+  pixel_diff_pub_->publish(diff_msg);
 }
 
 int main(int argc, char *argv[])

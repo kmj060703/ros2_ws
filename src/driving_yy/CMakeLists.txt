@@ -13,6 +13,8 @@ find_package(geometry_msgs REQUIRED)
 find_package(autorace_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
+include_directories(include ${ament_INCLUDE_DIRS} ${autorace_interfaces_INCLUDE_DIRS})
+
 add_executable(driving_yy_node src/driving_yy.cpp)
 ament_target_dependencies(driving_yy_node rclcpp std_msgs geometry_msgs autorace_interfaces)
 

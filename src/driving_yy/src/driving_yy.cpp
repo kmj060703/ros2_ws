@@ -2,16 +2,15 @@
 
 using std::placeholders::_1;
 
-
 DrivingYY::DrivingYY() : Node("driving_yy")
 {
-    kp=0.0;
-    kd=0.0;
-    x=0.0;
-    z=0.0;
-    error=0.0;
-    last_error=0.0;
-    max_x=0.0;
+    kp = 0.0;
+    kd = 0.0;
+    x = 0.0;
+    z = 0.0;
+    error = 0.0;
+    last_error = 0.0;
+    max_x = 0.0;
     imu_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>(
         "imu_angle",
         10,
@@ -35,9 +34,14 @@ DrivingYY::DrivingYY() : Node("driving_yy")
         10,
         std::bind(&DrivingYY::ui_callback, this, _1));
 
+    pixel_diff_sub_ = this->create_subscription<autorace_interfaces::msg::MasterJo>(
+        "pixel_diff",
+        10,
+        std::bind(&DrivingYY::pixel_diff_callback, this, std::placeholders::_1));
+
     publisher_drive = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 30);
-    drive_timer = this->create_wall_timer(100ms, std::bind(&DrivingYY::drive_callback,this));
-    
+    drive_timer = this->create_wall_timer(100ms, std::bind(&DrivingYY::drive_callback, this));
+
     RCLCPP_INFO(this->get_logger(), "DrivingYY Start");
     RCLCPP_INFO(this->get_logger(), "초기 미션 플래그: %d", mission_flag_);
 }
@@ -51,19 +55,19 @@ void DrivingYY::imu_callback(const geometry_msgs::msg::Vector3::SharedPtr msg)
 void DrivingYY::psd_front_callback(const std_msgs::msg::Int32::SharedPtr msg)
 {
     is_front_danger_ = msg->data;
-    //RCLCPP_WARN(this->get_logger(), "정면 장애물 감지 여부: %d", is_front_danger_);
+    // RCLCPP_WARN(this->get_logger(), "정면 장애물 감지 여부: %d", is_front_danger_);
 }
 
 void DrivingYY::psd_left_callback(const std_msgs::msg::Int32::SharedPtr msg)
 {
     is_left_danger_ = msg->data;
-    //RCLCPP_INFO(this->get_logger(), "왼쪽 장애물 감지 여부: %d", is_left_danger_);
+    // RCLCPP_INFO(this->get_logger(), "왼쪽 장애물 감지 여부: %d", is_left_danger_);
 }
 
 void DrivingYY::psd_right_callback(const std_msgs::msg::Int32::SharedPtr msg)
 {
     is_right_danger_ = msg->data;
-    //RCLCPP_INFO(this->get_logger(), "오른쪽 장애물 감지 여부: %d", is_right_danger_);
+    // RCLCPP_INFO(this->get_logger(), "오른쪽 장애물 감지 여부: %d", is_right_danger_);
 }
 
 void DrivingYY::flag_callback(const std_msgs::msg::Int32::SharedPtr msg)
@@ -74,51 +78,56 @@ void DrivingYY::flag_callback(const std_msgs::msg::Int32::SharedPtr msg)
 
 void DrivingYY::ui_callback(const autorace_interfaces::msg::Ui2Driving::SharedPtr msg)
 {
-   //유아이
-    start_flag=msg->l_start_flag;
-    kp=msg->kp;
-    kd=msg->kd;
-    x=msg->l_x;
-    z=msg->l_z;
-    RCLCPP_INFO(this->get_logger(), "플래그: %d", mission_flag_);
+    // 유아이
+    start_flag = msg->l_start_flag;
+    kp = msg->kp;
+    kd = msg->kd;
+    x = msg->l_x;
+    z = msg->l_z;
 }
 
-void DrivingYY::PD_control(){
-    z=kp*error+kd*(error-last_error);
-    last_error=error;
+void DrivingYY::pixel_diff_callback(const autorace_interfaces::msg::MasterJo::SharedPtr msg)
+{
+    current_pixel_diff_ = msg->pixel_diff;
+
+    RCLCPP_INFO(this->get_logger(), "Pixel Diff: %d", current_pixel_diff_);
+}
+
+void DrivingYY::PD_control()
+{
+    z = kp * error + kd * (error - last_error);
+    last_error = error;
     auto msg = geometry_msgs::msg::Twist();
-    x=min(pow(max_x*(1-abs(error)/500, 0), 2.2), 0.05);  //x는 0.05보다 크면 안된다는 뜻?  //500은 중앙 픽셀 값 같기도하고 잘 모르겠다
-    if(z<0){
-        z=-max(z, -2.0);
+    x = min(pow(max_x * (1 - abs(error) / 500, 0), 2.2), 0.05); // x는 0.05보다 크면 안된다는 뜻?  //500은 중앙 픽셀 값 같기도하고 잘 모르겠다
+    if (z < 0)
+    {
+        z = -max(z, -2.0);
     }
-    else{
-        z=-min(z, 2.0); //2.0보다 절댓값이 크면 안된다는 뜻인가? 그리고 계산할때 부호반전된다
+    else
+    {
+        z = -min(z, 2.0); // 2.0보다 절댓값이 크면 안된다는 뜻인가? 그리고 계산할때 부호반전된다
     }
 
-    if(start_flag==1){
-        msg.linear.x=x;
-        msg.angular.z=z;
+    if (start_flag == 1)
+    {
+        msg.linear.x = x;
+        msg.angular.z = z;
     }
-    else{
-        msg.linear.x=0;
-        msg.angular.z=0;
+    else
+    {
+        msg.linear.x = 0;
+        msg.angular.z = 0;
     }
-    msg.linear.y=0;
-    msg.linear.z=0;
-    msg.angular.x=0;
-    msg.angular.y=0;
-    std::cout<<"linear.x:"<<msg.linear.x<<std::endl;
-    std::cout<<"linear.y:"<<msg.linear.y<<std::endl;
-    std::cout<<"linear.z:"<<msg.linear.z<<std::endl;
-    std::cout<<"angular.x:"<<msg.angular.x<<std::endl;
-    std::cout<<"angular.y:"<<msg.angular.y<<std::endl;
-    std::cout<<"angular.z:"<<msg.angular.z<<std::endl;
-    std::cout<<"-----------------------"<<std::endl;
+    msg.linear.y = 0;
+    msg.linear.z = 0;
+    msg.angular.x = 0;
+    msg.angular.y = 0;
     publisher_drive->publish(msg);
 }
 
-void DrivingYY::drive_callback(){
-  PD_control();
+void DrivingYY::drive_callback()
+{
+    PD_control();
 }
 
 int main(int argc, char **argv)

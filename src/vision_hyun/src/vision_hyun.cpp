@@ -241,20 +241,19 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 // 차이 계산 (기준선 320과의 차이)
                 global_yellow_diff = yellow_x - reference_x;
                 global_white_diff = white_x - reference_x;
-                int center_diff = center_x - reference_x;
 
-                RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
+                /* RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
                                      "Yellow X: %d (diff: %d) %s | White X: %d (diff: %d) %s | Center X: %d (diff: %d)",
                                      yellow_x, global_yellow_diff, yellow_detected ? "[DETECT]" : "[MEMORY]",
                                      white_x, global_white_diff, white_detected ? "[DETECT]" : "[MEMORY]",
-                                     center_x, center_diff);
+                                     center_x, center_diff);*/
             }
             else if (yellow_x != -1 || white_x != -1)
             {
                 // 한쪽만 감지된 경우도 로그 출력
-                RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
+                /*RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
                                      "Partial detection - Yellow: %d | White: %d",
-                                     yellow_x, white_x);
+                                     yellow_x, white_x);*/
 
                 // 전역 변수 업데이트 (부분 감지)
                 if (yellow_x != -1)
