@@ -41,21 +41,20 @@ public:
   QNode();
   ~QNode();
   void drive_callback();
-  void state_callback();
-  
-signals:
-  void new_image(const QImage &img);
+  void ui2drive_callback();
+  void run() override;
+  std::shared_ptr<rclcpp::Node> getNode() const { return node; }
 
-protected:
-  void run();
 
 private:
   std::shared_ptr<rclcpp::Node> node;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_drive;
-  rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr publisher_state;
-  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub;
+  rclcpp::Publisher<autorace_interfaces::msg::Ui2Driving>::SharedPtr publisher_ui2drive;
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr yolo_image_sub_;
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr bird_image_sub_;
 
-  void image_callback(const sensor_msgs::msg::Image::SharedPtr msg);
+  void yoloImageCallback(const sensor_msgs::msg::Image::SharedPtr msg);
+  void birdImageCallback(const sensor_msgs::msg::Image::SharedPtr msg);
 
   size_t count_drive;
   size_t count_state;
@@ -65,6 +64,7 @@ private:
 
 Q_SIGNALS:
   void rosShutDown();
+  void imageReceived(const QPixmap &pixmap, int index);
 };
 
 #endif /* ui_test_QNODE_HPP_ */

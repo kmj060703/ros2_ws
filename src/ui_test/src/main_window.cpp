@@ -14,12 +14,12 @@
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindowDesign)
 {
   ui->setupUi(this);
-  m_img[0].load(":/images/Resources/witcher3.jpg");
-	m_img[1].load(":/images/Resources/horizon.png");
+
   QIcon icon("://ros-icon.png");
   this->setWindowIcon(icon);
 
   qnode = new QNode();
+  connect(qnode, &QNode::imageReceived, this, &MainWindow::updateImage);
   
   QObject::connect(qnode, SIGNAL(rosShutDown()), this, SLOT(close()));
 }
@@ -617,14 +617,25 @@ void MainWindow::on_pushButton_43_clicked()
 }
 
 void MainWindow::camera_callback(){
-    if(imshow_flag_1==1){
-        ui->label_18->setPixmap(
-        m_img[0].scaled(640, 360, Qt::KeepAspectRatio));
+    
+}
+
+void MainWindow::updateImage(const QPixmap &pixmap, int index) {
+  if (index >= 0 && index < 2) {
+    m_img[index] = pixmap;
+    
+    // imshow_flag에 따라 즉시 표시
+    if (index == 0 && imshow_flag_1 == 1) {
+      ui->label_18->setPixmap(
+        m_img[0].scaled(640, 360, Qt::KeepAspectRatio)
+      );
     }
-    if(imshow_flag_2==1){
-        ui->label_19->setPixmap(
-	    m_img[1].scaled(640, 360, Qt::KeepAspectRatio));
+    else if (index == 1 && imshow_flag_2 == 1) {
+      ui->label_19->setPixmap(
+        m_img[1].scaled(640, 360, Qt::KeepAspectRatio)
+      );
     }
+  }
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)

@@ -22,7 +22,14 @@ DrivingYY::DrivingYY() : Node("driving_yy")
         "master_jo_flag",
         10,
         std::bind(&DrivingYY::flag_callback, this, _1));
+    ui_sub_ = this->create_subscription<autorace_interfaces::msg::Ui2Driving>(
+        "/ui2driving_topic",
+        10,
+        std::bind(&DrivingYY::ui_callback, this, _1));
 
+    publisher_drive = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 30);
+    drive_timer = this->create_wall_timer(100ms, std::bind(&DrivingYY::drive_callback,this));
+    
     RCLCPP_INFO(this->get_logger(), "DrivingYY Start");
     RCLCPP_INFO(this->get_logger(), "초기 미션 플래그: %d", mission_flag_);
 }
@@ -55,6 +62,40 @@ void DrivingYY::flag_callback(const std_msgs::msg::Int32::SharedPtr msg)
 {
     mission_flag_ = msg->data;
     RCLCPP_INFO(this->get_logger(), "플래그: %d", mission_flag_);
+}
+
+void DrivingYY::ui_callback(const autorace_interfaces::msg::Ui2Driving::SharedPtr msg)
+{
+   //유아이
+    start_flag=msg->l_start_flag;
+    kp=msg->kp;
+    kd=msg->kd;
+    x=msg->l_x;
+    z=msg->l_z;
+    RCLCPP_INFO(this->get_logger(), "플래그: %d", mission_flag_);
+}
+
+void DrivingYY::PD_control(){
+
+}
+
+void DrivingYY::drive_callback(){
+  auto msg = geometry_msgs::msg::Twist();
+  if(start_flag==1){
+
+    }
+    msg.linear.y=0;
+    msg.linear.z=0;
+    msg.angular.x=0;
+    msg.angular.y=0;
+    std::cout<<"linear.x:"<<msg.linear.x<<std::endl;
+    std::cout<<"linear.y:"<<msg.linear.y<<std::endl;
+    std::cout<<"linear.z:"<<msg.linear.z<<std::endl;
+    std::cout<<"angular.x:"<<msg.angular.x<<std::endl;
+    std::cout<<"angular.y:"<<msg.angular.y<<std::endl;
+    std::cout<<"angular.z:"<<msg.angular.z<<std::endl;
+    std::cout<<"-----------------------"<<std::endl;
+    publisher_drive->publish(msg);
 }
 
 int main(int argc, char **argv)

@@ -158,7 +158,6 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 cv::erode(white_mask, white_mask, k);
             }
         }
-
         // Publish processed frame
         auto msg_out = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", frame).toImageMsg();
         publisher_->publish(*msg_out);

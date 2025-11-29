@@ -17,22 +17,30 @@ QNode::QNode()
   int argc = 0;
   char** argv = NULL;
   rclcpp::init(argc, argv);
-  node = rclcpp::Node::make_shared("ui_test");
+  node = rclcpp::Node::make_shared("ui_test_node");
   new_timer1 = new QTimer(this);
   new_timer1->setInterval(100);
   new_timer2 = new QTimer(this);
   new_timer2->setInterval(100);
   publisher_drive = node->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 30);
-  publisher_state = node->create_publisher<std_msgs::msg::Int32>("/my_topic", 30);
+  publisher_ui2drive = node->create_publisher<autorace_interfaces::msg::Ui2Driving>("/ui2driving_topic", 30);
 
   const std::string image_topic = "/vision/image_processed";
-  image_sub = node->create_subscription<sensor_msgs::msg::Image>(
-            image_topic, 10,
-            std::bind(&QNode::image_callback, this, std::placeholders::_1)
-        );
+  yolo_image_sub_ = node->create_subscription<sensor_msgs::msg::Image>(
+    image_topic,  // 실제 토픽 이름으로 변경
+    10,
+    std::bind(&QNode::yoloImageCallback, this, std::placeholders::_1)
+  );
+  
+  // Bird's eye view 이미지 토픽 구독 (실제 토픽 이름으로 변경)
+  bird_image_sub_ = node->create_subscription<sensor_msgs::msg::Image>(
+    "/bird/image",  // 실제 토픽 이름으로 변경
+    10,
+    std::bind(&QNode::birdImageCallback, this, std::placeholders::_1)
+  );
 
   connect(new_timer1, &QTimer::timeout, this, &QNode::drive_callback);
-  connect(new_timer2, &QTimer::timeout, this, &QNode::state_callback);
+  connect(new_timer2, &QTimer::timeout, this, &QNode::ui2drive_callback);
 
   new_timer1->start();
   new_timer2->start();
@@ -86,21 +94,63 @@ void QNode::drive_callback(){
   }
 }
 
-void QNode::state_callback(){
-  auto msg = std_msgs::msg::Int32();
-  msg.data=state_flag_;
-  publisher_state->publish(msg);
+void QNode::ui2drive_callback(){
+  auto msg = autorace_interfaces::msg::Ui2Driving();
+  msg.state_flag=l_state_flag_;
+  msg.kp=kp_;
+  msg.kd=kd_;
+  msg.l_x=l_x_;
+  msg.l_z=l_z_;
+  msg.l_start_flag=l_start_flag_;
+  publisher_ui2drive->publish(msg);
 }
 
-void QNode::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
-{
+void QNode::yoloImageCallback(const sensor_msgs::msg::Image::SharedPtr msg) {
   try {
-        cv::Mat img = cv_bridge::toCvCopy(msg, "bgr8")->image;
-        
-    } catch (cv_bridge::Exception& e) {
-        RCLCPP_ERROR(rclcpp::get_logger("QNode"), "cv_bridge exception: %s", e.what());
-    }
+    cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+    cv::Mat image = cv_ptr->image;
+    
+    QImage qimage(
+      image.data,
+      image.cols,
+      image.rows,
+      image.step,
+      QImage::Format_RGB888
+    );
+    
+    QImage rgb_image = qimage.rgbSwapped();
+    
+    // index 0으로 yolo 이미지 전송
+    emit imageReceived(QPixmap::fromImage(rgb_image), 0);
+    
+  } catch (cv_bridge::Exception& e) {
+    RCLCPP_ERROR(node->get_logger(), "cv_bridge exception: %s", e.what());
+  }
 }
+
+void QNode::birdImageCallback(const sensor_msgs::msg::Image::SharedPtr msg) {
+  try {
+    cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+    cv::Mat image = cv_ptr->image;
+    
+    QImage qimage(
+      image.data,
+      image.cols,
+      image.rows,
+      image.step,
+      QImage::Format_RGB888
+    );
+    
+    QImage rgb_image = qimage.rgbSwapped();
+    
+    // index 1로 bird 이미지 전송
+    emit imageReceived(QPixmap::fromImage(rgb_image), 1);
+    
+  } catch (cv_bridge::Exception& e) {
+    RCLCPP_ERROR(node->get_logger(), "cv_bridge exception: %s", e.what());
+  }
+}
+
 
 void QNode::run()
 {

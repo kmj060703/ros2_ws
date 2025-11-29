@@ -16,15 +16,16 @@
 
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
+  <depend>autorace_interfaces</depend>
 <buildtool_depend>rosidl_default_generators</buildtool_depend>
 <exec_depend>rosidl_default_runtime</exec_depend>
   <depend>sensor_msgs</depend>
+  <depend>libopencv-dev</depend>
   <build_depend>cv_bridge</build_depend>
 <exec_depend>cv_bridge</exec_depend>
 <build_depend>opencv</build_depend>
 <exec_depend>opencv</exec_depend>
 
-  
   <export>
     <build_type>ament_cmake</build_type>
   </export>

@@ -1,6 +1,8 @@
 #ifndef CONTROLITEM_HPP
 #define CONTROLITEM_HPP
 
+#include "autorace_interfaces/msg/ui2_driving.hpp"
+
 extern int l_state_flag_;
 extern int state_flag_;
 extern int imshow_flag_1;

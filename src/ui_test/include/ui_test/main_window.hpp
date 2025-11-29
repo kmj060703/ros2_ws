@@ -48,9 +48,8 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  MainWindow(QWidget* parent = nullptr);
+  explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
-  QNode* qnode;
 
 private slots:
 void on_pushButton_7_clicked();
@@ -128,12 +127,14 @@ void on_pushButton_17_clicked();
     
   void on_pushButton_43_clicked();
   void camera_callback();
+  void updateImage(const QPixmap &pixmap, int index);  // 이미지 업데이트 슬롯
 
 private:
   Ui::MainWindowDesign* ui;
   void keyPressEvent(QKeyEvent *event) override;
   void closeEvent(QCloseEvent* event);
 	QPixmap m_img[2];
+  QNode *qnode;
 
 };
 
