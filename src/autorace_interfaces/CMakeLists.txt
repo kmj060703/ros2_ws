@@ -14,12 +14,9 @@ find_package(geometry_msgs REQUIRED)
 # 메시지 파일 선언 (이 부분이 중요!)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Ui2Driving.msg"
+  "msg/VisionHyun.msg"
   DEPENDENCIES std_msgs geometry_msgs
 )
 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
-
+ament_export_dependencies(std_msgs geometry_msgs)
 ament_package()
