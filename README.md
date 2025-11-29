@@ -1,3 +1,7 @@
+### 한 번에 다 실행시키는 방법
+```bash
+ros2 launch master_jo total.launch.py
+```
 ### turtlebot 카메라 실행 방법 
 ```bash
 cd ros2_ws && colcon build
