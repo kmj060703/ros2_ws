@@ -13,7 +13,7 @@ MasterJo::MasterJo()
 
   flag_pub_ = this->create_publisher<std_msgs::msg::Int32>("master_jo_flag", 10);
 
-  RCLCPP_INFO(this->get_logger(), "MasterJo_YOLO Start");
+  RCLCPP_WARN(this->get_logger(), "robot power automatically restored");
 }
 
 void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)

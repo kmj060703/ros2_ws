@@ -25,7 +25,7 @@ void PsdJo::topic_callback(const std_msgs::msg::UInt16MultiArray::SharedPtr msg)
     if (front_adc > detect_object_f)
     {
         flag_f++;
-        if (flag_f > 5)
+        if (flag_f > 3)
         {
             msg_f.data = 1;
         }
