@@ -1,11 +1,20 @@
 #ifndef CONTROLITEM_HPP
 #define CONTROLITEM_HPP
 
+extern int l_state_flag_;
 extern int state_flag_;
+extern int imshow_flag_1;
+extern int imshow_flag_2;
 extern int start_flag_;
 extern int forw_back_;
 extern int left_right_;
+extern int l_start_flag_;
 extern double x_;
 extern double z_;
+extern double kp_;
+extern double kd_;
+extern double l_x_;
+extern double l_z_;
+
 
 #endif // CONTROLITEM_HPP

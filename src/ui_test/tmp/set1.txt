@@ -1,0 +1,6 @@
+kp=6
+kd=0
+l_state_flag=0
+l_x=0
+l_z=0
+comment:fjhgfjhg

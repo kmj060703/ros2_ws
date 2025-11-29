@@ -25,6 +25,12 @@ QNode::QNode()
   publisher_drive = node->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 30);
   publisher_state = node->create_publisher<std_msgs::msg::Int32>("/my_topic", 30);
 
+  const std::string image_topic = "/vision/image_processed";
+  image_sub = node->create_subscription<sensor_msgs::msg::Image>(
+            image_topic, 10,
+            std::bind(&QNode::image_callback, this, std::placeholders::_1)
+        );
+
   connect(new_timer1, &QTimer::timeout, this, &QNode::drive_callback);
   connect(new_timer2, &QTimer::timeout, this, &QNode::state_callback);
 
@@ -84,6 +90,16 @@ void QNode::state_callback(){
   auto msg = std_msgs::msg::Int32();
   msg.data=state_flag_;
   publisher_state->publish(msg);
+}
+
+void QNode::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
+{
+  try {
+        cv::Mat img = cv_bridge::toCvCopy(msg, "bgr8")->image;
+        // 필요하면 Qt 시그널 emit
+    } catch (cv_bridge::Exception& e) {
+        RCLCPP_ERROR(rclcpp::get_logger("QNode"), "cv_bridge exception: %s", e.what());
+    }
 }
 
 void QNode::run()
