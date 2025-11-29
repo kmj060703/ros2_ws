@@ -2,8 +2,16 @@
 
 using std::placeholders::_1;
 
+
 DrivingYY::DrivingYY() : Node("driving_yy")
 {
+    kp=0.0;
+    kd=0.0;
+    x=0.0;
+    z=0.0;
+    error=0.0;
+    last_error=0.0;
+    max_x=0.0;
     imu_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>(
         "imu_angle",
         10,
@@ -76,13 +84,24 @@ void DrivingYY::ui_callback(const autorace_interfaces::msg::Ui2Driving::SharedPt
 }
 
 void DrivingYY::PD_control(){
+    z=kp*error+kd*(error-last_error);
+    last_error=error;
+    auto msg = geometry_msgs::msg::Twist();
+    x=min(pow(max_x*(1-abs(error)/500, 0), 2.2), 0.05);  //x는 0.05보다 크면 안된다는 뜻?  //500은 중앙 픽셀 값 같기도하고 잘 모르겠다
+    if(z<0){
+        z=-max(z, -2.0);
+    }
+    else{
+        z=-min(z, 2.0); //2.0보다 절댓값이 크면 안된다는 뜻인가? 그리고 계산할때 부호반전된다
+    }
 
-}
-
-void DrivingYY::drive_callback(){
-  auto msg = geometry_msgs::msg::Twist();
-  if(start_flag==1){
-
+    if(start_flag==1){
+        msg.linear.x=x;
+        msg.angular.z=z;
+    }
+    else{
+        msg.linear.x=0;
+        msg.angular.z=0;
     }
     msg.linear.y=0;
     msg.linear.z=0;
@@ -96,6 +115,10 @@ void DrivingYY::drive_callback(){
     std::cout<<"angular.z:"<<msg.angular.z<<std::endl;
     std::cout<<"-----------------------"<<std::endl;
     publisher_drive->publish(msg);
+}
+
+void DrivingYY::drive_callback(){
+  PD_control();
 }
 
 int main(int argc, char **argv)
