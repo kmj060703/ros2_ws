@@ -11,9 +11,14 @@ MasterJo::MasterJo()
       10,
       std::bind(&MasterJo::yolo_callback, this, std::placeholders::_1));
 
+  vision_sub_ = this->create_subscription<std_msgs::msg::Int32>(
+      "MasterJo_VISION",
+      10,
+      std::bind(&MasterJo::vision_callback, this, std::placeholders::_1));
+
   flag_pub_ = this->create_publisher<std_msgs::msg::Int32>("master_jo_flag", 10);
 
-  RCLCPP_WARN(this->get_logger(), "robot power automatically restored");
+  RCLCPP_INFO(this->get_logger(), "MasterJo_YOLO Start");
 }
 
 void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
@@ -110,6 +115,10 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
       }
     }
   }
+}
+
+void MasterJo::vision_callback(const std_msgs::msg::Int32::SharedPtr msg)
+{
 }
 
 int main(int argc, char *argv[])
