@@ -79,19 +79,24 @@ void QNode::drive_callback(){
       msg.linear.x=0;
       msg.angular.z=0;
     }
-    msg.linear.y=0;
-    msg.linear.z=0;
-    msg.angular.x=0;
-    msg.angular.y=0;
-    std::cout<<"linear.x:"<<msg.linear.x<<std::endl;
-    std::cout<<"linear.y:"<<msg.linear.y<<std::endl;
-    std::cout<<"linear.z:"<<msg.linear.z<<std::endl;
-    std::cout<<"angular.x:"<<msg.angular.x<<std::endl;
-    std::cout<<"angular.y:"<<msg.angular.y<<std::endl;
-    std::cout<<"angular.z:"<<msg.angular.z<<std::endl;
-    std::cout<<"-----------------------"<<std::endl;
-    publisher_drive->publish(msg);
+    
   }
+  else{
+    msg.linear.x=0;
+    msg.angular.z=0;
+  }
+  msg.linear.y=0;
+  msg.linear.z=0;
+  msg.angular.x=0;
+  msg.angular.y=0;
+  std::cout<<"linear.x:"<<msg.linear.x<<std::endl;
+  std::cout<<"linear.y:"<<msg.linear.y<<std::endl;
+  std::cout<<"linear.z:"<<msg.linear.z<<std::endl;
+  std::cout<<"angular.x:"<<msg.angular.x<<std::endl;
+  std::cout<<"angular.y:"<<msg.angular.y<<std::endl;
+  std::cout<<"angular.z:"<<msg.angular.z<<std::endl;
+  std::cout<<"-----------------------"<<std::endl;
+  publisher_drive->publish(msg);
 }
 
 void QNode::ui2drive_callback(){
