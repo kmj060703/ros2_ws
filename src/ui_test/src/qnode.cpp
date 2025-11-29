@@ -96,7 +96,7 @@ void QNode::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
   try {
         cv::Mat img = cv_bridge::toCvCopy(msg, "bgr8")->image;
-        // 필요하면 Qt 시그널 emit
+        
     } catch (cv_bridge::Exception& e) {
         RCLCPP_ERROR(rclcpp::get_logger("QNode"), "cv_bridge exception: %s", e.what());
     }

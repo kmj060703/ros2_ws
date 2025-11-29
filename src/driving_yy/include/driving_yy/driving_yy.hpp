@@ -17,6 +17,7 @@ private:
     void psd_left_callback(const std_msgs::msg::Int32::SharedPtr msg);
     void psd_right_callback(const std_msgs::msg::Int32::SharedPtr msg);
     void flag_callback(const std_msgs::msg::Int32::SharedPtr msg);
+    void ui_callback();
 
     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr imu_sub_;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_front_sub_;

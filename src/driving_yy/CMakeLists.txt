@@ -10,14 +10,17 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(autorace_interfaces REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 
 add_executable(driving_yy_node src/driving_yy.cpp)
-ament_target_dependencies(driving_yy_node rclcpp std_msgs geometry_msgs)
+ament_target_dependencies(driving_yy_node rclcpp std_msgs geometry_msgs autorace_interfaces)
 
 install(TARGETS
   driving_yy_node
   DESTINATION lib/${PROJECT_NAME}
 )
+
 # -----------------------------
 
 if(BUILD_TESTING)
