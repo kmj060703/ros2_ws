@@ -179,112 +179,143 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             }
 
             // y=scan_y 위치에서 노란색과 하얀색 선 찾기
-            yellow_x = -1;
-            white_x = -1;
 
-            if (scan_y < yellow_mask.rows && scan_y < white_mask.rows)
+            birdeye_with_lines = birdeye.clone();
+            for(int i=0; i<yellow_mask.rows;i++)
             {
-                // 노란색 선 찾기 (가장 왼쪽 흰색 픽셀)
-                for (int x = 0; x < yellow_mask.cols; x++)
-                {
-                    if (yellow_mask.at<uchar>(scan_y, x) > 0)
-                    {
-                        yellow_x = x;
-                        break;
-                    }
+                yellow_x = -1;
+                white_x = -1;
+                for(int j=0; j<yellow_mask.cols;j++){
+                    if (yellow_mask.at<uchar>(i, j) > 0)
+                        {
+                            yellow_x = j;
+                             cv::line(birdeye_with_lines, cv::Point(yellow_x, i), cv::Point(yellow_x, i), cv::Scalar(255, 255, 0), 1);
+                            break;
+                    }//왼쪽 노랑라인
+
                 }
-
-                // 하얀색 선 찾기 (가장 오른쪽 흰색 픽셀)
-                for (int x = white_mask.cols - 1; x >= 0; x--)
-                {
-                    if (white_mask.at<uchar>(scan_y, x) > 0)
-                    {
-                        white_x = x;
-                        break;
-                    }
+                for(int j=white_mask.cols-1; j>=0;j--){
+                    if (white_mask.at<uchar>(i, j) > 0)
+                        {
+                            white_x = j;
+                             cv::line(birdeye_with_lines, cv::Point(white_x, i), cv::Point(white_x, i), cv::Scalar(255, 255, 255), 1);
+                            break;
+                    }//오른쪽 휜라인
+                }
+                if(yellow_x!=-1&&white_x!=-1){
+                    int center=(yellow_x+white_x)/2;
+                    cv::line(birdeye_with_lines, cv::Point(center, i), cv::Point(center, i), cv::Scalar(0, 255, 0), 1);
+                    //중앙선 초록
                 }
             }
+            
+            // yellow_x = -1;
+            // white_x = -1;
 
-            // 현재 감지 상태 확인
-            bool yellow_detected = (yellow_x != -1);
-            bool white_detected = (white_x != -1);
+            // if (scan_y < yellow_mask.rows && scan_y < white_mask.rows)
+            // {
+            //     // 노란색 선 찾기 (가장 왼쪽 흰색 픽셀)
+            //     for (int x = 0; x < yellow_mask.cols; x++)
+            //     {
+            //         if (yellow_mask.at<uchar>(scan_y, x) > 0)
+            //         {
+            //             yellow_x = x;
+            //             break;
+            //         }
+            //     }
 
-            // 이전 값 기억
-            if (yellow_detected)
-            {
-                last_yellow_x = yellow_x;
-                yellow_detected_before = true;
-            }
-            else if (yellow_detected_before)
-            {
-                yellow_x = last_yellow_x; // 이전 값 사용
-            }
+            //     // 하얀색 선 찾기 (가장 오른쪽 흰색 픽셀)
+            //     for (int x = white_mask.cols - 1; x >= 0; x--)
+            //     {
+            //         if (white_mask.at<uchar>(scan_y, x) > 0)
+            //         {
+            //             white_x = x;
+            //             break;
+            //         }
+            //     }
+            // }
 
-            if (white_detected)
-            {
-                last_white_x = white_x;
-                white_detected_before = true;
-            }
-            else if (white_detected_before)
-            {
-                white_x = last_white_x; // 이전 값 사용
-            }
+            // // 현재 감지 상태 확인
+            // bool yellow_detected = (yellow_x != -1);
+            // bool white_detected = (white_x != -1);
 
-            // 중앙 x좌표 계산 및 전역 변수 업데이트
-            if (yellow_x != -1 && white_x != -1)
-            {
-                int center_x = (yellow_x + white_x) / 2;
-                global_center_x = center_x;
-                global_yellow_x = yellow_x;
-                global_white_x = white_x;
+            // // 이전 값 기억
+            // if (yellow_detected)
+            // {
+            //     last_yellow_x = yellow_x;
+            //     yellow_detected_before = true;
+            // }
+            // else if (yellow_detected_before)
+            // {
+            //     yellow_x = last_yellow_x; // 이전 값 사용
+            // }
 
-                // 차이 계산 (기준선 320과의 차이)
-                global_yellow_diff = yellow_x - reference_x;
-                global_white_diff = white_x - reference_x;
+            // if (white_detected)
+            // {
+            //     last_white_x = white_x;
+            //     white_detected_before = true;
+            // }
+            // else if (white_detected_before)
+            // {
+            //     white_x = last_white_x; // 이전 값 사용
+            // }
 
-                /* RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
-                                     "Yellow X: %d (diff: %d) %s | White X: %d (diff: %d) %s | Center X: %d (diff: %d)",
-                                     yellow_x, global_yellow_diff, yellow_detected ? "[DETECT]" : "[MEMORY]",
-                                     white_x, global_white_diff, white_detected ? "[DETECT]" : "[MEMORY]",
-                                     center_x, center_diff);*/
-            }
-            else if (yellow_x != -1 || white_x != -1)
-            {
-                // 한쪽만 감지된 경우도 로그 출력
-                /*RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
-                                     "Partial detection - Yellow: %d | White: %d",
-                                     yellow_x, white_x);*/
+            // // 중앙 x좌표 계산 및 전역 변수 업데이트
+            // if (yellow_x != -1 && white_x != -1)
+            // {
+            //     int center_x = (yellow_x + white_x) / 2;
+            //     global_center_x = center_x;
+            //     global_yellow_x = yellow_x;
+            //     global_white_x = white_x;
 
-                // 전역 변수 업데이트 (부분 감지)
-                if (yellow_x != -1)
-                    global_yellow_x = yellow_x;
-                if (white_x != -1)
-                    global_white_x = white_x;
-            }
+            //     // 차이 계산 (기준선 320과의 차이)
+            //     global_yellow_diff = yellow_x - reference_x;
+            //     global_white_diff = white_x - reference_x;
+
+            //     /* RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
+            //                          "Yellow X: %d (diff: %d) %s | White X: %d (diff: %d) %s | Center X: %d (diff: %d)",
+            //                          yellow_x, global_yellow_diff, yellow_detected ? "[DETECT]" : "[MEMORY]",
+            //                          white_x, global_white_diff, white_detected ? "[DETECT]" : "[MEMORY]",
+            //                          center_x, center_diff);*/
+            // }
+            // else if (yellow_x != -1 || white_x != -1)
+            // {
+            //     // 한쪽만 감지된 경우도 로그 출력
+            //     /*RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
+            //                          "Partial detection - Yellow: %d | White: %d",
+            //                          yellow_x, white_x);*/
+
+            //     // 전역 변수 업데이트 (부분 감지)
+            //     if (yellow_x != -1)
+            //         global_yellow_x = yellow_x;
+            //     if (white_x != -1)
+            //         global_white_x = white_x;
+            // }
 
             // ★★★ 선이 그려진 birdeye 생성 (퍼블리시 및 imshow용) ★★★
-            birdeye_with_lines = birdeye.clone();
+            // birdeye_with_lines = birdeye.clone();
             
-            // 기준선 (빨간색) - x=320
-            cv::line(birdeye_with_lines, cv::Point(320, 0), cv::Point(320, 360), cv::Scalar(0, 0, 255), 2);
+            
+            // // 기준선 (빨간색) - x=320
+            // cv::line(birdeye_with_lines, cv::Point(320, 0), cv::Point(320, 360), cv::Scalar(0, 0, 255), 2);
 
-            // 중앙선 (초록색)
-            if (global_center_x > 0)
-            {
-                cv::line(birdeye_with_lines, cv::Point(global_center_x, 0), cv::Point(global_center_x, 360), cv::Scalar(0, 255, 0), 2);
-            }
+            // // 중앙선 (초록색)
+            // if (global_center_x > 0)
+            // {
+            //     cv::line(birdeye_with_lines, cv::Point(global_center_x, 0), cv::Point(global_center_x, 360), cv::Scalar(0, 255, 0), 2);
+            // }
 
-            // 노란색 선 위치 (노란색)
-            if (global_yellow_x > 0)
-            {
-                cv::line(birdeye_with_lines, cv::Point(global_yellow_x, 0), cv::Point(global_yellow_x, 360), cv::Scalar(0, 255, 255), 1);
-            }
+            // // 노란색 선 위치 (노란색)
+            // if (global_yellow_x > 0)
+            // {
+            //     cv::line(birdeye_with_lines, cv::Point(global_yellow_x, 0), cv::Point(global_yellow_x, 360), cv::Scalar(0, 255, 255), 1);
+            // }
 
-            // 하얀색 선 위치 (흰색)
-            if (global_white_x > 0)
-            {
-                cv::line(birdeye_with_lines, cv::Point(global_white_x, 0), cv::Point(global_white_x, 360), cv::Scalar(255, 255, 255), 1);
-            }
+            // // 하얀색 선 위치 (흰색)
+            // if (global_white_x > 0)
+            // {
+            //     cv::line(birdeye_with_lines, cv::Point(global_white_x, 0), cv::Point(global_white_x, 360), cv::Scalar(255, 255, 255), 1);
+            // }
 
             // 스캔 라인 표시 (y=270, 보라색)
             cv::line(birdeye_with_lines, cv::Point(0, 270), cv::Point(640, 270), cv::Scalar(255, 0, 255), 1);
