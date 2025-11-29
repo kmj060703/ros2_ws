@@ -14,6 +14,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(autorace_interfaces REQUIRED)
 
 add_executable(vision_hyun_node src/vision_hyun.cpp)
 ament_target_dependencies(
@@ -25,6 +26,7 @@ ament_target_dependencies(
   cv_bridge
   image_transport
   OpenCV
+  autorace_interfaces
 )
 
 install(
