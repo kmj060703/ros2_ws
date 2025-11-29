@@ -207,6 +207,14 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     cv::line(birdeye_with_lines, cv::Point(center, i), cv::Point(center, i), cv::Scalar(0, 255, 0), 1);
                     //중앙선 초록
                 }
+                else if(yellow_x!=-1){
+                    cv::line(birdeye_with_lines, cv::Point(yellow_x+250, i), cv::Point(yellow_x+250, i), cv::Scalar(0, 255, 0), 1);
+                    //중앙선 초록
+                }
+                else if(white_x!=-1){
+                    cv::line(birdeye_with_lines, cv::Point(white_x-250, i), cv::Point(white_x-250, i), cv::Scalar(0, 255, 0), 1);
+                    //중앙선 초록
+                }
             }
             
             // yellow_x = -1;
