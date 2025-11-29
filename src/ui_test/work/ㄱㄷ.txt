@@ -1,5 +1,0 @@
-left_right=1
-forw_back=0
-state_flag=4
-x=0.04
-z=0

@@ -281,7 +281,7 @@ background-color:rgb(154, 153, 150);</string>
         <string notr="true">color:rgb(0, 0, 0);font: 20pt &quot;Ubuntu&quot;;</string>
        </property>
        <property name="text">
-        <string>state cahnge</string>
+        <string>state change</string>
        </property>
       </widget>
      </widget>
@@ -312,7 +312,7 @@ background-color:rgb(154, 153, 150);</string>
 color:rgb(0, 0, 0);</string>
        </property>
        <property name="text">
-        <string>custom drivie</string>
+        <string>custom drive</string>
        </property>
       </widget>
       <widget class="QPushButton" name="pushButton_7">
@@ -493,7 +493,7 @@ color:rgb(0, 0, 0);</string>
     </widget>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
-      <string>PD controller</string>
+      <string>PD controler</string>
      </attribute>
      <widget class="QLabel" name="label_10">
       <property name="geometry">

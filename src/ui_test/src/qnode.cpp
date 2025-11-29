@@ -27,14 +27,14 @@ QNode::QNode()
 
   const std::string image_topic = "/vision/image_processed";
   yolo_image_sub_ = node->create_subscription<sensor_msgs::msg::Image>(
-    image_topic,  // 실제 토픽 이름으로 변경
+    image_topic,
     10,
     std::bind(&QNode::yoloImageCallback, this, std::placeholders::_1)
   );
   
-  // Bird's eye view 이미지 토픽 구독 (실제 토픽 이름으로 변경)
+  // 나중에 토픽 이름으로 변경해라~
   bird_image_sub_ = node->create_subscription<sensor_msgs::msg::Image>(
-    "/bird/image",  // 실제 토픽 이름으로 변경
+    "/bird/image",
     10,
     std::bind(&QNode::birdImageCallback, this, std::placeholders::_1)
   );
@@ -79,19 +79,24 @@ void QNode::drive_callback(){
       msg.linear.x=0;
       msg.angular.z=0;
     }
-    msg.linear.y=0;
-    msg.linear.z=0;
-    msg.angular.x=0;
-    msg.angular.y=0;
-    std::cout<<"linear.x:"<<msg.linear.x<<std::endl;
-    std::cout<<"linear.y:"<<msg.linear.y<<std::endl;
-    std::cout<<"linear.z:"<<msg.linear.z<<std::endl;
-    std::cout<<"angular.x:"<<msg.angular.x<<std::endl;
-    std::cout<<"angular.y:"<<msg.angular.y<<std::endl;
-    std::cout<<"angular.z:"<<msg.angular.z<<std::endl;
-    std::cout<<"-----------------------"<<std::endl;
-    publisher_drive->publish(msg);
+    
   }
+  else{
+    msg.linear.x=0;
+    msg.angular.z=0;
+  }
+  msg.linear.y=0;
+  msg.linear.z=0;
+  msg.angular.x=0;
+  msg.angular.y=0;
+  std::cout<<"linear.x:"<<msg.linear.x<<std::endl;
+  std::cout<<"linear.y:"<<msg.linear.y<<std::endl;
+  std::cout<<"linear.z:"<<msg.linear.z<<std::endl;
+  std::cout<<"angular.x:"<<msg.angular.x<<std::endl;
+  std::cout<<"angular.y:"<<msg.angular.y<<std::endl;
+  std::cout<<"angular.z:"<<msg.angular.z<<std::endl;
+  std::cout<<"-----------------------"<<std::endl;
+  publisher_drive->publish(msg);
 }
 
 void QNode::ui2drive_callback(){
