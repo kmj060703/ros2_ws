@@ -7,9 +7,10 @@
 #include "geometry_msgs/msg/vector3.hpp"
 #include "autorace_interfaces/msg/ui2_driving.hpp"
 #include "std_msgs/msg/int32.hpp"
+#include <cmath>
 
-using namespace std::chrono_literals;  
-
+using namespace std::chrono_literals;
+using namespace std;  
 
 class DrivingYY : public rclcpp::Node
 {
@@ -21,6 +22,9 @@ public:
     double kd;
     double x;
     double z;
+    double error;
+    double last_error;
+    double max_x;
 
 private:
     void imu_callback(const geometry_msgs::msg::Vector3::SharedPtr msg);
