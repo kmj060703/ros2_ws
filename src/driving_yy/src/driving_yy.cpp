@@ -39,6 +39,11 @@ DrivingYY::DrivingYY() : Node("driving_yy")
         10,
         std::bind(&DrivingYY::pixel_diff_callback, this, std::placeholders::_1));
 
+    vision_traffic_sub_ = this->create_subscription<autorace_interfaces::msg::VisionHyun>(
+        "/vision/line_diff_info",
+        10,
+        std::bind(&DrivingYY::vision_traffic_callback, this, _1));
+
     publisher_drive = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 30);
     drive_timer = this->create_wall_timer(100ms, std::bind(&DrivingYY::drive_callback, this));
 
@@ -91,6 +96,24 @@ void DrivingYY::pixel_diff_callback(const autorace_interfaces::msg::MasterJo::Sh
     current_pixel_diff_ = msg->pixel_diff;
 
     RCLCPP_INFO(this->get_logger(), "Pixel Diff: %d", current_pixel_diff_);
+}
+
+void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg)
+{
+    traffic_light_status_ = msg->traffic_light;
+
+    if (traffic_light_status_ == 1)
+    {
+        RCLCPP_INFO(this->get_logger(), "빨간불 감지 %d", traffic_light_status_);
+    }
+    else if (traffic_light_status_ == 2)
+    {
+        RCLCPP_INFO(this->get_logger(), "초록불 감지 %d", traffic_light_status_);
+    }
+    else
+    {
+        RCLCPP_INFO(this->get_logger(), "감지 안됨 혹은 노란색 %d", traffic_light_status_);
+    }
 }
 
 void DrivingYY::PD_control()

@@ -7,6 +7,7 @@
 #include "geometry_msgs/msg/vector3.hpp"
 #include "autorace_interfaces/msg/ui2_driving.hpp"
 #include "autorace_interfaces/msg/master_jo.hpp"
+#include "autorace_interfaces/msg/vision_hyun.hpp"
 #include "std_msgs/msg/int32.hpp"
 #include <cmath>
 
@@ -36,6 +37,7 @@ private:
     void ui_callback(const autorace_interfaces::msg::Ui2Driving::SharedPtr msg);
     void drive_callback();
     void pixel_diff_callback(const autorace_interfaces::msg::MasterJo::SharedPtr msg);
+    void vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg);
 
     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr imu_sub_;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_front_sub_;
@@ -44,6 +46,7 @@ private:
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr flag_sub_;
     rclcpp::Subscription<autorace_interfaces::msg::Ui2Driving>::SharedPtr ui_sub_;
     rclcpp::Subscription<autorace_interfaces::msg::MasterJo>::SharedPtr pixel_diff_sub_;
+    rclcpp::Subscription<autorace_interfaces::msg::VisionHyun>::SharedPtr vision_traffic_sub_;
 
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_drive;
 
@@ -53,6 +56,7 @@ private:
     int is_right_danger_ = 0;
     int mission_flag_ = 0;
     int current_pixel_diff_ = 0;
+    int traffic_light_status_ = 0;
     rclcpp::TimerBase::SharedPtr drive_timer;
 };
 

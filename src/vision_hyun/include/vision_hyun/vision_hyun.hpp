@@ -75,6 +75,9 @@ private:
     // 기준 x좌표
     const int reference_x = 320;
     const int scan_y = 270;
+
+    // 신호등 감지 여부
+    int traffic_light_state = 0;
 };
 
 #endif // IMAGE_VIEWER_HPP
