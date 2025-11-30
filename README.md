@@ -43,6 +43,6 @@ ros2 run driving_yy driving_node
 ```bash
 ros2 run ui_test ui_test
 ```
-### ui에서는 Home탭이랑 PD탭 동시에 제어 못함 
-### Home탭에서는 사용자 조종
-### PD 탭에서는 pd제어 들어가고 vision, master_jo, driving_yy 켜져있어야 작동함
+#### ui에서는 Home탭이랑 PD탭 동시에 제어 못함 
+#### Home탭에서는 사용자 조종
+#### PD 탭에서는 pd제어 들어가고 vision, master_jo, driving_yy 켜져있어야 작동함
