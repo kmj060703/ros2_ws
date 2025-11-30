@@ -4,17 +4,16 @@
 #include <thread>
 #include <mutex>
 
-/* 이미지가 YUYV 4:2:2 포맷으로 퍼블리시되고 있다
-OpenCV cv::imshow에서 바로 BGR8으로 처리하려고 하면 채널 수 불일치 오류가 나
-run : ros2 run vision_hyun vision_hyun_node */
-
+// mutex 기반 글로벌 변수
 std::mutex frame_mutex;
 cv::Mat latest_frame;
 cv::Mat latest_birdeye;
 cv::Mat yellow_mask;
 cv::Mat white_mask;
-
+cv::Mat red_mask;
+cv::Mat green_mask;
 cv::Mat red_and_green_mask;
+cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy, red_and_green_mask_copy;
 
 // 전역 변수 추가
 int global_center_x = -1;
@@ -24,8 +23,19 @@ int global_yellow_diff = 0;
 int global_white_diff = 0;
 int yellow_x = -1;
 int white_x = -1;
-// 가로 640  세로 360
-cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy, red_and_green_mask_copy;
+
+// 신호등 감지 여부
+int traffic_light_state = 0;
+
+// red && green 탐지 범위
+int detect_x_start = 320;
+int detect_x_end = 640;
+int detect_y_start = 0;
+int detect_y_end = 80;
+
+/* 이미지가 YUYV 4:2:2 포맷으로 퍼블리시되고 있다
+OpenCV cv::imshow에서 바로 BGR8으로 처리하려고 하면 채널 수 불일치 오류가 나
+run : ros2 run vision_hyun vision_hyun_node */
 
 void gui_thread()
 {
@@ -49,8 +59,27 @@ void gui_thread()
 
         if (!frame_display.empty())
         {
+            std::stringstream ss;
+            ss << "Traffic Light flag : " << traffic_light_state;
+            std::string text_to_display = ss.str();
+
             cv::line(frame_display, cv::Point(320, 0), cv::Point(320, 360), cv::Scalar(0, 0, 255), 1);
             cv::line(frame_display, cv::Point(0, 80), cv::Point(640, 80), cv::Scalar(0, 0, 255), 1);
+            cv::rectangle(
+                frame_display,
+                cv::Point(detect_x_start, detect_y_start),
+                cv::Point(detect_x_end, detect_y_end),
+                cv::Scalar(0, 255, 0), 2);
+
+            cv::putText(
+                frame_display,
+                text_to_display,
+                cv::Point(detect_x_start, detect_y_start - 5),
+                cv::FONT_HERSHEY_SIMPLEX,
+                0.5,
+                cv::Scalar(0, 255, 0),
+                1);
+
             cv::imshow("Spedal Feed", frame_display);
         }
 
@@ -77,6 +106,7 @@ void gui_thread()
         {
             cv::line(red_and_green_mask, cv::Point(320, 0), cv::Point(320, 360), cv::Scalar(255, 255, 255), 1);
             cv::line(red_and_green_mask, cv::Point(0, 270), cv::Point(640, 270), cv::Scalar(255, 255, 255), 1);
+
             cv::imshow("traffic_mask", red_and_green_mask);
         }
 
