@@ -1,2 +1,2 @@
 std_msgs/Header header
-int32 pixel_diff
+float64 pixel_diff

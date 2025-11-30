@@ -58,7 +58,7 @@ private:
     int is_left_danger_ = 0;
     int is_right_danger_ = 0;
     int mission_flag_ = 0;
-    int current_pixel_diff_ = 0;
+    double current_pixel_diff_ = 0;
     int traffic_light_status_ = 0;
     rclcpp::TimerBase::SharedPtr drive_timer;
 };

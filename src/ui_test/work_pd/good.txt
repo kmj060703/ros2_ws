@@ -1,0 +1,7 @@
+kp=0.01
+kd=0.01
+l_state_flag=0
+l_x=0.1
+l_z=0.8
+max_vel=1.23
+comment:선 밟는거 빼고 꽤 괜찮아요

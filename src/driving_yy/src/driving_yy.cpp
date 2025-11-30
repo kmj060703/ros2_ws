@@ -51,13 +51,13 @@ DrivingYY::DrivingYY() : Node("driving_yy")
     drive_timer = this->create_wall_timer(100ms, std::bind(&DrivingYY::drive_callback, this));
 
     RCLCPP_INFO(this->get_logger(), "DrivingYY Start");
-    RCLCPP_INFO(this->get_logger(), "초기 미션 플래그: %d", mission_flag_);
+    //RCLCPP_INFO(this->get_logger(), "초기 미션 플래그: %d", mission_flag_);
 }
 
 void DrivingYY::imu_callback(const geometry_msgs::msg::Vector3::SharedPtr msg)
 {
     current_yaw_ = msg->z;
-    RCLCPP_INFO(this->get_logger(), "Yaw: %.2f 도", current_yaw_ * 180.0 / M_PI);
+    //RCLCPP_INFO(this->get_logger(), "Yaw: %.2f 도", current_yaw_ * 180.0 / M_PI);
 }
 
 void DrivingYY::psd_front_callback(const std_msgs::msg::Int32::SharedPtr msg)
@@ -81,7 +81,7 @@ void DrivingYY::psd_right_callback(const std_msgs::msg::Int32::SharedPtr msg)
 void DrivingYY::flag_callback(const std_msgs::msg::Int32::SharedPtr msg)
 {
     mission_flag_ = msg->data;
-    RCLCPP_INFO(this->get_logger(), "플래그: %d", mission_flag_);
+    //RCLCPP_INFO(this->get_logger(), "플래그: %d", mission_flag_);
 }
 
 void DrivingYY::ui_callback(const autorace_interfaces::msg::Ui2Driving::SharedPtr msg)
@@ -102,7 +102,7 @@ void DrivingYY::pixel_diff_callback(const autorace_interfaces::msg::MasterJo::Sh
 {
     error = msg->pixel_diff;
 
-    RCLCPP_INFO(this->get_logger(), "Pixel Diff: %d", error);
+    //RCLCPP_INFO(this->get_logger(), "Pixel Diff: %f", error);
 }
 
 void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg)
@@ -111,38 +111,42 @@ void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHy
 
     if (traffic_light_status_ == 1)
     {
-        RCLCPP_INFO(this->get_logger(), "빨간불 감지 %d", traffic_light_status_);
+        //RCLCPP_INFO(this->get_logger(), "빨간불 감지 %d", traffic_light_status_);
     }
     else if (traffic_light_status_ == 2)
     {
-        RCLCPP_INFO(this->get_logger(), "초록불 감지 %d", traffic_light_status_);
+        //RCLCPP_INFO(this->get_logger(), "초록불 감지 %d", traffic_light_status_);
     }
     else
     {
-        RCLCPP_INFO(this->get_logger(), "감지 안됨 혹은 노란색 %d", traffic_light_status_);
+        //RCLCPP_INFO(this->get_logger(), "감지 안됨 혹은 노란색 %d", traffic_light_status_);
     }
 }
 
 void DrivingYY::PD_control()
 {
+    RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
+    "[DEBUG] flags: start_flag=%d, l_start_flag=%d, error=%.2f",
+    start_flag, l_start_flag, error);
+
     auto msg = geometry_msgs::msg::Twist();
     //이쯤에 선 안보일때 어떻게 해야하는지 추가
-    if(abs(error)>=50){
-        if(def_turn_x==0) msg.linear.x=0.01;
-        else msg.linear.x=def_turn_x;
+    // if(abs(error)>=50){
+    //     if(def_turn_x==0) x=0.01;
+    //     else x=def_turn_x;
 
-        if(error<0){
-            if(def_turn_z==0)
-            msg.angular.z=-0.1;
-            else msg.angular.z=-def_turn_z;
-        }
-        else if(error>0){
-            if(def_turn_z==0)
-            msg.angular.z=0.1;
-            else msg.angular.z=def_turn_z;
-        }
-    }
-    else{
+    //     if(error<0){
+    //         if(def_turn_z==0)
+    //         z=-0.1;
+    //         else z=-def_turn_z;
+    //     }
+    //     else if(error>0){
+    //         if(def_turn_z==0)
+    //         z=0.1;
+    //         else z=def_turn_z;
+    //     }
+    // }
+    // else{
     z = kp * error + kd * (error - last_error);
     
     // 디버깅 출력 추가
@@ -164,15 +168,15 @@ void DrivingYY::PD_control()
         z = -std::max(z, -2.0);
     else
         z = -std::min(z, 2.0);
-    }
+    //}
 
     if (l_start_flag == 1)
     {
         msg.linear.x = x;
         msg.angular.z = z;
         
-        RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
-            "Publishing: x=%.4f, z=%.4f", msg.linear.x, msg.angular.z);
+        // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+        //     "Publishing: x=%.4f, z=%.4f", msg.linear.x, msg.angular.z);
     }
     else
     {

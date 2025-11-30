@@ -126,7 +126,7 @@ void MasterJo::vision_callback(const autorace_interfaces::msg::VisionHyun::Share
   int yellow_x = msg->yellow_x;
   int white_x = msg->white_x;
 
-  int pixel_diff = center_x - 320;
+  double pixel_diff = center_x - 320;
 
   auto diff_msg = autorace_interfaces::msg::MasterJo();
 
