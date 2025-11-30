@@ -44,7 +44,7 @@ void gui_thread()
             if (!white_mask.empty())
                 white_display = white_mask.clone();
             if (!red_and_green_mask.empty())
-                red_and_green_mask_display = red_and_green_mask.clone();
+                red_and_green_mask_copy = red_and_green_mask.clone();
         }
 
         if (!frame_display.empty())
@@ -113,7 +113,7 @@ ImageViewer::ImageViewer()
     cv::namedWindow("Bird's-Eye View");
     cv::namedWindow("yellow_mask");
     cv::namedWindow("white_mask");
-    cv::nameWindow("traffic_mask");
+    cv::namedWindow("traffic_mask");
 }
 
 void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
