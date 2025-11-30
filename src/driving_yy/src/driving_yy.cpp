@@ -170,7 +170,7 @@ void DrivingYY::PD_control()
         z = -std::min(z, 2.0);
     //}
 
-    if (l_start_flag == 1)
+    if (l_start_flag == 1&&traffic_light_status_!=1)
     {
         msg.linear.x = x;
         msg.angular.z = z;

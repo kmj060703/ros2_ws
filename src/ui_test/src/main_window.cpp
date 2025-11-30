@@ -374,7 +374,6 @@ void MainWindow::on_pushButton_28_clicked()
 //로드가 잘 안되는 것 같은데 나중에 한번 보렴
 void MainWindow::on_pushButton_29_clicked()
 {
-    //line_load
     QString path = QDir::homePath() + "/ros2_ws/src/ui_test/work_pd/";
     QDir().mkpath(path); 
     QString filePath = QFileDialog::getOpenFileName(
@@ -396,34 +395,40 @@ void MainWindow::on_pushButton_29_clicked()
     while (!in.atEnd())
     {
         QString line = in.readLine();
-        
-        if (line.startsWith("kp="))
-            kp_ = line.split("=")[1].toInt();
-        else if (line.startsWith("kd="))
-            kd_ = line.split("=")[1].toInt();
-        else if (line.startsWith("l_state_flag="))
+
+        if (line.startsWith("kp=")) {
+            kp_ = line.split("=")[1].toDouble();
+            ui->doubleSpinBox_3->setValue(kp_);
+        }
+        else if (line.startsWith("kd=")) {
+            kd_ = line.split("=")[1].toDouble();
+            ui->doubleSpinBox_4->setValue(kd_);
+        }
+        else if (line.startsWith("l_state_flag=")) {
             l_state_flag_ = line.split("=")[1].toInt();
-        else if (line.startsWith("l_x="))
+        }
+        else if (line.startsWith("l_x=")) {
             l_x_ = line.split("=")[1].toDouble();
-        else if (line.startsWith("l_z="))
+            ui->doubleSpinBox_5->setValue(l_x_);  
+        }
+        else if (line.startsWith("l_z=")) {
             l_z_ = line.split("=")[1].toDouble();
-        else if (line.startsWith("max_vel="))
+            ui->doubleSpinBox_6->setValue(l_z_);   
+        }
+        else if (line.startsWith("max_vel=")) {
             max_vel_ = line.split("=")[1].toDouble();
-        else if (line.startsWith("comment:"))
-            {QString comment;
-             comment = line.split(":")[1].trimmed();
-            ui->plainTextEdit->setPlainText(comment);}
-    
-    ui->doubleSpinBox_3->setValue(kp_);
-    ui->doubleSpinBox_4->setValue(kd_);
-    ui->doubleSpinBox_5->setValue(x_);
-    ui->doubleSpinBox_6->setValue(z_);
-    ui->doubleSpinBox_7->setValue(max_vel_);
+            ui->doubleSpinBox_7->setValue(max_vel_);
+        }
+        else if (line.startsWith("comment:")) {
+            QString comment = line.split("comment:")[1].trimmed();
+            ui->plainTextEdit->setPlainText(comment);
+        }
+    }
 
     file.close();
     qDebug() << "loaded from" << filePath;
 }
-}
+
 
 void MainWindow::on_pushButton_34_clicked()
 {
