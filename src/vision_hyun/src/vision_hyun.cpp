@@ -173,17 +173,17 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
             cv::Mat M = cv::getPerspectiveTransform(src_pts, dst_pts);
             cv::warpPerspective(frame, birdeye, M, cv::Size(640, 360));
-            latest_birdeye = birdeye.clone();
 
             cv::Mat birdeye_blurred;
             cv::GaussianBlur(birdeye, birdeye_blurred, cv::Size(5, 5), 1.5);
+            latest_birdeye = birdeye.clone();
 
             cv::Mat birdeye_hsv;
             cv::cvtColor(birdeye_blurred, birdeye_hsv, cv::COLOR_BGR2HSV);
 
             cv::Mat frame_hsv;
             cv::cvtColor(latest_frame, frame_hsv, cv::COLOR_BGR2HSV);
-            
+
             cv::inRange(birdeye_hsv, lower_white, upper_white, white_mask);
             cv::inRange(birdeye_hsv, lower_yellow, upper_yellow, yellow_mask);
             cv::inRange(latest_frame, lower_red, upper_red, red_mask);
@@ -233,7 +233,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 traffic_light_state = 0; // 신호등 없음
             }
 
-           // y=scan_y 위치에서 노란색과 하얀색 선 찾기
+            // y=scan_y 위치에서 노란색과 하얀색 선 찾기
 
             birdeye_with_lines = birdeye.clone();
             for (int i = 0; i < yellow_mask.rows; i++)
@@ -364,4 +364,3 @@ int main(int argc, char *argv[])
     cv::destroyAllWindows();
     return 0;
 }
-

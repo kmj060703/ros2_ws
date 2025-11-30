@@ -37,7 +37,7 @@ private:
   rclcpp::Publisher<autorace_interfaces::msg::VisionHyun>::SharedPtr
       publisher_4;
 
-  cv::Scalar lower_white = cv::Scalar(0, 0, 120);
+  cv::Scalar lower_white = cv::Scalar(0, 0, 180);
   cv::Scalar upper_white = cv::Scalar(180, 50, 255);
   cv::Scalar lower_yellow = cv::Scalar(20, 100, 100);
   cv::Scalar upper_yellow = cv::Scalar(30, 255, 255);
