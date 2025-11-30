@@ -27,7 +27,7 @@
      <string notr="true">font: 11pt &quot;Ubuntu&quot;;</string>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -509,7 +509,7 @@ color:rgb(0, 0, 0);</string>
        <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
       </property>
       <property name="text">
-       <string>Kp gain control (max:1000.0)</string>
+       <string>Kp gain control (max:1.0)</string>
       </property>
      </widget>
      <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
@@ -524,14 +524,17 @@ color:rgb(0, 0, 0);</string>
       <property name="styleSheet">
        <string notr="true">font: 30pt &quot;Ubuntu&quot;;</string>
       </property>
+      <property name="decimals">
+       <number>4</number>
+      </property>
       <property name="minimum">
        <double>0.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>1.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>1.000000000000000</double>
+       <double>0.000100000000000</double>
       </property>
      </widget>
      <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
@@ -546,14 +549,17 @@ color:rgb(0, 0, 0);</string>
       <property name="styleSheet">
        <string notr="true">font: 30pt &quot;Ubuntu&quot;;</string>
       </property>
+      <property name="decimals">
+       <number>4</number>
+      </property>
       <property name="minimum">
        <double>0.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>100.000000000000000</double>
+       <double>1.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.100000000000000</double>
+       <double>0.000100000000000</double>
       </property>
      </widget>
      <widget class="QLabel" name="label_15">
@@ -569,7 +575,7 @@ color:rgb(0, 0, 0);</string>
        <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
       </property>
       <property name="text">
-       <string>Kd gain control(max: 100.0)</string>
+       <string>Kd gain control(max: 1.0)</string>
       </property>
      </widget>
      <widget class="QWidget" name="widget_6" native="true">
@@ -615,6 +621,9 @@ color:rgb(255, 255, 255);</string>
        <property name="styleSheet">
         <string notr="true">font: 30pt &quot;Ubuntu&quot;;</string>
        </property>
+       <property name="decimals">
+        <number>3</number>
+       </property>
        <property name="minimum">
         <double>0.000000000000000</double>
        </property>
@@ -655,7 +664,7 @@ color:rgb(255, 255, 255);</string>
        <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
       </property>
       <property name="text">
-       <string>base linear.x control (max:1.0)</string>
+       <string>turn linear.x (max:1.0)</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_22">
@@ -671,7 +680,7 @@ color:rgb(255, 255, 255);</string>
        <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
       </property>
       <property name="text">
-       <string>base angular.z control (max:10.0)</string>
+       <string>turn- angular.z (max:10.0)</string>
       </property>
      </widget>
      <widget class="QDoubleSpinBox" name="doubleSpinBox_5">

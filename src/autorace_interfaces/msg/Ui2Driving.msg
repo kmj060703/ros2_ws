@@ -14,3 +14,5 @@ float64 l_z
 int32 l_start_flag
 int32 l_state_flag
 float64 max_vel
+float64 def_turn_x
+float64 def_turn_z

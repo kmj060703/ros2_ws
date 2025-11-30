@@ -25,14 +25,12 @@ QNode::QNode()
   publisher_drive = node->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 30);
   publisher_ui2drive = node->create_publisher<autorace_interfaces::msg::Ui2Driving>("/ui2driving_topic", 30);
 
-  const std::string image_topic = "/vision/image_processed";
+  // const std::string image_topic = "/vision/image_processed";
   yolo_image_sub_ = node->create_subscription<sensor_msgs::msg::Image>(
-    image_topic,
+    "/vision/image_processed",
     10,
     std::bind(&QNode::yoloImageCallback, this, std::placeholders::_1)
   );
-  
-  // 나중에 토픽 이름으로 변경해라~
   bird_image_sub_ = node->create_subscription<sensor_msgs::msg::Image>(
     "/vision/birdeye_raw",
     10,
@@ -110,8 +108,8 @@ void QNode::ui2drive_callback(){
   msg.start_flag=start_flag_;
   msg.kp=kp_;
   msg.kd=kd_;
-  msg.l_x=l_x_;
-  msg.l_z=l_z_;
+  msg.def_turn_x=l_x_;
+  msg.def_turn_z=l_z_;
   msg.l_start_flag=l_start_flag_;
   msg.max_vel=max_vel_;
   publisher_ui2drive->publish(msg);
@@ -119,7 +117,6 @@ void QNode::ui2drive_callback(){
 
 void QNode::yoloImageCallback(const sensor_msgs::msg::Image::SharedPtr msg) {
   try {
-    // ===== cv_bridge 호출 전 완전한 검증 =====
     
     if (!msg) {
       RCLCPP_WARN(node->get_logger(), "Null yolo message");

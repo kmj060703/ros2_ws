@@ -21,8 +21,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
   // 초기값 설정
   imshow_flag_1 = 1;
   imshow_flag_2 = 1;
-  camera_1_state = 1;  // label_18에는 Yolo (index 0)
-  camera_2_state = 2;  // label_19에는 Bird1 (index 1)
+  camera_1_state = 1;  // index 0
+  camera_2_state = 2;  // index 1
 
   QImage default_img(640, 360, QImage::Format_RGB888);
   default_img.fill(QColor(128, 128, 128));
@@ -36,7 +36,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
   QObject::connect(qnode, SIGNAL(rosShutDown()), this, SLOT(close()));
 }
 
-
 void MainWindow::closeEvent(QCloseEvent* event)
 {
   QMainWindow::closeEvent(event);
@@ -46,7 +45,6 @@ MainWindow::~MainWindow()
 {
   delete ui;
 }
-
 
 void MainWindow::on_pushButton_7_clicked()
 {
@@ -366,19 +364,19 @@ void MainWindow::on_pushButton_28_clicked()
     out << "l_state_flag=" << l_state_flag_ << "\n";
     out << "l_x=" << l_x_ << "\n";
     out << "l_z=" << l_z_ << "\n";
+    out << "max_vel=" << max_vel_ << "\n";
     out << "comment:" << comment << "\n";
 
     file.close();
     qDebug() << "saved to" << filePath;
 }
 
+//로드가 잘 안되는 것 같은데 나중에 한번 보렴
 void MainWindow::on_pushButton_29_clicked()
 {
     //line_load
     QString path = QDir::homePath() + "/ros2_ws/src/ui_test/work_pd/";
     QDir().mkpath(path); 
-
-    //getOpenFileName써야 save안뜸...왜 못찾았지 
     QString filePath = QFileDialog::getOpenFileName(
         this,
         "파일 열기", 
@@ -409,6 +407,8 @@ void MainWindow::on_pushButton_29_clicked()
             l_x_ = line.split("=")[1].toDouble();
         else if (line.startsWith("l_z="))
             l_z_ = line.split("=")[1].toDouble();
+        else if (line.startsWith("max_vel="))
+            max_vel_ = line.split("=")[1].toDouble();
         else if (line.startsWith("comment:"))
             {QString comment;
              comment = line.split(":")[1].trimmed();
@@ -418,6 +418,7 @@ void MainWindow::on_pushButton_29_clicked()
     ui->doubleSpinBox_4->setValue(kd_);
     ui->doubleSpinBox_5->setValue(x_);
     ui->doubleSpinBox_6->setValue(z_);
+    ui->doubleSpinBox_7->setValue(max_vel_);
 
     file.close();
     qDebug() << "loaded from" << filePath;
@@ -433,10 +434,12 @@ void MainWindow::on_pushButton_34_clicked()
     l_z_=0;
     l_start_flag_=0;
     l_state_flag_=0;
+    max_vel_=0;
     ui->doubleSpinBox_3->setValue(kp_);
     ui->doubleSpinBox_4->setValue(kd_);
     ui->doubleSpinBox_5->setValue(l_x_);
     ui->doubleSpinBox_6->setValue(l_z_);
+    ui->doubleSpinBox_7->setValue(max_vel_);
     ui->plainTextEdit->clear();
     std::cout<<"lane set 0"<<std::endl;
 }
@@ -445,7 +448,7 @@ void MainWindow::on_pushButton_35_clicked()
     //set1
     QFile file("/home/yu/ros2_ws/src/ui_test/tmp/set1.txt");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+    {ui->doubleSpinBox_7->setValue(max_vel_);
         qDebug() << "cannot open file";
         return;
     }
@@ -465,6 +468,8 @@ void MainWindow::on_pushButton_35_clicked()
             l_x_ = line.split("=")[1].toDouble();
         else if (line.startsWith("l_z="))
             l_z_ = line.split("=")[1].toDouble();
+        else if (line.startsWith("max_vel="))
+            max_vel_ = line.split("=")[1].toDouble();
         else if (line.startsWith("comment:"))
             {QString comment;
              comment = line.split(":")[1].trimmed();
@@ -474,6 +479,7 @@ void MainWindow::on_pushButton_35_clicked()
     ui->doubleSpinBox_4->setValue(kd_);
     ui->doubleSpinBox_5->setValue(x_);
     ui->doubleSpinBox_6->setValue(z_);
+    ui->doubleSpinBox_7->setValue(max_vel_);
 
     file.close();}
 }
@@ -502,6 +508,8 @@ void MainWindow::on_pushButton_36_clicked()
             l_x_ = line.split("=")[1].toDouble();
         else if (line.startsWith("l_z="))
             l_z_ = line.split("=")[1].toDouble();
+        else if (line.startsWith("max_vel="))
+            max_vel_ = line.split("=")[1].toDouble();
         else if (line.startsWith("comment:"))
             {QString comment;
              comment = line.split(":")[1].trimmed();
@@ -511,6 +519,7 @@ void MainWindow::on_pushButton_36_clicked()
     ui->doubleSpinBox_4->setValue(kd_);
     ui->doubleSpinBox_5->setValue(x_);
     ui->doubleSpinBox_6->setValue(z_);
+    ui->doubleSpinBox_7->setValue(max_vel_);
 
     file.close();}
 }
@@ -528,7 +537,7 @@ void MainWindow::on_pushButton_37_clicked()
     while (!in.atEnd())
     {
         QString line = in.readLine();
-        
+        ui->doubleSpinBox_7->setValue(max_vel_);
         if (line.startsWith("kp="))
             kp_ = line.split("=")[1].toInt();
         else if (line.startsWith("kd="))
@@ -539,6 +548,8 @@ void MainWindow::on_pushButton_37_clicked()
             l_x_ = line.split("=")[1].toDouble();
         else if (line.startsWith("l_z="))
             l_z_ = line.split("=")[1].toDouble();
+        else if (line.startsWith("max_vel="))
+            max_vel_ = line.split("=")[1].toDouble();
         else if (line.startsWith("comment:"))
             {QString comment;
              comment = line.split(":")[1].trimmed();
@@ -548,6 +559,7 @@ void MainWindow::on_pushButton_37_clicked()
     ui->doubleSpinBox_4->setValue(kd_);
     ui->doubleSpinBox_5->setValue(x_);
     ui->doubleSpinBox_6->setValue(z_);
+    ui->doubleSpinBox_7->setValue(max_vel_);
 
     file.close();}
 }
@@ -557,7 +569,7 @@ void MainWindow::on_pushButton_38_clicked()
     QFile file("/home/yu/ros2_ws/src/ui_test/tmp/set1.txt");
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
-        qDebug() << "cannot open file";
+        qDebug() << "cannot open fileui->doubleSpinBox_7->setValue(max_vel_);";
         return;
     }
     QString comment;
@@ -569,6 +581,7 @@ void MainWindow::on_pushButton_38_clicked()
     out << "l_state_flag=" << l_state_flag_ << "\n";
     out << "l_x=" << l_x_ << "\n";
     out << "l_z=" << l_z_ << "\n";
+    out << "max_vel" << max_vel_ << "\n";
     out << "comment:" << comment << "\n";
     file.close();
 }
@@ -590,6 +603,7 @@ void MainWindow::on_pushButton_39_clicked()
     out << "l_state_flag=" << l_state_flag_ << "\n";
     out << "l_x=" << l_x_ << "\n";
     out << "l_z=" << l_z_ << "\n";
+    out << "max_vel" << max_vel_ << "\n";
     out << "comment:" << comment << "\n";
     file.close();
 }
@@ -611,6 +625,7 @@ void MainWindow::on_pushButton_40_clicked()
     out << "l_state_flag=" << l_state_flag_ << "\n";
     out << "l_x=" << l_x_ << "\n";
     out << "l_z=" << l_z_ << "\n";
+    out << "max_vel" << max_vel_ << "\n";
     out << "comment:" << comment << "\n";
     file.close();
 }
@@ -622,7 +637,6 @@ void MainWindow::on_pushButton_42_clicked()
     start_flag_=0;
     std::cout<<"lane-detecting work start"<<std::endl;
 }
-
 
 void MainWindow::on_pushButton_43_clicked()
 {
@@ -637,13 +651,11 @@ void MainWindow::on_radioButton_3_clicked()
     camera_1_state=2;
 }
 
-
 void MainWindow::on_radioButton_clicked()
 {
     //raw1
     camera_1_state=1;
 }
-
 
 void MainWindow::on_radioButton_2_clicked()
 {
@@ -651,20 +663,17 @@ void MainWindow::on_radioButton_2_clicked()
     camera_1_state=3;
 }
 
-
 void MainWindow::on_radioButton_6_clicked()
 {
     //raw_bird2
     camera_2_state=2;
 }
 
-
 void MainWindow::on_radioButton_5_clicked()
 {
     //raw2
     camera_2_state=1;
 }
-
 
 void MainWindow::on_radioButton_4_clicked()
 {
@@ -676,10 +685,6 @@ void MainWindow::on_doubleSpinBox_7_valueChanged(double arg1)
 {
     //max_vel
     max_vel_=arg1;
-}
-
-void MainWindow::camera_callback(){
-    
 }
 
 void MainWindow::updateImage(const QPixmap &pixmap, int index) {
@@ -706,6 +711,7 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index) {
   }
 }
 
+//밑에 키보드 나중에 구현하기
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
   if(event->key() == Qt::Key_W)

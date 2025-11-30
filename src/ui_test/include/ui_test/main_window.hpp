@@ -139,8 +139,6 @@ void on_pushButton_17_clicked();
     
   void on_radioButton_4_clicked();
   void on_doubleSpinBox_7_valueChanged(double arg1);
-
-  void camera_callback();
   void updateImage(const QPixmap &pixmap, int index);  // 이미지 업데이트 슬롯
 
 private:

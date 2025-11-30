@@ -28,6 +28,8 @@ public:
     double error;
     double last_error;
     double max_x;
+    double def_turn_x;
+    double def_turn_z;
 
 private:
     void imu_callback(const geometry_msgs::msg::Vector3::SharedPtr msg);
