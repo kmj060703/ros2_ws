@@ -230,67 +230,8 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 traffic_light_state = 0; // 신호등 없음
             }
 
-            // y=scan_y 위치에서 노란색과 하얀색 선 찾기
+           // y=scan_y 위치에서 노란색과 하얀색 선 찾기
 
-            // birdeye_with_lines = birdeye.clone();
-            // for (int i = 0; i < yellow_mask.rows; i++)
-            // {
-            //     yellow_x = -1;
-            //     white_x = -1;
-
-            //     // 왼쪽 노란색 라인 찾기
-            //     for (int j = 0; j < yellow_mask.cols; j++)
-            //     {
-            //         if (yellow_mask.at<uchar>(i, j) > 0)
-            //         {
-            //             yellow_x = j;
-            //             cv::line(birdeye_with_lines, cv::Point(yellow_x, i), cv::Point(yellow_x, i), cv::Scalar(255, 255, 0), 1);
-            //             break;
-            //         }
-            //     }
-
-            //     // 오른쪽 흰색 라인 찾기
-            //     for (int j = white_mask.cols - 1; j >= 0; j--)
-            //     {
-            //         if (white_mask.at<uchar>(i, j) > 0)
-            //         {
-            //             white_x = j;
-            //             cv::line(birdeye_with_lines, cv::Point(white_x, i), cv::Point(white_x, i), cv::Scalar(255, 255, 255), 1);
-            //             break;
-            //         }
-            //     }
-
-            //     // 중앙선 계산 (수정됨)
-            //     int center = -1;
-            //     if (yellow_x != -1 && white_x != -1)
-            //     {
-            //         center = (yellow_x + white_x) / 2;
-            //     }
-            //     else if (yellow_x != -1)
-            //     {
-            //         center = yellow_x + 250; // 차선 폭 추정
-            //     }
-            //     else if (white_x != -1)
-            //     {
-            //         center = white_x - 250;
-            //     }
-
-            //     // 중앙선 그리기 및 저장
-            //     if (center != -1)
-            //     {
-            //         cv::line(birdeye_with_lines, cv::Point(center, i), cv::Point(center, i), cv::Scalar(0, 255, 0), 1);
-            //         if (i == 270)
-            //         {
-            //             global_center_x = center;
-            //             global_yellow_x = yellow_x;
-            //             global_white_x = white_x;
-            //             global_yellow_diff = (yellow_x != -1) ? yellow_x - 320 : 0;
-            //             global_white_diff = (white_x != -1) ? white_x - 320 : 0;
-            //         }
-            //     }
-            // }
-
-            // 라인 검출 및 중앙선 계산
             birdeye_with_lines = birdeye.clone();
             for (int i = 0; i < yellow_mask.rows; i++)
             {
@@ -319,35 +260,33 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     }
                 }
 
-                // 중앙선 계산 및 그리기
+                // 중앙선 계산 (수정됨)
+                int center = -1;
                 if (yellow_x != -1 && white_x != -1)
                 {
-                    int center = (yellow_x + white_x) / 2;
-                    if (i == 270)
-                    {
-                        global_center_x = center;
-                    }
-                    cv::line(birdeye_with_lines, cv::Point(center, i), cv::Point(center, i), cv::Scalar(0, 255, 0), 1);
+                    center = (yellow_x + white_x) / 2;
                 }
                 else if (yellow_x != -1)
                 {
-                    cv::line(birdeye_with_lines, cv::Point(yellow_x + 250, i), cv::Point(yellow_x + 250, i), cv::Scalar(0, 255, 0), 1);
-                    int center = yellow_x + 250;
-                    if (i == 270)
-                    {
-                        global_center_x = center;
-                    }
-                   
+                    center = yellow_x + 250; // 차선 폭 추정
                 }
                 else if (white_x != -1)
                 {
-                    cv::line(birdeye_with_lines, cv::Point(white_x - 250, i), cv::Point(white_x - 250, i), cv::Scalar(0, 255, 0), 1);
-                    int center = white_x - 250;
+                    center = white_x - 250;
+                }
+
+                // 중앙선 그리기 및 저장
+                if (center != -1)
+                {
+                    cv::line(birdeye_with_lines, cv::Point(center, i), cv::Point(center, i), cv::Scalar(0, 255, 0), 1);
                     if (i == 270)
                     {
                         global_center_x = center;
+                        global_yellow_x = yellow_x;
+                        global_white_x = white_x;
+                        global_yellow_diff = (yellow_x != -1) ? yellow_x - 320 : 0;
+                        global_white_diff = (white_x != -1) ? white_x - 320 : 0;
                     }
-                    
                 }
             }
 
