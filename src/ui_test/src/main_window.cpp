@@ -688,17 +688,16 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index) {
   }
   
   if (index >= 0 && index < 3) {
-    // 받은 이미지를 배열에 저장
     m_img[index] = pixmap;
     
-    // label_18 업데이트 (camera_1_state에 해당하는 이미지만)
+    // label_18 업데이트
     if (imshow_flag_1 == 1 && camera_1_state == (index + 1)) {
       ui->label_18->setPixmap(
         m_img[index].scaled(640, 360, Qt::KeepAspectRatio)
       );
     }
     
-    // label_19 업데이트 (camera_2_state에 해당하는 이미지만)
+    // label_19 업데이트
     if (imshow_flag_2 == 1 && camera_2_state == (index + 1)) {
       ui->label_19->setPixmap(
         m_img[index].scaled(640, 360, Qt::KeepAspectRatio)
