@@ -13,3 +13,4 @@ float64 l_x
 float64 l_z
 int32 l_start_flag
 int32 l_state_flag
+float64 max_vel

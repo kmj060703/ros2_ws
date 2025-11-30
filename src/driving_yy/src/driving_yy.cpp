@@ -84,7 +84,9 @@ void DrivingYY::flag_callback(const std_msgs::msg::Int32::SharedPtr msg)
 void DrivingYY::ui_callback(const autorace_interfaces::msg::Ui2Driving::SharedPtr msg)
 {
     // 유아이
-    start_flag = msg->l_start_flag;
+    max_x=msg->max_vel;
+    l_start_flag = msg->l_start_flag;
+    start_flag=msg->start_flag;
     kp = msg->kp;
     kd = msg->kd;
     x = msg->l_x;
@@ -93,9 +95,9 @@ void DrivingYY::ui_callback(const autorace_interfaces::msg::Ui2Driving::SharedPt
 
 void DrivingYY::pixel_diff_callback(const autorace_interfaces::msg::MasterJo::SharedPtr msg)
 {
-    current_pixel_diff_ = msg->pixel_diff;
+    error = msg->pixel_diff;
 
-    RCLCPP_INFO(this->get_logger(), "Pixel Diff: %d", current_pixel_diff_);
+    RCLCPP_INFO(this->get_logger(), "Pixel Diff: %d", error);
 }
 
 void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg)
@@ -120,18 +122,21 @@ void DrivingYY::PD_control()
 {
     z = kp * error + kd * (error - last_error);
     last_error = error;
-    auto msg = geometry_msgs::msg::Twist();
-    x = min(pow(max_x * (1 - abs(error) / 500, 0), 2.2), 0.05); // x는 0.05보다 크면 안된다는 뜻?  //500은 중앙 픽셀 값 같기도하고 잘 모르겠다
-    if (z < 0)
-    {
-        z = -max(z, -2.0);
-    }
-    else
-    {
-        z = -min(z, 2.0); // 2.0보다 절댓값이 크면 안된다는 뜻인가? 그리고 계산할때 부호반전된다
-    }
 
-    if (start_flag == 1)
+    // x 계산 수정
+    double ratio = std::max(1.0 - std::abs(error) / 360.0, 0.0);
+    double x_raw = std::pow(max_x * ratio, 2.2);
+    x = std::min(x_raw, 0.05);
+
+
+    if (z < 0)
+        z = -std::max(z, -2.0);
+    else
+        z = -std::min(z, 2.0);
+
+    auto msg = geometry_msgs::msg::Twist();
+
+    if (l_start_flag == 1)
     {
         msg.linear.x = x;
         msg.angular.z = z;
@@ -141,12 +146,16 @@ void DrivingYY::PD_control()
         msg.linear.x = 0;
         msg.angular.z = 0;
     }
+
     msg.linear.y = 0;
     msg.linear.z = 0;
     msg.angular.x = 0;
     msg.angular.y = 0;
-    publisher_drive->publish(msg);
+
+    if(start_flag == 0)
+        publisher_drive->publish(msg);
 }
+
 
 void DrivingYY::drive_callback()
 {

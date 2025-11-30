@@ -44,6 +44,7 @@ public:
   void ui2drive_callback();
   void run() override;
   std::shared_ptr<rclcpp::Node> getNode() const { return node; }
+  int count=0;
 
 
 private:
@@ -52,9 +53,11 @@ private:
   rclcpp::Publisher<autorace_interfaces::msg::Ui2Driving>::SharedPtr publisher_ui2drive;
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr yolo_image_sub_;
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr bird_image_sub_;
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr bird_image_sub_2_;
 
   void yoloImageCallback(const sensor_msgs::msg::Image::SharedPtr msg);
   void birdImageCallback(const sensor_msgs::msg::Image::SharedPtr msg);
+  void birdImageCallback_2(const sensor_msgs::msg::Image::SharedPtr msg);
 
   size_t count_drive;
   size_t count_state;

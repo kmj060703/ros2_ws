@@ -18,11 +18,24 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
   QIcon icon("://ros-icon.png");
   this->setWindowIcon(icon);
 
+  // 초기값 설정
+  imshow_flag_1 = 1;
+  imshow_flag_2 = 1;
+  camera_1_state = 1;  // label_18에는 Yolo (index 0)
+  camera_2_state = 2;  // label_19에는 Bird1 (index 1)
+
+  QImage default_img(640, 360, QImage::Format_RGB888);
+  default_img.fill(QColor(128, 128, 128));
+  m_img[0] = QPixmap::fromImage(default_img);
+  m_img[1] = QPixmap::fromImage(default_img);
+  m_img[2] = QPixmap::fromImage(default_img);
+
   qnode = new QNode();
   connect(qnode, &QNode::imageReceived, this, &MainWindow::updateImage);
   
   QObject::connect(qnode, SIGNAL(rosShutDown()), this, SLOT(close()));
 }
+
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
@@ -78,6 +91,7 @@ void MainWindow::on_pushButton_21_clicked()
 {
     //start
     start_flag_=1;
+    l_start_flag_=0;
     std::cout<<"START"<<std::endl;
 }
 
@@ -605,6 +619,7 @@ void MainWindow::on_pushButton_42_clicked()
 {
     //lane_start
     l_start_flag_=1;
+    start_flag_=0;
     std::cout<<"lane-detecting work start"<<std::endl;
 }
 
@@ -616,23 +631,77 @@ void MainWindow::on_pushButton_43_clicked()
     std::cout<<"lane-detecting work stop"<<std::endl;
 }
 
+void MainWindow::on_radioButton_3_clicked()
+{
+    //raw_bird1
+    camera_1_state=2;
+}
+
+
+void MainWindow::on_radioButton_clicked()
+{
+    //raw1
+    camera_1_state=1;
+}
+
+
+void MainWindow::on_radioButton_2_clicked()
+{
+    //mask_bird1
+    camera_1_state=3;
+}
+
+
+void MainWindow::on_radioButton_6_clicked()
+{
+    //raw_bird2
+    camera_2_state=2;
+}
+
+
+void MainWindow::on_radioButton_5_clicked()
+{
+    //raw2
+    camera_2_state=1;
+}
+
+
+void MainWindow::on_radioButton_4_clicked()
+{
+    //mask_bird2
+    camera_2_state=3;
+}
+
+void MainWindow::on_doubleSpinBox_7_valueChanged(double arg1)
+{
+    //max_vel
+    max_vel_=arg1;
+}
+
 void MainWindow::camera_callback(){
     
 }
 
 void MainWindow::updateImage(const QPixmap &pixmap, int index) {
-  if (index >= 0 && index < 2) {
+  if (pixmap.isNull()) {
+    return;
+  }
+  
+  if (index >= 0 && index < 3) {
+    // 받은 이미지를 배열에 저장
     m_img[index] = pixmap;
     
-    // imshow_flag에 따라 즉시 표시
-    if (index == 0 && imshow_flag_1 == 1) {
+    // label_18 업데이트 (camera_1_state에 해당하는 이미지만)
+    if (imshow_flag_1 == 1 && camera_1_state == (index + 1)) {
       ui->label_18->setPixmap(
-        m_img[0].scaled(640, 360, Qt::KeepAspectRatio)
+        m_img[index].scaled(640, 360, Qt::KeepAspectRatio)
       );
     }
-    else if (index == 1 && imshow_flag_2 == 1) {
+    
+    // label_19 업데이트 (camera_2_state에 해당하는 이미지만)
+    if (imshow_flag_2 == 1 && camera_2_state == (index + 1)) {
       ui->label_19->setPixmap(
-        m_img[1].scaled(640, 360, Qt::KeepAspectRatio)
+        m_img[index].scaled(640, 360, Qt::KeepAspectRatio)
       );
     }
   }

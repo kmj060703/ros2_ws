@@ -126,6 +126,20 @@ void on_pushButton_17_clicked();
   void on_pushButton_42_clicked();
     
   void on_pushButton_43_clicked();
+
+  void on_radioButton_3_clicked();
+    
+  void on_radioButton_clicked();
+    
+  void on_radioButton_2_clicked();
+    
+  void on_radioButton_6_clicked();
+    
+  void on_radioButton_5_clicked();
+    
+  void on_radioButton_4_clicked();
+  void on_doubleSpinBox_7_valueChanged(double arg1);
+
   void camera_callback();
   void updateImage(const QPixmap &pixmap, int index);  // 이미지 업데이트 슬롯
 
@@ -133,7 +147,7 @@ private:
   Ui::MainWindowDesign* ui;
   void keyPressEvent(QKeyEvent *event) override;
   void closeEvent(QCloseEvent* event);
-	QPixmap m_img[2];
+	QPixmap m_img[3];
   QNode *qnode;
 
 };

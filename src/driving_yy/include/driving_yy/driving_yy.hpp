@@ -19,7 +19,8 @@ class DrivingYY : public rclcpp::Node
 public:
     DrivingYY();
     void PD_control();
-    int start_flag = 0;
+    int l_start_flag = 0;
+    int start_flag=0;
     double kp;
     double kd;
     double x;
@@ -44,9 +45,9 @@ private:
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_left_sub_;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_right_sub_;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr flag_sub_;
-    rclcpp::Subscription<autorace_interfaces::msg::Ui2Driving>::SharedPtr ui_sub_;
-    rclcpp::Subscription<autorace_interfaces::msg::MasterJo>::SharedPtr pixel_diff_sub_;
-    rclcpp::Subscription<autorace_interfaces::msg::VisionHyun>::SharedPtr vision_traffic_sub_;
+    rclcpp::Subscription<autorace_interfaces::msg::Ui2Driving>::SharedPtr ui_sub_; //ui명령
+    rclcpp::Subscription<autorace_interfaces::msg::MasterJo>::SharedPtr pixel_diff_sub_; //PD error값
+    rclcpp::Subscription<autorace_interfaces::msg::VisionHyun>::SharedPtr vision_traffic_sub_; //신호등
 
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_drive;
 

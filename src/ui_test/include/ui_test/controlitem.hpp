@@ -11,12 +11,14 @@ extern int start_flag_;
 extern int forw_back_;
 extern int left_right_;
 extern int l_start_flag_;
+extern int camera_1_state;
+extern int camera_2_state;
 extern double x_;
 extern double z_;
 extern double kp_;
 extern double kd_;
 extern double l_x_;
 extern double l_z_;
-
+extern double max_vel_;
 
 #endif // CONTROLITEM_HPP
