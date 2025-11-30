@@ -21,8 +21,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
   // 초기값 설정
   imshow_flag_1 = 1;
   imshow_flag_2 = 1;
-  camera_1_state = 1;  // label_18에는 Yolo (index 0)
-  camera_2_state = 2;  // label_19에는 Bird1 (index 1)
+  camera_1_state = 1;  // index 0
+  camera_2_state = 2;  // index 1
 
   QImage default_img(640, 360, QImage::Format_RGB888);
   default_img.fill(QColor(128, 128, 128));
@@ -36,7 +36,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
   QObject::connect(qnode, SIGNAL(rosShutDown()), this, SLOT(close()));
 }
 
-
 void MainWindow::closeEvent(QCloseEvent* event)
 {
   QMainWindow::closeEvent(event);
@@ -46,7 +45,6 @@ MainWindow::~MainWindow()
 {
   delete ui;
 }
-
 
 void MainWindow::on_pushButton_7_clicked()
 {
@@ -366,20 +364,19 @@ void MainWindow::on_pushButton_28_clicked()
     out << "l_state_flag=" << l_state_flag_ << "\n";
     out << "l_x=" << l_x_ << "\n";
     out << "l_z=" << l_z_ << "\n";
-    out << "max_vel" << max_vel_ << "\n";
+    out << "max_vel=" << max_vel_ << "\n";
     out << "comment:" << comment << "\n";
 
     file.close();
     qDebug() << "saved to" << filePath;
 }
 
+//로드가 잘 안되는 것 같은데 나중에 한번 보렴
 void MainWindow::on_pushButton_29_clicked()
 {
     //line_load
     QString path = QDir::homePath() + "/ros2_ws/src/ui_test/work_pd/";
     QDir().mkpath(path); 
-
-    //getOpenFileName써야 save안뜸...왜 못찾았지 
     QString filePath = QFileDialog::getOpenFileName(
         this,
         "파일 열기", 
@@ -641,7 +638,6 @@ void MainWindow::on_pushButton_42_clicked()
     std::cout<<"lane-detecting work start"<<std::endl;
 }
 
-
 void MainWindow::on_pushButton_43_clicked()
 {
     //lane_stop
@@ -655,13 +651,11 @@ void MainWindow::on_radioButton_3_clicked()
     camera_1_state=2;
 }
 
-
 void MainWindow::on_radioButton_clicked()
 {
     //raw1
     camera_1_state=1;
 }
-
 
 void MainWindow::on_radioButton_2_clicked()
 {
@@ -669,20 +663,17 @@ void MainWindow::on_radioButton_2_clicked()
     camera_1_state=3;
 }
 
-
 void MainWindow::on_radioButton_6_clicked()
 {
     //raw_bird2
     camera_2_state=2;
 }
 
-
 void MainWindow::on_radioButton_5_clicked()
 {
     //raw2
     camera_2_state=1;
 }
-
 
 void MainWindow::on_radioButton_4_clicked()
 {
@@ -694,10 +685,6 @@ void MainWindow::on_doubleSpinBox_7_valueChanged(double arg1)
 {
     //max_vel
     max_vel_=arg1;
-}
-
-void MainWindow::camera_callback(){
-    
 }
 
 void MainWindow::updateImage(const QPixmap &pixmap, int index) {
@@ -724,6 +711,7 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index) {
   }
 }
 
+//밑에 키보드 나중에 구현하기
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
   if(event->key() == Qt::Key_W)
