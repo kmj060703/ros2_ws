@@ -175,12 +175,15 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             cv::warpPerspective(frame, birdeye, M, cv::Size(640, 360));
             latest_birdeye = birdeye.clone();
 
+            cv::Mat birdeye_blurred;
+            cv::GaussianBlur(birdeye, birdeye_blurred, cv::Size(5, 5), 1.5);
+
             cv::Mat birdeye_hsv;
-            cv::cvtColor(birdeye, birdeye_hsv, cv::COLOR_BGR2HSV);
+            cv::cvtColor(birdeye_blurred, birdeye_hsv, cv::COLOR_BGR2HSV);
 
             cv::Mat frame_hsv;
             cv::cvtColor(latest_frame, frame_hsv, cv::COLOR_BGR2HSV);
-
+            
             cv::inRange(birdeye_hsv, lower_white, upper_white, white_mask);
             cv::inRange(birdeye_hsv, lower_yellow, upper_yellow, yellow_mask);
             cv::inRange(latest_frame, lower_red, upper_red, red_mask);
@@ -282,6 +285,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     if (i == 270)
                     {
                         global_center_x = center;
+
                         global_yellow_x = yellow_x;
                         global_white_x = white_x;
                         global_yellow_diff = (yellow_x != -1) ? yellow_x - 320 : 0;
