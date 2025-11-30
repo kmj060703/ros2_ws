@@ -366,6 +366,7 @@ void MainWindow::on_pushButton_28_clicked()
     out << "l_state_flag=" << l_state_flag_ << "\n";
     out << "l_x=" << l_x_ << "\n";
     out << "l_z=" << l_z_ << "\n";
+    out << "max_vel" << max_vel_ << "\n";
     out << "comment:" << comment << "\n";
 
     file.close();
@@ -409,6 +410,8 @@ void MainWindow::on_pushButton_29_clicked()
             l_x_ = line.split("=")[1].toDouble();
         else if (line.startsWith("l_z="))
             l_z_ = line.split("=")[1].toDouble();
+        else if (line.startsWith("max_vel="))
+            max_vel_ = line.split("=")[1].toDouble();
         else if (line.startsWith("comment:"))
             {QString comment;
              comment = line.split(":")[1].trimmed();
@@ -418,6 +421,7 @@ void MainWindow::on_pushButton_29_clicked()
     ui->doubleSpinBox_4->setValue(kd_);
     ui->doubleSpinBox_5->setValue(x_);
     ui->doubleSpinBox_6->setValue(z_);
+    ui->doubleSpinBox_7->setValue(max_vel_);
 
     file.close();
     qDebug() << "loaded from" << filePath;
@@ -433,10 +437,12 @@ void MainWindow::on_pushButton_34_clicked()
     l_z_=0;
     l_start_flag_=0;
     l_state_flag_=0;
+    max_vel_=0;
     ui->doubleSpinBox_3->setValue(kp_);
     ui->doubleSpinBox_4->setValue(kd_);
     ui->doubleSpinBox_5->setValue(l_x_);
     ui->doubleSpinBox_6->setValue(l_z_);
+    ui->doubleSpinBox_7->setValue(max_vel_);
     ui->plainTextEdit->clear();
     std::cout<<"lane set 0"<<std::endl;
 }
@@ -445,7 +451,7 @@ void MainWindow::on_pushButton_35_clicked()
     //set1
     QFile file("/home/yu/ros2_ws/src/ui_test/tmp/set1.txt");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+    {ui->doubleSpinBox_7->setValue(max_vel_);
         qDebug() << "cannot open file";
         return;
     }
@@ -465,6 +471,8 @@ void MainWindow::on_pushButton_35_clicked()
             l_x_ = line.split("=")[1].toDouble();
         else if (line.startsWith("l_z="))
             l_z_ = line.split("=")[1].toDouble();
+        else if (line.startsWith("max_vel="))
+            max_vel_ = line.split("=")[1].toDouble();
         else if (line.startsWith("comment:"))
             {QString comment;
              comment = line.split(":")[1].trimmed();
@@ -474,6 +482,7 @@ void MainWindow::on_pushButton_35_clicked()
     ui->doubleSpinBox_4->setValue(kd_);
     ui->doubleSpinBox_5->setValue(x_);
     ui->doubleSpinBox_6->setValue(z_);
+    ui->doubleSpinBox_7->setValue(max_vel_);
 
     file.close();}
 }
@@ -502,6 +511,8 @@ void MainWindow::on_pushButton_36_clicked()
             l_x_ = line.split("=")[1].toDouble();
         else if (line.startsWith("l_z="))
             l_z_ = line.split("=")[1].toDouble();
+        else if (line.startsWith("max_vel="))
+            max_vel_ = line.split("=")[1].toDouble();
         else if (line.startsWith("comment:"))
             {QString comment;
              comment = line.split(":")[1].trimmed();
@@ -511,6 +522,7 @@ void MainWindow::on_pushButton_36_clicked()
     ui->doubleSpinBox_4->setValue(kd_);
     ui->doubleSpinBox_5->setValue(x_);
     ui->doubleSpinBox_6->setValue(z_);
+    ui->doubleSpinBox_7->setValue(max_vel_);
 
     file.close();}
 }
@@ -528,7 +540,7 @@ void MainWindow::on_pushButton_37_clicked()
     while (!in.atEnd())
     {
         QString line = in.readLine();
-        
+        ui->doubleSpinBox_7->setValue(max_vel_);
         if (line.startsWith("kp="))
             kp_ = line.split("=")[1].toInt();
         else if (line.startsWith("kd="))
@@ -539,6 +551,8 @@ void MainWindow::on_pushButton_37_clicked()
             l_x_ = line.split("=")[1].toDouble();
         else if (line.startsWith("l_z="))
             l_z_ = line.split("=")[1].toDouble();
+        else if (line.startsWith("max_vel="))
+            max_vel_ = line.split("=")[1].toDouble();
         else if (line.startsWith("comment:"))
             {QString comment;
              comment = line.split(":")[1].trimmed();
@@ -548,6 +562,7 @@ void MainWindow::on_pushButton_37_clicked()
     ui->doubleSpinBox_4->setValue(kd_);
     ui->doubleSpinBox_5->setValue(x_);
     ui->doubleSpinBox_6->setValue(z_);
+    ui->doubleSpinBox_7->setValue(max_vel_);
 
     file.close();}
 }
@@ -557,7 +572,7 @@ void MainWindow::on_pushButton_38_clicked()
     QFile file("/home/yu/ros2_ws/src/ui_test/tmp/set1.txt");
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
-        qDebug() << "cannot open file";
+        qDebug() << "cannot open fileui->doubleSpinBox_7->setValue(max_vel_);";
         return;
     }
     QString comment;
@@ -569,6 +584,7 @@ void MainWindow::on_pushButton_38_clicked()
     out << "l_state_flag=" << l_state_flag_ << "\n";
     out << "l_x=" << l_x_ << "\n";
     out << "l_z=" << l_z_ << "\n";
+    out << "max_vel" << max_vel_ << "\n";
     out << "comment:" << comment << "\n";
     file.close();
 }
@@ -590,6 +606,7 @@ void MainWindow::on_pushButton_39_clicked()
     out << "l_state_flag=" << l_state_flag_ << "\n";
     out << "l_x=" << l_x_ << "\n";
     out << "l_z=" << l_z_ << "\n";
+    out << "max_vel" << max_vel_ << "\n";
     out << "comment:" << comment << "\n";
     file.close();
 }
@@ -611,6 +628,7 @@ void MainWindow::on_pushButton_40_clicked()
     out << "l_state_flag=" << l_state_flag_ << "\n";
     out << "l_x=" << l_x_ << "\n";
     out << "l_z=" << l_z_ << "\n";
+    out << "max_vel" << max_vel_ << "\n";
     out << "comment:" << comment << "\n";
     file.close();
 }

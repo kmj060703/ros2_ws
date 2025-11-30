@@ -11,6 +11,9 @@ DrivingYY::DrivingYY() : Node("driving_yy")
     error = 0.0;
     last_error = 0.0;
     max_x = 0.0;
+    def_turn_x=0;
+    def_turn_z=0;
+
     imu_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>(
         "imu_angle",
         10,
@@ -91,6 +94,8 @@ void DrivingYY::ui_callback(const autorace_interfaces::msg::Ui2Driving::SharedPt
     kd = msg->kd;
     x = msg->l_x;
     z = msg->l_z;
+    def_turn_x=msg->def_turn_x;
+    def_turn_z=msg->def_turn_z;
 }
 
 void DrivingYY::pixel_diff_callback(const autorace_interfaces::msg::MasterJo::SharedPtr msg)
@@ -120,6 +125,24 @@ void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHy
 
 void DrivingYY::PD_control()
 {
+    auto msg = geometry_msgs::msg::Twist();
+    //이쯤에 선 안보일때 어떻게 해야하는지 추가
+    if(abs(error)>=50){
+        if(def_turn_x==0) msg.linear.x=0.01;
+        else msg.linear.x=def_turn_x;
+
+        if(error<0){
+            if(def_turn_z==0)
+            msg.angular.z=-0.1;
+            else msg.angular.z=-def_turn_z;
+        }
+        else if(error>0){
+            if(def_turn_z==0)
+            msg.angular.z=0.1;
+            else msg.angular.z=def_turn_z;
+        }
+    }
+    else{
     z = kp * error + kd * (error - last_error);
     
     // 디버깅 출력 추가
@@ -132,7 +155,7 @@ void DrivingYY::PD_control()
     // x 계산 수정
     double ratio = std::max(1.0 - std::abs(error) / 360.0, 0.0);
     double x_raw = std::pow(max_x * ratio, 2.2);
-    x = std::min(x_raw, 0.05);
+    x = std::min(x_raw, 0.1);
 
     RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
         "ratio=%.2f, x_raw=%.4f, x=%.4f", ratio, x_raw, x);
@@ -141,8 +164,7 @@ void DrivingYY::PD_control()
         z = -std::max(z, -2.0);
     else
         z = -std::min(z, 2.0);
-
-    auto msg = geometry_msgs::msg::Twist();
+    }
 
     if (l_start_flag == 1)
     {

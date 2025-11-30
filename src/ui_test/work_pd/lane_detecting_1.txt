@@ -1,0 +1,7 @@
+kp=0.01
+kd=0.01
+l_state_flag=0
+l_x=0.05
+l_z=0.05
+max_vel0.5
+comment:적절한듯

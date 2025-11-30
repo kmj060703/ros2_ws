@@ -509,7 +509,7 @@ color:rgb(0, 0, 0);</string>
        <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
       </property>
       <property name="text">
-       <string>Kp gain control (max:1000.0)</string>
+       <string>Kp gain control (max:1.0)</string>
       </property>
      </widget>
      <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
@@ -528,10 +528,10 @@ color:rgb(0, 0, 0);</string>
        <double>0.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>1.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>1.000000000000000</double>
+       <double>0.00001000000000</double>
       </property>
      </widget>
      <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
@@ -550,10 +550,10 @@ color:rgb(0, 0, 0);</string>
        <double>0.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>100.000000000000000</double>
+       <double>1.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.100000000000000</double>
+       <double>0.000010000000000</double>
       </property>
      </widget>
      <widget class="QLabel" name="label_15">
@@ -569,7 +569,7 @@ color:rgb(0, 0, 0);</string>
        <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
       </property>
       <property name="text">
-       <string>Kd gain control(max: 100.0)</string>
+       <string>Kd gain control(max: 1.0)</string>
       </property>
      </widget>
      <widget class="QWidget" name="widget_6" native="true">

@@ -110,8 +110,8 @@ void QNode::ui2drive_callback(){
   msg.start_flag=start_flag_;
   msg.kp=kp_;
   msg.kd=kd_;
-  msg.l_x=l_x_;
-  msg.l_z=l_z_;
+  msg.def_turn_x=l_x_;
+  msg.def_turn_z=l_z_;
   msg.l_start_flag=l_start_flag_;
   msg.max_vel=max_vel_;
   publisher_ui2drive->publish(msg);
