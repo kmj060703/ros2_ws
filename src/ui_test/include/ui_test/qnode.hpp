@@ -23,16 +23,15 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "std_msgs/msg/int32.hpp"
 #include "autorace_interfaces/msg/ui2_driving.hpp"
-#include "controlitem.hpp" 
+#include "controlitem.hpp"
 #endif
 
-#include <thread> 
+#include <thread>
 #include <QThread>
 #include <QTimer>
 #include <QImage>
 #include <QPixmap>
 #include <QLabel>
-
 
 /*****************************************************************************
 ** Class
@@ -47,7 +46,6 @@ public:
   void ui2drive_callback();
   void run() override;
   std::shared_ptr<rclcpp::Node> getNode() const { return node; }
-  int count=0;
 
 private:
   std::shared_ptr<rclcpp::Node> node;
@@ -64,20 +62,6 @@ private:
 
   QTimer *new_timer1;
   QTimer *new_timer2;
-
-  double x_ = 0.0;
-  double z_ = 0.0;
-  int forw_back_ = 0;
-  int left_right_ = 0;
-  int start_flag_ = 0;
-  int l_start_flag_ = 0;
-  int l_state_flag_ = 0;
-  double kp_ = 0.0;
-  double kd_ = 0.0;
-  double l_x_ = 0.0;
-  double l_z_ = 0.0;
-  double max_vel_ = 0.0;
-
 
 Q_SIGNALS:
   void rosShutDown();
