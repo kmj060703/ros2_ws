@@ -2,6 +2,6 @@ kp=0.005
 kd=0.001
 l_state_flag=0
 l_x=0.1
-l_z=0.8
+l_z=1
 max_vel=1.23
 comment:선 밟는거 빼고 꽤 괜찮아요

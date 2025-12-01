@@ -301,11 +301,11 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 }
                 else if (yellow_x != -1)
                 {
-                    center = yellow_x + 250; // 차선 폭 추정
+                    center = yellow_x + 235; // 차선 폭 추정
                 }
                 else if (white_x != -1)
                 {
-                    center = white_x - 250;
+                    center = white_x - 235;
                 }
 
                 // 중앙선 그리기 및 저장
