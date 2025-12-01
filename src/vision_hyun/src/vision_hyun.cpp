@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <cstring>
 
-#define REMOTE_IP "127.0.0.1"
+#define REMOTE_IP "223.194.43.127"
 #define REMOTE_PORT 9999
 #define PACKET_SIZE 4096
 
@@ -52,7 +52,7 @@ run : ros2 run vision_hyun vision_hyun_node */
 void send_udp_image(cv::Mat &img, int id, rclcpp::Logger logger)
 {
     if (img.empty() || udp_sock < 0) {
-        RCLCPP_WARN(logger, "Image is empty or UDP socket is not ready.");
+        RCLCPP_WARN(logger, "이미지 X or UDP 준비 X");
         return;
     }
 
@@ -61,25 +61,25 @@ void send_udp_image(cv::Mat &img, int id, rclcpp::Logger logger)
     bool success = cv::imencode(".jpg", img, encoded, params);
 
     if (!success) {
-        RCLCPP_ERROR(logger, "cv::imencode failed for image ID: %d", id);
+        RCLCPP_ERROR(logger, "cv::imencode 실패 image ID: %d", id);
         return;
     }
 
     int total_size = encoded.size();
     if (total_size == 0) {
-        RCLCPP_WARN(logger, "Encoded size is 0 for image ID: %d", id);
+        RCLCPP_WARN(logger, "엔코딩 사이즈: 0 ID: %d", id);
         return;
     }
 
-    RCLCPP_INFO(logger, "Attempting to send image ID: %d, Encoded Size: %d bytes", id, total_size);
+    RCLCPP_INFO(logger, "이미지 pub ID: %d, 엔코딩 사이즈: %d bytes", id, total_size);
 
     int header[2] = {id, total_size};
     ssize_t sent_header_bytes = sendto(udp_sock, header, sizeof(header), 0, (struct sockaddr *)&remote_addr, sizeof(remote_addr));
     if (sent_header_bytes < 0) {
-        RCLCPP_ERROR(logger, "sendto failed for header: %s", strerror(errno));
+        RCLCPP_ERROR(logger, "pub 실패 for header: %s", strerror(errno));
         return;
     }
-    RCLCPP_INFO(logger, "Sent header: %ld bytes", sent_header_bytes);
+    RCLCPP_INFO(logger, "header: %ld bytes", sent_header_bytes);
 
 
     int sent_bytes = 0;
@@ -89,13 +89,13 @@ void send_udp_image(cv::Mat &img, int id, rclcpp::Logger logger)
         ssize_t sent_chunk_bytes = sendto(udp_sock, &encoded[sent_bytes], chunk_size, 0, (struct sockaddr *)&remote_addr, sizeof(remote_addr));
         
         if (sent_chunk_bytes < 0) {
-            RCLCPP_ERROR(logger, "sendto failed for chunk: %s", strerror(errno));
+            RCLCPP_ERROR(logger, "pub 실패 for chunk: %s", strerror(errno));
             break; 
         }
         sent_bytes += sent_chunk_bytes;
-        usleep(100); // 네트워크가 너무 빠르면 패킷 손실 방지용
+        // usleep(100); // 네트워크가 너무 빠르면 패킷 손실 방지용
     }
-    RCLCPP_INFO(logger, "Total sent bytes for ID %d: %d / %d", id, sent_bytes, total_size);
+    RCLCPP_INFO(logger, "byte for ID %d: %d / %d", id, sent_bytes, total_size);
 }
 
 void gui_thread()
@@ -384,7 +384,7 @@ int main(int argc, char *argv[])
     // UDP 소켓 생성
     udp_sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (udp_sock < 0) {
-        std::cerr << "ERROR: UDP socket creation failed!" << std::endl;
+        std::cerr << "소켓 생성 실패" << std::endl;
         return 1;
     }
 
@@ -393,14 +393,14 @@ int main(int argc, char *argv[])
     remote_addr.sin_family = AF_INET;
     remote_addr.sin_port = htons(REMOTE_PORT);
     if (inet_pton(AF_INET, REMOTE_IP, &remote_addr.sin_addr) <= 0) {
-        std::cerr << "ERROR: Invalid address/ Address not supported" << std::endl;
+        std::cerr << "주소 오류" << std::endl;
         close(udp_sock);
         return 1;
     }
 
     if (getenv("DISPLAY") == nullptr)
     {
-        std::cerr << "ERROR: DISPLAY environment variable not set!" << std::endl;
+        std::cerr << "DISPLAY 환경 X" << std::endl;
         close(udp_sock);
         return 1;
     }
@@ -408,10 +408,7 @@ int main(int argc, char *argv[])
     auto node = std::make_shared<ImageViewer>();
     std::thread t(gui_thread);
     t.detach();
-
-    RCLCPP_INFO(node->get_logger(), "Starting spin...");
     rclcpp::spin(node);
-
     rclcpp::shutdown();
     close(udp_sock);
     cv::destroyAllWindows();
