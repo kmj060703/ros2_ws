@@ -125,9 +125,9 @@ void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHy
 
 void DrivingYY::PD_control()
 {
-    RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
-    "[DEBUG] flags: start_flag=%d, l_start_flag=%d, error=%.2f",
-    start_flag, l_start_flag, error);
+    // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
+    // "[DEBUG] flags: start_flag=%d, l_start_flag=%d, error=%.2f",
+    // start_flag, l_start_flag, error);
 
     auto msg = geometry_msgs::msg::Twist();
     //이쯤에 선 안보일때 어떻게 해야하는지 추가
@@ -150,9 +150,9 @@ void DrivingYY::PD_control()
     z = kp * error + kd * (error - last_error);
     
     // 디버깅 출력 추가
-    RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
-        "error=%.2f, last_error=%.2f, kp=%.2f, kd=%.2f, z=%.4f",
-        error, last_error, kp, kd, z);
+    // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    //     "error=%.2f, last_error=%.2f, kp=%.2f, kd=%.2f, z=%.4f",
+    //     error, last_error, kp, kd, z);
     
     last_error = error;
 
@@ -161,8 +161,8 @@ void DrivingYY::PD_control()
     double x_raw = std::pow(max_x * ratio, 2.2);
     x = std::min(x_raw, 5.0);
 
-    RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
-        "ratio=%.2f, x_raw=%.4f, x=%.4f", ratio, x_raw, x);
+    // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    //     "ratio=%.2f, x_raw=%.4f, x=%.4f", ratio, x_raw, x);
 
     if (z < 0)
         z = -std::max(z, -10.0);

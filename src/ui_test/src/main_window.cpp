@@ -693,7 +693,9 @@ void MainWindow::on_doubleSpinBox_7_valueChanged(double arg1)
 }
 
 void MainWindow::updateImage(const QPixmap &pixmap, int index) {
+  qDebug() << "[Debug] updateImage called with index:" << index;
   if (pixmap.isNull()) {
+    qDebug() << "[Debug] pixmap is null, returning.";
     return;
   }
   
@@ -701,14 +703,18 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index) {
     m_img[index] = pixmap;
     
     // label_18 업데이트
+    qDebug() << "[Debug] Checking for label_18 update. imshow_flag_1:" << imshow_flag_1 << "camera_1_state:" << camera_1_state << "index+1:" << index + 1;
     if (imshow_flag_1 == 1 && camera_1_state == (index + 1)) {
+      qDebug() << "[Debug] Updating label_18 with image index:" << index;
       ui->label_18->setPixmap(
         m_img[index].scaled(640, 360, Qt::KeepAspectRatio)
       );
     }
     
     // label_19 업데이트
+    qDebug() << "[Debug] Checking for label_19 update. imshow_flag_2:" << imshow_flag_2 << "camera_2_state:" << camera_2_state << "index+1:" << index + 1;
     if (imshow_flag_2 == 1 && camera_2_state == (index + 1)) {
+      qDebug() << "[Debug] Updating label_19 with image index:" << index;
       ui->label_19->setPixmap(
         m_img[index].scaled(640, 360, Qt::KeepAspectRatio)
       );
