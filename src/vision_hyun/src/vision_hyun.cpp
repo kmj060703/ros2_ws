@@ -312,7 +312,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 if (center != -1)
                 {
                     cv::line(birdeye_with_lines, cv::Point(center, i), cv::Point(center, i), cv::Scalar(0, 255, 0), 1);
-                    if (i == 270)
+                    if (i == 350)
                     {
                         global_center_x = center;
 
@@ -327,8 +327,8 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // 화면에 lineWrite 로직
 
-            // 스캔 라인 표시 (y=270, 보라색)
-            cv::line(birdeye_with_lines, cv::Point(0, 270), cv::Point(640, 270), cv::Scalar(255, 0, 255), 1);
+            // 스캔 라인 표시 (y=350, 보라색)
+            cv::line(birdeye_with_lines, cv::Point(0, 350), cv::Point(640, 350), cv::Scalar(255, 0, 255), 1);
 
             // 정보 표시
             if (global_center_x > 0)
