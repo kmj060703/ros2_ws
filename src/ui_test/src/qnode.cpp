@@ -72,11 +72,11 @@ void QNode::drive_callback(){
       msg.angular.z=0;
     }
     else if(left_right_==1){
-      msg.linear.x=x_;
+      msg.linear.x=0.0;
       msg.angular.z=z_;
     }
     else if(left_right_==-1){
-      msg.linear.x=x_;
+      msg.linear.x=0.0;
       msg.angular.z=-z_;
     }
     else{
