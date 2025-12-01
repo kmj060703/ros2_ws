@@ -159,15 +159,15 @@ void DrivingYY::PD_control()
     // x 계산 수정
     double ratio = std::max(1.0 - std::abs(error) / 360.0, 0.0);
     double x_raw = std::pow(max_x * ratio, 2.2);
-    x = std::min(x_raw, 0.1);
+    x = std::min(x_raw, 5.0);
 
     RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
         "ratio=%.2f, x_raw=%.4f, x=%.4f", ratio, x_raw, x);
 
     if (z < 0)
-        z = -std::max(z, -2.0);
+        z = -std::max(z, -10.0);
     else
-        z = -std::min(z, 2.0);
+        z = -std::min(z, 10.0);
     //}
 
     if (l_start_flag == 1&&traffic_light_status_!=1)
