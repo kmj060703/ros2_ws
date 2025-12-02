@@ -21,7 +21,8 @@ extern cv::Mat white_mask;
 extern cv::Mat red_mask;
 extern cv::Mat green_mask;
 extern cv::Mat red_and_green_mask;
-extern cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy, red_and_green_mask_copy;
+extern cv::Mat brown_mask;
+extern cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy, red_and_green_mask_copy, brown_copy;
 
 // 전역 변수 추가
 extern int global_center_x;
@@ -56,14 +57,21 @@ private:
   rclcpp::Publisher<autorace_interfaces::msg::VisionHyun>::SharedPtr
       publisher_4;
 
-  cv::Scalar lower_white = cv::Scalar(0, 0, 150);
+  cv::Scalar lower_white = cv::Scalar(0, 0, 180);
   cv::Scalar upper_white = cv::Scalar(180, 50, 255);
-  cv::Scalar lower_yellow = cv::Scalar(20, 100, 100);
+  cv::Scalar lower_yellow = cv::Scalar(20, 100, 100); // H 179 // S 225 // V 225
   cv::Scalar upper_yellow = cv::Scalar(30, 255, 255);
-  cv::Scalar lower_red = cv::Scalar(0, 100, 80);
-  cv::Scalar upper_red = cv::Scalar(0, 100, 100);
-  cv::Scalar lower_green = cv::Scalar(120, 100, 80);
-  cv::Scalar upper_green = cv::Scalar(120, 100, 100);
+  cv::Scalar lower_red = cv::Scalar(0, 80, 80);
+  cv::Scalar upper_red = cv::Scalar(0, 100, 200);
+  cv::Scalar lower_t_yellow = cv::Scalar(150, 3, 70);
+  cv::Scalar upper_t_yellow = cv::Scalar(175, 8, 255);
+  //  cv::Scalar lower_green = cv::Scalar(140, 35, 27);
+  //  cv::Scalar upper_grㅑeen = cv::Scalar(170, 160, 190); // ㅈㄴ 신기하네이건
+
+  cv::Scalar lower_green = cv::Scalar(160, 50, 50);
+  cv::Scalar upper_green = cv::Scalar(179, 255, 255);
+  cv::Scalar lower_brown = cv::Scalar(50, 100, 150);
+  cv::Scalar upper_brown = cv::Scalar(90, 255, 255);
 
   // 사다리꼴 원본 좌표 (feed 640x360 기준)
   float distort_L_top_x = 160.0;
@@ -91,6 +99,12 @@ private:
   bool yellow_detected_before = false;
   bool white_detected_before = false;
 
+  int global_center_x = -1;
+  int global_yellow_x = -1;
+  int global_white_x = -1;
+  int global_yellow_diff = 0;
+  int global_white_diff = 0;
+
   // 기준 x좌표
   const int reference_x = 320;
   const int scan_y = 270;
@@ -98,10 +112,11 @@ private:
   // detect 영역의 빨간색/초록색 픽셀 카운트
   int red_pixel_count = 0;
   int green_pixel_count = 0;
-
+  int yellow_pixel_count = 0 ;
   // 신호등 상태 판단
-  int red_threshold = 500;
-  int green_threshold = 500;
+  int red_threshold = 150;
+  int green_threshold = 250;
+  int yellow_threshold = 300;
 };
 
 #endif // IMAGE_VIEWER_HPP
