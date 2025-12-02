@@ -1339,6 +1339,7 @@ void MainWindow::on_pushButton_45_clicked()
     HSV_low[20] = v_low["bb"].toInt();
 
     load_vision_data(0);
+    ui->radioButton_7->setChecked(true);
 }
 
 void MainWindow::load_vision_data(int index)
@@ -1349,7 +1350,6 @@ void MainWindow::load_vision_data(int index)
     ui->horizontalSlider_4->setValue(HSV_high[index + 1]);
     ui->horizontalSlider_5->setValue(HSV_low[index + 2]);
     ui->horizontalSlider_6->setValue(HSV_high[index + 2]);
-    ui->radioButton_7->setChecked(true);
 }
 
 void MainWindow::saveJson(const QJsonObject &obj, const QString &filePath)
@@ -1378,6 +1378,7 @@ void MainWindow::on_pushButton_51_clicked()
     }
     vision_hsv_state = 0;
     load_vision_data(0);
+    ui->radioButton_7->setChecked(true);
 }
 
 void MainWindow::on_pushButton_52_clicked()
@@ -1455,12 +1456,11 @@ void MainWindow::on_pushButton_50_clicked()
     }
 
     QTextStream in(&file);
+    int index = (vision_hsv_state - 1) * 3;
+    std::cout << index << std::endl;
     while (!in.atEnd())
     {
         QString line = in.readLine();
-        int index = (vision_hsv_state - 1) * 3;
-
-        std::cout << index << std::endl;
         if (line.startsWith("H_h="))
             HSV_high[index] = line.split("=")[1].toInt();
         else if (line.startsWith("H_l="))
@@ -1477,6 +1477,9 @@ void MainWindow::on_pushButton_50_clicked()
         //     vision_hsv_state = line.split("=")[1].toInt();
         file.close();
     }
+    file.close();
+    load_vision_data(index);
+    
 }
 
 void MainWindow::on_pushButton_54_clicked()
@@ -1511,8 +1514,9 @@ void MainWindow::on_pushButton_54_clicked()
             HSV_low[index + 2] = line.split("=")[1].toInt();
         // else if (line.startsWith("vision_state="))
         //     vision_hsv_state = line.split("=")[1].toInt();
-        file.close();
+        
     }
+    file.close();
     load_vision_data(index);
 }
 
@@ -1547,8 +1551,9 @@ void MainWindow::on_pushButton_56_clicked()
             HSV_low[index + 2] = line.split("=")[1].toInt();
         // else if (line.startsWith("vision_state="))
         //     vision_hsv_state = line.split("=")[1].toInt();
-        file.close();
+        
     }
+    file.close();
     load_vision_data(index);
 }
 

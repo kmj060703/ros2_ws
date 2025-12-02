@@ -4,4 +4,4 @@ S_h=0
 S_l=0
 V_h=0
 V_l=0
-vision_state=0
+vision_state=7
