@@ -44,6 +44,7 @@ public:
   ~QNode();
   void drive_callback();
   void ui2drive_callback();
+  void vision_helper(cv::Mat tmp, int img_id);
   void run() override;
   std::shared_ptr<rclcpp::Node> getNode() const { return node; }
 

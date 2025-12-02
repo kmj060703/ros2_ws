@@ -1,10 +1,10 @@
 /**
-* @file /include/ui_test/main_window.hpp
-*
-* @brief Qt based gui for %(package)s.
-*
-* @date August 2024
-**/
+ * @file /include/ui_test/main_window.hpp
+ *
+ * @brief Qt based gui for %(package)s.
+ *
+ * @date August 2024
+ **/
 
 #ifndef ui_test_MAIN_WINDOW_H
 #define ui_test_MAIN_WINDOW_H
@@ -35,6 +35,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QDialog>
 
 #include <sensor_msgs/msg/image.hpp>
 #include <cv_bridge/cv_bridge.h>
@@ -44,150 +45,149 @@
 ** Interface [MainWindow]
 *****************************************************************************/
 /**
-* @brief Qt central, all operations relating to the view part here.
-*/
+ * @brief Qt central, all operations relating to the view part here.
+ */
 class MainWindow : public QMainWindow
 {
-Q_OBJECT
+  Q_OBJECT
 
 public:
-explicit MainWindow(QWidget *parent = nullptr);
-void saveJson(const QJsonObject &obj, const QString &filePath);
-QJsonObject loadJson(const QString &filePath);
-void load_vision_data();
-~MainWindow();
+  explicit MainWindow(QWidget *parent = nullptr);
+  void saveJson(const QJsonObject &obj, const QString &filePath);
+  QJsonObject loadJson(const QString &filePath);
+  void load_vision_data();
+  ~MainWindow();
 
 private slots:
-void on_pushButton_7_clicked();
+  void on_pushButton_7_clicked();
 
-void on_pushButton_11_clicked();
+  void on_pushButton_11_clicked();
 
-void on_pushButton_18_clicked();
+  void on_pushButton_18_clicked();
 
-void on_pushButton_19_clicked();
+  void on_pushButton_19_clicked();
 
-void on_pushButton_20_clicked();
+  void on_pushButton_20_clicked();
 
-void on_pushButton_21_clicked();
+  void on_pushButton_21_clicked();
 
-void on_pushButton_23_clicked();
+  void on_pushButton_23_clicked();
 
-void on_pushButton_8_clicked();
+  void on_pushButton_8_clicked();
 
-void on_pushButton_9_clicked();
+  void on_pushButton_9_clicked();
 
-void on_pushButton_10_clicked();
+  void on_pushButton_10_clicked();
 
-void on_pushButton_22_clicked();
+  void on_pushButton_22_clicked();
 
-void on_doubleSpinBox_valueChanged(double arg1);
+  void on_doubleSpinBox_valueChanged(double arg1);
 
-void on_doubleSpinBox_2_valueChanged(double arg1);
+  void on_doubleSpinBox_2_valueChanged(double arg1);
 
-void on_pushButton_15_clicked();
+  void on_pushButton_15_clicked();
 
-void on_pushButton_16_clicked();
+  void on_pushButton_16_clicked();
 
-void on_pushButton_17_clicked();
+  void on_pushButton_17_clicked();
 
-void on_pushButton_24_clicked();
+  void on_pushButton_24_clicked();
 
-void on_pushButton_26_clicked();
+  void on_pushButton_26_clicked();
 
-void on_pushButton_25_clicked();
+  void on_pushButton_25_clicked();
 
-void on_pushButton_27_clicked();
+  void on_pushButton_27_clicked();
 
-void on_doubleSpinBox_3_valueChanged(double arg1);
+  void on_doubleSpinBox_3_valueChanged(double arg1);
 
-void on_doubleSpinBox_4_valueChanged(double arg1);
+  void on_doubleSpinBox_4_valueChanged(double arg1);
 
-void on_doubleSpinBox_5_valueChanged(double arg1);
+  void on_doubleSpinBox_5_valueChanged(double arg1);
 
-void on_doubleSpinBox_6_valueChanged(double arg1);
+  void on_doubleSpinBox_6_valueChanged(double arg1);
 
-void on_pushButton_30_clicked();
+  void on_pushButton_30_clicked();
 
-void on_pushButton_33_clicked();
+  void on_pushButton_33_clicked();
 
-void on_pushButton_31_clicked();
+  void on_pushButton_31_clicked();
 
-void on_pushButton_32_clicked();
+  void on_pushButton_32_clicked();
 
-void on_pushButton_41_clicked();
+  void on_pushButton_41_clicked();
 
-void on_pushButton_28_clicked();
-void on_pushButton_29_clicked();
+  void on_pushButton_28_clicked();
+  void on_pushButton_29_clicked();
 
-void on_pushButton_34_clicked();
-void on_pushButton_35_clicked();
-void on_pushButton_36_clicked();
-void on_pushButton_37_clicked();
-void on_pushButton_38_clicked();
-void on_pushButton_39_clicked();
-void on_pushButton_40_clicked();
+  void on_pushButton_34_clicked();
+  void on_pushButton_35_clicked();
+  void on_pushButton_36_clicked();
+  void on_pushButton_37_clicked();
+  void on_pushButton_38_clicked();
+  void on_pushButton_39_clicked();
+  void on_pushButton_40_clicked();
 
-//plainTextEdit에서 글자 가져오기
+  // plainTextEdit에서 글자 가져오기
 
-void on_pushButton_42_clicked();
-void on_pushButton_43_clicked();
+  void on_pushButton_42_clicked();
+  void on_pushButton_43_clicked();
 
-void on_radioButton_3_clicked();
-void on_radioButton_clicked();
-void on_radioButton_2_clicked();
-void on_radioButton_6_clicked();
-void on_radioButton_5_clicked();
-void on_radioButton_4_clicked();
-void on_doubleSpinBox_7_valueChanged(double arg1);
-void updateImage(const QPixmap &pixmap, int index); // 이미지 업데이트 슬롯
+  void on_radioButton_3_clicked();
+  void on_radioButton_clicked();
+  void on_radioButton_2_clicked();
+  void on_radioButton_6_clicked();
+  void on_radioButton_5_clicked();
+  void on_radioButton_4_clicked();
+  void on_doubleSpinBox_7_valueChanged(double arg1);
+  void updateImage(const QPixmap &pixmap, int index); // 이미지 업데이트 슬롯
 
-void on_horizontalSlider_sliderMoved(int position);
-void on_horizontalSlider_2_sliderMoved(int position);
-void on_horizontalSlider_4_sliderMoved(int position);
-void on_horizontalSlider_6_sliderMoved(int position);
-void on_horizontalSlider_3_sliderMoved(int position);
-void on_horizontalSlider_5_sliderMoved(int position);
-void on_radioButton_7_clicked();
-void on_radioButton_8_clicked();
-void on_radioButton_9_clicked();
-void on_radioButton_10_clicked();
-void on_radioButton_11_clicked();
-void on_radioButton_12_clicked();
-void on_radioButton_13_clicked();
+  void on_horizontalSlider_sliderMoved(int position);
+  void on_horizontalSlider_2_sliderMoved(int position);
+  void on_horizontalSlider_4_sliderMoved(int position);
+  void on_horizontalSlider_6_sliderMoved(int position);
+  void on_horizontalSlider_3_sliderMoved(int position);
+  void on_horizontalSlider_5_sliderMoved(int position);
+  void on_radioButton_7_clicked();
+  void on_radioButton_8_clicked();
+  void on_radioButton_9_clicked();
+  void on_radioButton_10_clicked();
+  void on_radioButton_11_clicked();
+  void on_radioButton_12_clicked();
+  void on_radioButton_13_clicked();
 
-void on_pushButton_44_clicked();
-void on_pushButton_45_clicked();
-void on_pushButton_51_clicked();
-void on_pushButton_52_clicked();
-void on_pushButton_53_clicked();
-void on_pushButton_55_clicked();
-void on_pushButton_50_clicked();
-void on_pushButton_54_clicked();
-void on_pushButton_56_clicked();
+  void on_pushButton_44_clicked();
+  void on_pushButton_45_clicked();
+  void on_pushButton_51_clicked();
+  void on_pushButton_52_clicked();
+  void on_pushButton_53_clicked();
+  void on_pushButton_55_clicked();
+  void on_pushButton_50_clicked();
+  void on_pushButton_54_clicked();
+  void on_pushButton_56_clicked();
 
-void on_pushButton_p90_clicked();
-void on_pushButton_m90_clicked();
-void on_pushButton_p180_clicked();
-void on_pushButton_setYaw_clicked();
-void on_pushButton_109_clicked();
-void on_pushButton_110_clicked();
-void on_pushButton_111_clicked();
-void on_pushButton_112_clicked();
-void on_pushButton_113_clicked();
+  void on_pushButton_p90_clicked();
+  void on_pushButton_m90_clicked();
+  void on_pushButton_p180_clicked();
+  void on_pushButton_setYaw_clicked();
+  void on_pushButton_109_clicked();
+  void on_pushButton_110_clicked();
+  void on_pushButton_111_clicked();
+  void on_pushButton_112_clicked();
+  void on_pushButton_113_clicked();
 
 private:
-Ui::MainWindowDesign* ui;
-void keyPressEvent(QKeyEvent *event) override;
-void closeEvent(QCloseEvent* event);
-QPixmap m_img[10];
-QNode *qnode;
-QJsonObject h_high;
-QJsonObject s_high;
-QJsonObject v_high;
-QJsonObject h_low;
-QJsonObject s_low;
-QJsonObject v_low;
-
+  Ui::MainWindowDesign *ui;
+  void keyPressEvent(QKeyEvent *event);
+  void closeEvent(QCloseEvent *event);
+  QPixmap m_img[10];
+  QNode *qnode;
+  QJsonObject h_high;
+  QJsonObject s_high;
+  QJsonObject v_high;
+  QJsonObject h_low;
+  QJsonObject s_low;
+  QJsonObject v_low;
 };
 
 #endif // ui_test_MAIN_WINDOW_H

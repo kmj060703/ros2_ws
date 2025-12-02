@@ -10,13 +10,15 @@ int l_start_flag_ = 0;
 int camera_1_state = 0;
 int camera_2_state = 0;
 int vision_hsv_state = 0;
+int currentIndex = 0;
 int HSV_high[21] = {
-0,
+    0,
 };
 int HSV_low[21] = {
-0,
+    0,
 };
 int driving_state = 0;
+int img_id=-1;
 double imu_yaw = 0;
 double x_ = 0.0;
 double z_ = 0.0;
@@ -32,6 +34,9 @@ cv::Mat tra_red_mask;
 cv::Mat tra_yellow_mask;
 cv::Mat tra_green_mask;
 cv::Mat brown_mask;
+cv::Mat frame;
+cv::Mat birdeye_hsv;
+cv::Mat frame_hsv;
 cv::Scalar lower_l_white;
 cv::Scalar upper_l_white;
 cv::Scalar lower_l_yellow;
