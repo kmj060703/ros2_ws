@@ -17,6 +17,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     QIcon icon("://ros-icon.png");
     this->setWindowIcon(icon);
+    new_timer1 = new QTimer(this);
+    new_timer1->setInterval(100);
+    connect(new_timer1, &QTimer::timeout, this, &MainWindow::combine_callback);
+
+    new_timer1->start();
 
     // 초기값 설정
     imshow_flag_1 = 1;
@@ -40,8 +45,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->dial->setRange(-180, 180); // yaw
     ui->dial->setWrapping(true);
 
-    ui->dial_5->setRange(0, 1);  // x
-    ui->dial_6->setRange(-5, 5); // z
+    // ui->dial_5->setRange(0, 1);  // x
+    // ui->dial_6->setRange(-5, 5); // z
 
     h_high["lw"] = 0;
     h_high["ly"] = 0;
@@ -104,6 +109,61 @@ void MainWindow::closeEvent(QCloseEvent *event)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::combine_callback()
+{ // imu
+    ui->dial->setValue(imu_yaw);
+    // psd
+    if (psd_flag[0] == 1)
+        ui->label_p_forward->setText("왼쪽 장애물!");
+    else
+        ui->label_p_forward->clear();
+    if (psd_flag[1] == 1)
+        ui->label_p_left->setText("정면 장애물!");
+    else
+        ui->label_p_left->clear();
+    if (psd_flag[2] == 1)
+        ui->label_p_right->setText("우측 장애물!");
+    else
+        ui->label_p_right->clear();
+    // 신호등
+    if (traffic_state == 1)
+    {
+        ui->label_f_traf->setText("빨간불! 정지");
+    }
+    else if (traffic_state == 2)
+    {
+        ui->label_f_traf->setText("파란불");
+    }
+    else if (traffic_state == 3)
+    {
+        ui->label_f_traf->setText("노란불! 감속?");
+    }
+    else
+    {
+        ui->label_f_traf->clear();
+    }
+    switch (driving_state)
+    {
+    case 1:
+        ui->label_state_show->setText("교차로");
+        break;
+    case 4:
+        ui->label_state_show->setText("공사구간");
+        break;
+    case 5:
+        ui->label_state_show->setText("주차");
+        break;
+    case 6:
+        ui->label_state_show->setText("차단바");
+        break;
+    case 0:
+        ui->label_state_show->setText("주행");
+        break;
+    default:
+        break;
+    }
 }
 
 void MainWindow::on_pushButton_7_clicked()
@@ -794,13 +854,13 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index)
             ui->label_19->setPixmap(
                 m_img[index].scaled(640, 360, Qt::KeepAspectRatio));
         }
-        ui->label_wl->setPixmap(m_img[index].scaled(290, 163, Qt::KeepAspectRatio));
-        ui->label_yl->setPixmap(m_img[index].scaled(290, 163, Qt::KeepAspectRatio));
-        ui->label_rl->setPixmap(m_img[index].scaled(290, 163, Qt::KeepAspectRatio));
-        ui->label_rt->setPixmap(m_img[index].scaled(290, 163, Qt::KeepAspectRatio));
-        ui->label_yt->setPixmap(m_img[index].scaled(290, 163, Qt::KeepAspectRatio));
-        ui->label_gt->setPixmap(m_img[index].scaled(290, 163, Qt::KeepAspectRatio));
-        ui->label_bb->setPixmap(m_img[index].scaled(290, 163, Qt::KeepAspectRatio));
+        ui->label_wl->setPixmap(m_img[3].scaled(290, 163, Qt::KeepAspectRatio));
+        ui->label_yl->setPixmap(m_img[4].scaled(290, 163, Qt::KeepAspectRatio));
+        ui->label_rl->setPixmap(m_img[5].scaled(290, 163, Qt::KeepAspectRatio));
+        ui->label_rt->setPixmap(m_img[6].scaled(290, 163, Qt::KeepAspectRatio));
+        ui->label_yt->setPixmap(m_img[7].scaled(290, 163, Qt::KeepAspectRatio));
+        ui->label_gt->setPixmap(m_img[8].scaled(290, 163, Qt::KeepAspectRatio));
+        ui->label_bb->setPixmap(m_img[9].scaled(290, 163, Qt::KeepAspectRatio));
     }
 }
 
@@ -1278,17 +1338,17 @@ void MainWindow::on_pushButton_45_clicked()
     HSV_low[17] = v_low["tg"].toInt();
     HSV_low[20] = v_low["bb"].toInt();
 
-    load_vision_data();
+    load_vision_data(0);
 }
 
-void MainWindow::load_vision_data()
+void MainWindow::load_vision_data(int index)
 {
-    ui->horizontalSlider->setValue(HSV_high[0]);
-    ui->horizontalSlider_2->setValue(HSV_low[0]);
-    ui->horizontalSlider_3->setValue(HSV_low[1]);
-    ui->horizontalSlider_4->setValue(HSV_high[1]);
-    ui->horizontalSlider_5->setValue(HSV_low[2]);
-    ui->horizontalSlider_6->setValue(HSV_high[2]);
+    ui->horizontalSlider->setValue(HSV_high[index]);
+    ui->horizontalSlider_2->setValue(HSV_low[index]);
+    ui->horizontalSlider_3->setValue(HSV_low[index + 1]);
+    ui->horizontalSlider_4->setValue(HSV_high[index + 1]);
+    ui->horizontalSlider_5->setValue(HSV_low[index + 2]);
+    ui->horizontalSlider_6->setValue(HSV_high[index + 2]);
     ui->radioButton_7->setChecked(true);
 }
 
@@ -1311,13 +1371,13 @@ void MainWindow::saveJson(const QJsonObject &obj, const QString &filePath)
 void MainWindow::on_pushButton_51_clicked()
 {
     // vision_set0
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 21; i++)
     {
         HSV_high[i] = 0;
         HSV_low[i] = 0;
     }
     vision_hsv_state = 0;
-    load_vision_data();
+    load_vision_data(0);
 }
 
 void MainWindow::on_pushButton_52_clicked()
@@ -1400,6 +1460,7 @@ void MainWindow::on_pushButton_50_clicked()
         QString line = in.readLine();
         int index = (vision_hsv_state - 1) * 3;
 
+        std::cout << index << std::endl;
         if (line.startsWith("H_h="))
             HSV_high[index] = line.split("=")[1].toInt();
         else if (line.startsWith("H_l="))
@@ -1412,8 +1473,8 @@ void MainWindow::on_pushButton_50_clicked()
             HSV_high[index + 2] = line.split("=")[1].toInt();
         else if (line.startsWith("V_l="))
             HSV_low[index + 2] = line.split("=")[1].toInt();
-        else if (line.startsWith("vision_state="))
-            vision_hsv_state = line.split("=")[1].toInt();
+        // else if (line.startsWith("vision_state="))
+        //     vision_hsv_state = line.split("=")[1].toInt();
         file.close();
     }
 }
@@ -1429,12 +1490,14 @@ void MainWindow::on_pushButton_54_clicked()
     }
 
     QTextStream in(&file);
+    int index = (vision_hsv_state - 1) * 3;
+    std::cout << index << std::endl;
     while (!in.atEnd())
     {
         QString line = in.readLine();
-        int index = (vision_hsv_state - 1) * 3;
 
         if (line.startsWith("H_h="))
+
             HSV_high[index] = line.split("=")[1].toInt();
         else if (line.startsWith("H_l="))
             HSV_low[index] = line.split("=")[1].toInt();
@@ -1446,11 +1509,11 @@ void MainWindow::on_pushButton_54_clicked()
             HSV_high[index + 2] = line.split("=")[1].toInt();
         else if (line.startsWith("V_l="))
             HSV_low[index + 2] = line.split("=")[1].toInt();
-        else if (line.startsWith("vision_state="))
-            vision_hsv_state = line.split("=")[1].toInt();
+        // else if (line.startsWith("vision_state="))
+        //     vision_hsv_state = line.split("=")[1].toInt();
         file.close();
     }
-    load_vision_data();
+    load_vision_data(index);
 }
 
 void MainWindow::on_pushButton_56_clicked()
@@ -1464,10 +1527,11 @@ void MainWindow::on_pushButton_56_clicked()
     }
 
     QTextStream in(&file);
+    int index = (vision_hsv_state - 1) * 3;
+    std::cout << index << std::endl;
     while (!in.atEnd())
     {
         QString line = in.readLine();
-        int index = (vision_hsv_state - 1) * 3;
 
         if (line.startsWith("H_h="))
             HSV_high[index] = line.split("=")[1].toInt();
@@ -1481,11 +1545,11 @@ void MainWindow::on_pushButton_56_clicked()
             HSV_high[index + 2] = line.split("=")[1].toInt();
         else if (line.startsWith("V_l="))
             HSV_low[index + 2] = line.split("=")[1].toInt();
-        else if (line.startsWith("vision_state="))
-            vision_hsv_state = line.split("=")[1].toInt();
+        // else if (line.startsWith("vision_state="))
+        //     vision_hsv_state = line.split("=")[1].toInt();
         file.close();
     }
-    load_vision_data();
+    load_vision_data(index);
 }
 
 void MainWindow::on_pushButton_p90_clicked()
@@ -1521,19 +1585,19 @@ void MainWindow::on_pushButton_109_clicked()
 void MainWindow::on_pushButton_110_clicked()
 {
     // construction(combine)
-    driving_state = 2;
+    driving_state = 4;
 }
 
 void MainWindow::on_pushButton_111_clicked()
 {
     // parking(combine)
-    driving_state = 3;
+    driving_state = 5;
 }
 
 void MainWindow::on_pushButton_112_clicked()
 {
     // level_cross(combine)
-    driving_state = 4;
+    driving_state = 6;
 }
 
 void MainWindow::on_pushButton_113_clicked()
@@ -1542,6 +1606,17 @@ void MainWindow::on_pushButton_113_clicked()
     driving_state = 0;
 }
 
+void MainWindow::on_pushButton_drive_clicked()
+{
+    // drive
+    l_start_flag_ = 1;
+}
+
+void MainWindow::on_pushButton_stop_clicked()
+{
+    // driving stop
+    l_start_flag_ = 0;
+}
 // 밑에 키보드 구현-->w s a d home탭에서 이동, space: 정지 enter: pd start
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
@@ -1550,51 +1625,96 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         left_right_ = 0;
         forw_back_ = 1;
         start_flag_ = 1;
-        std::cout << "w key pressed" << std::endl;
+        ui->tabWidget->setCurrentIndex(0);
+        std::cout
+            << "w key pressed" << std::endl;
     }
     else if (event->key() == Qt::Key_S)
     {
         left_right_ = 0;
         forw_back_ = -1;
         start_flag_ = 1;
-        std::cout << "s key pressed" << std::endl;
+        ui->tabWidget->setCurrentIndex(0);
+        std::cout
+            << "s key pressed" << std::endl;
     }
     else if (event->key() == Qt::Key_A)
     {
         left_right_ = 1;
         forw_back_ = 0;
         start_flag_ = 1;
-        std::cout << "a key pressed" << std::endl;
+        ui->tabWidget->setCurrentIndex(0);
+        std::cout
+            << "a key pressed" << std::endl;
     }
     else if (event->key() == Qt::Key_D)
     {
         left_right_ = -1;
         forw_back_ = 0;
         start_flag_ = 1;
-        std::cout << "d key pressed" << std::endl;
+        ui->tabWidget->setCurrentIndex(0);
+        std::cout
+            << "d key pressed" << std::endl;
     }
     else if (event->key() == Qt::Key_Up)
     {
-        x_ += 0.01;
-        ui->doubleSpinBox->setValue(x_);
+        currentIndex = ui->tabWidget->currentIndex();
+        if (currentIndex == 0)
+        {
+            x_ += 0.01;
+            ui->doubleSpinBox->setValue(x_);
+        }
+        else if (currentIndex == 1)
+        {
+            l_x_ += 0.01;
+            ui->doubleSpinBox_5->setValue(l_x_);
+        }
+
         std::cout << "up key pressed" << std::endl;
     }
     else if (event->key() == Qt::Key_Down)
     {
-        x_ -= 0.01;
-        ui->doubleSpinBox->setValue(x_);
+        currentIndex = ui->tabWidget->currentIndex();
+        if (currentIndex == 0)
+        {
+            x_ -= 0.01;
+            ui->doubleSpinBox->setValue(x_);
+        }
+        else if (currentIndex == 1)
+        {
+            l_x_ -= 0.01;
+            ui->doubleSpinBox_5->setValue(l_x_);
+        }
         std::cout << "down key pressed" << std::endl;
     }
     else if (event->key() == Qt::Key_Left)
     {
-        z_ += 0.01;
-        ui->doubleSpinBox_2->setValue(z_);
+        currentIndex = ui->tabWidget->currentIndex();
+        if (currentIndex == 0)
+        {
+            z_ += 0.01;
+            ui->doubleSpinBox_2->setValue(z_);
+        }
+        else if (currentIndex == 1)
+        {
+            l_z_ += 0.01;
+            ui->doubleSpinBox_6->setValue(l_z_);
+        }
         std::cout << "left key pressed" << std::endl;
     }
     else if (event->key() == Qt::Key_Right)
     {
-        z_ -= 0.01;
-        ui->doubleSpinBox_2->setValue(z_);
+        currentIndex = ui->tabWidget->currentIndex();
+        if (currentIndex == 0)
+        {
+            z_ -= 0.01;
+            ui->doubleSpinBox_2->setValue(z_);
+        }
+        else if (currentIndex == 1)
+        {
+            l_z_ -= 0.01;
+            ui->doubleSpinBox_6->setValue(l_z_);
+        }
         std::cout << "right key pressed" << std::endl;
     }
     else if (event->key() == Qt::Key_Space)
@@ -1607,7 +1727,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     else if (event->key() == Qt::Key_Enter)
     {
         l_start_flag_ = 1;
-        std::cout << "enter key pressed" << std::endl;
-        // currentIndex = ui->tabWidget->currentIndex();
+        ui->tabWidget->setCurrentIndex(1);
+        std::cout
+            << "enter key pressed" << std::endl;
     }
 }

@@ -20,6 +20,8 @@ extern int HSV_low[21];
 extern int driving_state;
 extern int currentIndex;
 extern int img_id;
+extern int psd_flag[3];
+extern int traffic_state;
 extern double imu_yaw;
 extern double x_;
 extern double z_;

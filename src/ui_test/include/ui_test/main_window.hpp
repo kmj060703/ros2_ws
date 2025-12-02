@@ -55,7 +55,7 @@ public:
   explicit MainWindow(QWidget *parent = nullptr);
   void saveJson(const QJsonObject &obj, const QString &filePath);
   QJsonObject loadJson(const QString &filePath);
-  void load_vision_data();
+  void load_vision_data(int index);
   ~MainWindow();
 
 private slots:
@@ -175,11 +175,14 @@ private slots:
   void on_pushButton_111_clicked();
   void on_pushButton_112_clicked();
   void on_pushButton_113_clicked();
+  void on_pushButton_drive_clicked();
+  void on_pushButton_stop_clicked();
 
 private:
   Ui::MainWindowDesign *ui;
   void keyPressEvent(QKeyEvent *event);
   void closeEvent(QCloseEvent *event);
+  void combine_callback();
   QPixmap m_img[10];
   QNode *qnode;
   QJsonObject h_high;
@@ -188,6 +191,7 @@ private:
   QJsonObject h_low;
   QJsonObject s_low;
   QJsonObject v_low;
+  QTimer *new_timer1;
 };
 
 #endif // ui_test_MAIN_WINDOW_H
