@@ -9,6 +9,15 @@ int left_right_ = 0;
 int l_start_flag_ = 0;
 int camera_1_state = 0;
 int camera_2_state = 0;
+int vision_hsv_state = 0;
+int HSV_high[21] = {
+0,
+};
+int HSV_low[21] = {
+0,
+};
+int driving_state = 0;
+double imu_yaw = 0;
 double x_ = 0.0;
 double z_ = 0.0;
 double kp_ = 0.0;
@@ -16,3 +25,25 @@ double kd_ = 0.0;
 double l_x_ = 0.0;
 double l_z_ = 0.0;
 double max_vel_ = 0.0;
+cv::Mat line_white_mask;
+cv::Mat line_yellow_mask;
+cv::Mat line_red_mask;
+cv::Mat tra_red_mask;
+cv::Mat tra_yellow_mask;
+cv::Mat tra_green_mask;
+cv::Mat brown_mask;
+cv::Scalar lower_l_white;
+cv::Scalar upper_l_white;
+cv::Scalar lower_l_yellow;
+cv::Scalar upper_l_yellow;
+cv::Scalar lower_l_red;
+cv::Scalar upper_l_red;
+cv::Scalar lower_t_red;
+cv::Scalar upper_t_red;
+cv::Scalar lower_t_yellow;
+cv::Scalar upper_t_yellow;
+cv::Scalar lower_t_green;
+cv::Scalar upper_t_green;
+cv::Scalar lower_brown;
+cv::Scalar upper_brown;
+cv::Mat red_l_mask;

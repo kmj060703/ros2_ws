@@ -17,7 +17,7 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>10</x>
       <y>0</y>
       <width>1031</width>
       <height>931</height>
@@ -27,7 +27,7 @@
      <string notr="true">font: 11pt &quot;Ubuntu&quot;;</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -203,7 +203,7 @@ color:rgb(237, 51, 59);</string>
        <double>0.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>5.000000000000000</double>
+       <double>1.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.010000000000000</double>
@@ -699,7 +699,7 @@ color:rgb(255, 255, 255);</string>
        <double>0.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>5.000000000000000</double>
+       <double>1.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.010000000000000</double>
@@ -1150,10 +1150,1342 @@ color:rgb(0, 0, 0);</string>
      <zorder>pushButton_42</zorder>
      <zorder>pushButton_43</zorder>
     </widget>
+    <widget class="QWidget" name="tab_4">
+     <attribute name="title">
+      <string>Vision helper</string>
+     </attribute>
+     <widget class="QSlider" name="horizontalSlider">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>670</y>
+        <width>301</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="horizontalSlider_2">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>750</y>
+        <width>301</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="horizontalSlider_3">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>750</y>
+        <width>301</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="horizontalSlider_4">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>670</y>
+        <width>301</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="horizontalSlider_5">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>750</y>
+        <width>301</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="horizontalSlider_6">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>670</y>
+        <width>301</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_wl">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>30</y>
+        <width>290</width>
+        <height>163</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_yl">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>30</y>
+        <width>290</width>
+        <height>163</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_rl">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>30</y>
+        <width>290</width>
+        <height>163</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_rt">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>240</y>
+        <width>290</width>
+        <height>163</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_yt">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>240</y>
+        <width>290</width>
+        <height>163</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_gt">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>441</y>
+        <width>290</width>
+        <height>163</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_bb">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>440</y>
+        <width>290</width>
+        <height>163</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_26">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>660</y>
+        <width>291</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Hue_high</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_35">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>740</y>
+        <width>291</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Hue_low</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_36">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>660</y>
+        <width>171</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Saturation_high</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_37">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>660</y>
+        <width>291</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Value_high</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_38">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>740</y>
+        <width>291</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Value_low</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_39">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>740</y>
+        <width>291</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Saturation_low</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_7">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>260</y>
+        <width>151</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>White_line</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_8">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>310</y>
+        <width>151</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Yellow_line</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_9">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>360</y>
+        <width>151</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Red_line</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_10">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>410</y>
+        <width>151</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Red_traffic</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_11">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>510</y>
+        <width>151</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Green_traffic</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_12">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>460</y>
+        <width>151</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Yellow_traffic</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_13">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>560</y>
+        <width>151</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Brown_bricks</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_40">
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>180</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>White_line</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_41">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>180</y>
+        <width>141</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Yellow_line</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_42">
+      <property name="geometry">
+       <rect>
+        <x>800</x>
+        <y>180</y>
+        <width>91</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Red_line</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_43">
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>390</y>
+        <width>131</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Red_traffic</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_44">
+      <property name="geometry">
+       <rect>
+        <x>430</x>
+        <y>390</y>
+        <width>291</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Yellow_traffic</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_45">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>590</y>
+        <width>151</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Green_traffic</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_46">
+      <property name="geometry">
+       <rect>
+        <x>440</x>
+        <y>590</y>
+        <width>171</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Brown_bricks</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_44">
+      <property name="geometry">
+       <rect>
+        <x>660</x>
+        <y>840</y>
+        <width>171</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+background-color:rgb(153, 193, 241);
+color:rgb(0, 0, 0);
+</string>
+      </property>
+      <property name="text">
+       <string>file save</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_45">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>840</y>
+        <width>171</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+background-color:rgb(249, 240, 107);
+color:rgb(0, 0, 0);</string>
+      </property>
+      <property name="text">
+       <string>file load</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_50">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>850</y>
+        <width>71</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 13pt &quot;Ubuntu&quot;;
+</string>
+      </property>
+      <property name="text">
+       <string>set1</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_51">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>820</y>
+        <width>101</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+background-color:rgb(61, 56, 70);
+color:rgb(237, 51, 59);
+</string>
+      </property>
+      <property name="text">
+       <string>set 0</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_52">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>820</y>
+        <width>71</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 13pt &quot;Ubuntu&quot;;
+</string>
+      </property>
+      <property name="text">
+       <string>save1</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_53">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>820</y>
+        <width>71</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 13pt &quot;Ubuntu&quot;;
+</string>
+      </property>
+      <property name="text">
+       <string>save2</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_54">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>850</y>
+        <width>71</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 13pt &quot;Ubuntu&quot;;
+</string>
+      </property>
+      <property name="text">
+       <string>set2</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_55">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>820</y>
+        <width>71</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 13pt &quot;Ubuntu&quot;;
+</string>
+      </property>
+      <property name="text">
+       <string>save3</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_56">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>850</y>
+        <width>71</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 13pt &quot;Ubuntu&quot;;
+</string>
+      </property>
+      <property name="text">
+       <string>set3</string>
+      </property>
+     </widget>
+    </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
-      <string>Odometry show</string>
+      <string>Combine</string>
      </attribute>
+     <widget class="QWidget" name="widget_15" native="true">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>511</width>
+        <height>411</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
+background-color:rgb(255, 255, 255);</string>
+      </property>
+      <widget class="QLabel" name="label_63">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>0</y>
+         <width>131</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+background-color:rgb(0, 0, 0);
+color:rgb(255, 255, 255);</string>
+       </property>
+       <property name="text">
+        <string>Yaw</string>
+       </property>
+      </widget>
+      <widget class="QDial" name="dial">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>341</width>
+         <height>301</height>
+        </rect>
+       </property>
+       <property name="notchesVisible">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_setYaw">
+       <property name="geometry">
+        <rect>
+         <x>340</x>
+         <y>280</y>
+         <width>141</width>
+         <height>71</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+</string>
+       </property>
+       <property name="text">
+        <string>Set Yaw</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_p90">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>60</y>
+         <width>101</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+</string>
+       </property>
+       <property name="text">
+        <string>+90</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_m90">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>130</y>
+         <width>101</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+</string>
+       </property>
+       <property name="text">
+        <string>-90</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_p180">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>200</y>
+         <width>101</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+</string>
+       </property>
+       <property name="text">
+        <string>+180</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="widget_16" native="true">
+      <property name="geometry">
+       <rect>
+        <x>520</x>
+        <y>10</y>
+        <width>491</width>
+        <height>191</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
+background-color:rgb(255, 255, 255);</string>
+      </property>
+      <widget class="QLabel" name="label_65">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>0</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 15pt &quot;Ubuntu&quot;;
+background-color:rgb(0, 0, 0);
+color:rgb(255, 255, 255);</string>
+       </property>
+       <property name="text">
+        <string>Psd</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_p_left">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>50</y>
+         <width>191</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_p_right">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>50</y>
+         <width>191</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_p_forward">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>110</y>
+         <width>191</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_86">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>30</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+       </property>
+       <property name="text">
+        <string>Left</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_87">
+       <property name="geometry">
+        <rect>
+         <x>390</x>
+         <y>30</y>
+         <width>71</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+       </property>
+       <property name="text">
+        <string>Right</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_88">
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>170</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+       </property>
+       <property name="text">
+        <string>Forward</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="widget_17" native="true">
+      <property name="geometry">
+       <rect>
+        <x>520</x>
+        <y>200</y>
+        <width>491</width>
+        <height>221</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
+background-color:rgb(255, 255, 255);</string>
+      </property>
+      <widget class="QLabel" name="label_69">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>0</y>
+         <width>101</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 15pt &quot;Ubuntu&quot;;
+background-color:rgb(0, 0, 0);
+color:rgb(255, 255, 255);</string>
+       </property>
+       <property name="text">
+        <string>Flag</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_f_psd">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>40</y>
+         <width>351</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_f_traf">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>100</y>
+         <width>351</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_f_blank">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>160</y>
+         <width>351</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_81">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>50</y>
+         <width>51</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+       </property>
+       <property name="text">
+        <string>Psd</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_82">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>110</y>
+         <width>81</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+       </property>
+       <property name="text">
+        <string>Traffic</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_83">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>170</y>
+         <width>81</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+       </property>
+       <property name="text">
+        <string>Any</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QPushButton" name="pushButton_109">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>460</y>
+        <width>161</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 17pt &quot;Ubuntu&quot;;
+</string>
+      </property>
+      <property name="text">
+       <string>Intersection</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_state_show">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>460</y>
+        <width>181</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_76">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>430</y>
+        <width>141</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Live State</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_77">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>430</y>
+        <width>141</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>State controll</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_110">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>460</y>
+        <width>161</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 17pt &quot;Ubuntu&quot;;
+</string>
+      </property>
+      <property name="text">
+       <string>Construction</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_111">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>460</y>
+        <width>161</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 17pt &quot;Ubuntu&quot;;
+</string>
+      </property>
+      <property name="text">
+       <string>Parking</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_112">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>460</y>
+        <width>161</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 17pt &quot;Ubuntu&quot;;
+</string>
+      </property>
+      <property name="text">
+       <string>Level Cross</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_113">
+      <property name="geometry">
+       <rect>
+        <x>850</x>
+        <y>460</y>
+        <width>161</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 17pt &quot;Ubuntu&quot;;
+</string>
+      </property>
+      <property name="text">
+       <string>Default</string>
+      </property>
+     </widget>
+     <widget class="QDial" name="dial_5">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>530</y>
+        <width>381</width>
+        <height>341</height>
+       </rect>
+      </property>
+      <property name="notchesVisible">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QDial" name="dial_6">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>530</y>
+        <width>381</width>
+        <height>341</height>
+       </rect>
+      </property>
+      <property name="notchesVisible">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_74">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>850</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;
+background-color:rgb(0, 0, 0);
+color:rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>   linear.x</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_78">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>850</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 15pt &quot;Ubuntu&quot;;
+background-color:rgb(0, 0, 0);
+color:rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>  angular.z</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_x_vel">
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>730</y>
+        <width>181</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_z_vel">
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>820</y>
+        <width>181</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+background-color:rgb(222, 221, 218);
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_drive">
+      <property name="geometry">
+       <rect>
+        <x>430</x>
+        <y>540</y>
+        <width>161</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 25pt &quot;Ubuntu&quot;;
+background-color:rgb(143, 240, 164);
+color:rgb(0, 0, 0);
+</string>
+      </property>
+      <property name="text">
+       <string>Drive</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_stop">
+      <property name="geometry">
+       <rect>
+        <x>430</x>
+        <y>620</y>
+        <width>161</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 25pt &quot;Ubuntu&quot;;
+background-color:rgb(246, 97, 81);
+color:rgb(0, 0, 0);</string>
+      </property>
+      <property name="text">
+       <string>stop</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QLabel" name="label_16">
