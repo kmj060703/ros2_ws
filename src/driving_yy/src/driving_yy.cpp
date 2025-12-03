@@ -200,7 +200,7 @@ void DrivingYY::drive_callback()
     if(traffic_light_status_!=0){
         Traffic_light();
     }
-    else if(Traffic_light_status==0){
+    else if(traffic_light_status_==0){
         PD_control();
     }
     driving_msg.linear.y = 0;

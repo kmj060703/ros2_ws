@@ -24,9 +24,9 @@ public:
     void Construction();
     void Parking();
     void Level_crossing();
-    void total_driving()
+    void total_driving();
 
-        int l_start_flag = 0;
+    int l_start_flag = 0;
     int start_flag = 0;
     double kp;
     double kd;

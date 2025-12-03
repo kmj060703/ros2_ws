@@ -417,13 +417,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if (getenv("DISPLAY") == nullptr)
-    {
-        std::cerr << "ERROR: DISPLAY environment variable not set!" << std::endl;
-        close(udp_sock);
-        return 1;
-    }
-
     auto node = std::make_shared<ImageViewer>();
     std::thread t(gui_thread);
     t.detach();
