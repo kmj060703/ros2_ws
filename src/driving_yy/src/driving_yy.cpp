@@ -125,9 +125,9 @@ void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHy
 
 void DrivingYY::PD_control()
 {
-    // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
-    // "[DEBUG] flags: start_flag=%d, l_start_flag=%d, error=%.2f",
-    // start_flag, l_start_flag, error);
+    RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
+    "[DEBUG] flags: start_flag=%d, l_start_flag=%d, error=%.2f",
+    start_flag, l_start_flag, error);
 
     z = kp * error + kd * (error - last_error);
     

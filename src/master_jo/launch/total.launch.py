@@ -13,6 +13,22 @@ def generate_launch_description():
         ),
 
         Node(
+            package='master_jo',
+            executable='imu_jo',
+            name='imu_jo',
+            output='screen',
+            emulate_tty=True,
+        ),
+
+        Node(
+            package='master_jo',
+            executable='psd_jo',
+            name='psd_jo',
+            output='screen',
+            emulate_tty=True,
+        ),
+
+        Node(
             package='driving_yy',
             executable='driving_yy_node',
             name='driving_yy',
