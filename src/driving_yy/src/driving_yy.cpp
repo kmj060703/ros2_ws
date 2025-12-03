@@ -129,24 +129,6 @@ void DrivingYY::PD_control()
     // "[DEBUG] flags: start_flag=%d, l_start_flag=%d, error=%.2f",
     // start_flag, l_start_flag, error);
 
-    auto msg = geometry_msgs::msg::Twist();
-    //이쯤에 선 안보일때 어떻게 해야하는지 추가
-    // if(abs(error)>=50){
-    //     if(def_turn_x==0) x=0.01;
-    //     else x=def_turn_x;
-
-    //     if(error<0){
-    //         if(def_turn_z==0)
-    //         z=-0.1;
-    //         else z=-def_turn_z;
-    //     }
-    //     else if(error>0){
-    //         if(def_turn_z==0)
-    //         z=0.1;
-    //         else z=def_turn_z;
-    //     }
-    // }
-    // else{
     z = kp * error + kd * (error - last_error);
     
     // 디버깅 출력 추가
@@ -170,33 +152,63 @@ void DrivingYY::PD_control()
         z = -std::min(z, 10.0);
     //}
 
-    if (l_start_flag == 1&&traffic_light_status_!=1)
+    if (l_start_flag == 1)
     {
-        msg.linear.x = x;
-        msg.angular.z = z;
+        driving_msg.linear.x = x;
+        driving_msg.angular.z = z;
         
         // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
         //     "Publishing: x=%.4f, z=%.4f", msg.linear.x, msg.angular.z);
     }
     else
     {
-        msg.linear.x = 0;
-        msg.angular.z = 0;
+        driving_msg.linear.x = 0;
+        driving_msg.angular.z = 0;
     }
 
-    msg.linear.y = 0;
-    msg.linear.z = 0;
-    msg.angular.x = 0;
-    msg.angular.y = 0;
-
-    if(start_flag == 0)
-        publisher_drive->publish(msg);
 }
 
+void DrivingYY::Traffic_light(){
+    switch (traffic_light_status_)
+    {
+    case 1:{driving_msg.linear.x=0;driving_msg.angular.z=0;}
+        break;
+    
+    default://노란색 감지를 위해 비워 놓는 것이다...
+        break;
+    }
+}
+void DrivingYY::Itersection(){
+
+}
+void DrivingYY::Construction(){
+
+}
+void DrivingYY::Parking(){
+
+}
+void DrivingYY::Level_crossing(){
+
+}
+void DrivingYY::total_driving(){
+//여기가 전체 제어..일단 만들어둠
+}
 
 void DrivingYY::drive_callback()
 {
-    PD_control();
+    
+    if(traffic_light_status_!=0){
+        Traffic_light();
+    }
+    else if(Traffic_light_status==0){
+        PD_control();
+    }
+    driving_msg.linear.y = 0;
+    driving_msg.linear.z = 0;
+    driving_msg.angular.x = 0;
+    driving_msg.angular.y = 0;
+    if(start_flag == 0)
+        publisher_drive->publish(driving_msg);
 }
 
 int main(int argc, char **argv)

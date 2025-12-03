@@ -19,8 +19,15 @@ class DrivingYY : public rclcpp::Node
 public:
     DrivingYY();
     void PD_control();
-    int l_start_flag = 0;
-    int start_flag=0;
+    void Traffic_light();
+    void Itersection();
+    void Construction();
+    void Parking();
+    void Level_crossing();
+    void total_driving()
+
+        int l_start_flag = 0;
+    int start_flag = 0;
     double kp;
     double kd;
     double x;
@@ -42,14 +49,16 @@ private:
     void pixel_diff_callback(const autorace_interfaces::msg::MasterJo::SharedPtr msg);
     void vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg);
 
+    geometry_msgs::msg::Twist driving_msg;
+
     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr imu_sub_;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_front_sub_;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_left_sub_;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_right_sub_;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr flag_sub_;
-    rclcpp::Subscription<autorace_interfaces::msg::Ui2Driving>::SharedPtr ui_sub_; //ui명령
-    rclcpp::Subscription<autorace_interfaces::msg::MasterJo>::SharedPtr pixel_diff_sub_; //PD error값
-    rclcpp::Subscription<autorace_interfaces::msg::VisionHyun>::SharedPtr vision_traffic_sub_; //신호등
+    rclcpp::Subscription<autorace_interfaces::msg::Ui2Driving>::SharedPtr ui_sub_;             // ui명령
+    rclcpp::Subscription<autorace_interfaces::msg::MasterJo>::SharedPtr pixel_diff_sub_;       // PD error값
+    rclcpp::Subscription<autorace_interfaces::msg::VisionHyun>::SharedPtr vision_traffic_sub_; // 신호등
 
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_drive;
 
