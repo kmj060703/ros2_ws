@@ -37,6 +37,10 @@ public:
     double max_x;
     double def_turn_x;
     double def_turn_z;
+    int yellow_x;
+    int white_x;
+    int yellow_diff;
+    int white_diff;
 
 private:
     void imu_callback(const geometry_msgs::msg::Vector3::SharedPtr msg);

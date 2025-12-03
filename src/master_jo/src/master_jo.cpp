@@ -131,6 +131,10 @@ void MasterJo::vision_callback(const autorace_interfaces::msg::VisionHyun::Share
   auto diff_msg = autorace_interfaces::msg::MasterJo();
 
   diff_msg.pixel_diff = pixel_diff;
+  diff_msg.yellow_diff = yellow_diff;
+  diff_msg.white_diff = white_diff;
+  diff_msg.yellow_x = yellow_x;
+  diff_msg.white_x = white_x;
 
   pixel_diff_pub_->publish(diff_msg);
 }
