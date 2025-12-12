@@ -10,7 +10,7 @@ class ImageSubscriber(Node):
     def __init__(self):
         super().__init__('turtlebot_vision_subscriber')
         
-        self.model = YOLO('/home/kmj/Downloads/best.pt')
+        self.model = YOLO('src/best.pt')
         
         self.subscription = self.create_subscription(
             Image,

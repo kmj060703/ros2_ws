@@ -188,6 +188,16 @@ void DrivingYY::Traffic_light()
 }
 void DrivingYY::Itersection()
 {
+
+    if(mission_flag_==2){
+        driving_msg.linear.x = 0.02;
+        driving_msg.angular.z = 0.05;
+    }
+    else if(mission_flag_==3){
+        driving_msg.linear.x = 0.02;
+        driving_msg.angular.z =-0.05;
+    }    
+    
 }
 void DrivingYY::Construction()
 {
@@ -212,6 +222,7 @@ void DrivingYY::drive_callback()
     }
     else if (traffic_light_status_ == 0)
     {
+        Itersection();
         PD_control();
     }
     driving_msg.linear.y = 0;

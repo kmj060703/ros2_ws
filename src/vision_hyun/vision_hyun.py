@@ -11,13 +11,13 @@ last_blink_time = 0
 blink_visible = True
 BLINK_INTERVAL = 500
 
-UDP_IP = "192.168.0.23"
+UDP_IP = "223.194.43.153"
 UDP_PORT = 5000
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 time.sleep(2)
 
-model = YOLO("yolov8n.pt")
+model = YOLO("src/best.pt")
 
 cap = cv2.VideoCapture(0) # 여기에 UDP 수신한 영상받기
 

@@ -11,7 +11,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <math.h>
 
-#define REMOTE_IP "223.194.43.127"
+#define REMOTE_IP "223.194.43.153"
 #define REMOTE_PORT 9999 // UI용 포트 하나만 사용
 #define PACKET_SIZE 4096
 
@@ -323,23 +323,27 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     }
                 }
 
-                int center = -1;
+                int center_y = -1;
+                int center_w = -1;
+                int center_yw = -1;
                 if (yellow_x != -1 && white_x != -1)
-                    center = (yellow_x + white_x) / 2;
-                else if (yellow_x != -1)
-                    center = yellow_x + 235;
-                else if (white_x != -1)
-                    center = white_x - 235;
+                    center_yw = (yellow_x + white_x) / 2;
+                if (yellow_x != -1)
+                    center_y = yellow_x + 235;
+                if (white_x != -1)
+                    center_w = white_x - 235;
 
-                if (center != -1)
+                if (!(center_w==center_yw&&center_y==center_yw&&center_yw==-1))
                 {
-                    cv::line(birdeye_with_lines, cv::Point(center, i), cv::Point(center, i), cv::Scalar(0, 255, 0), 1);
+                    cv::line(birdeye_with_lines, cv::Point(center_yw, i), cv::Point(center_yw, i), cv::Scalar(0, 255, 0), 1);
+                    cv::line(birdeye_with_lines, cv::Point(center_w, i), cv::Point(center_w, i), cv::Scalar(255, 255, 255), 1);
+                    cv::line(birdeye_with_lines, cv::Point(center_y, i), cv::Point(center_y, i), cv::Scalar(255, 255, 0), 1);
                     // 제어 기준선 (y=350)
                     if (i == 350)
                     {
-                        global_center_x = center;
-                        global_yellow_x = yellow_x;
-                        global_white_x = white_x;
+                        global_center_x = center_yw;
+                        global_yellow_x = center_y;
+                        global_white_x = center_w;
                         global_yellow_diff = (yellow_x != -1) ? yellow_x - 320 : 0;
                         global_white_diff = (white_x != -1) ? white_x - 320 : 0;
                     }
@@ -380,8 +384,8 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
         이런게 있다*/
 
         msg_data->center_x = global_center_x;
-        msg_data->yellow_x = yellow_x;
-        msg_data->white_x = white_x;
+        msg_data->yellow_x = global_yellow_x;
+        msg_data->white_x = global_white_x;
         msg_data->yellow_diff = global_yellow_diff;
         msg_data->white_diff = global_white_diff;
         msg_data->traffic_light = traffic_light_state;
