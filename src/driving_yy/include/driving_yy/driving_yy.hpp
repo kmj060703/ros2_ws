@@ -77,9 +77,12 @@ private:
     double current_pixel_diff_ = 0;
     int traffic_light_status_ = 0;
     int brown_count = 0;
-    
+    int timer = 0;
+
       //장애물용 기억
-    int Construction_mem = 1 ;
+    int Construction_mem = 1 ;//(0=노랑 중심, 1=하양 중심)
+    int local_yaw = 0 ;
+    int state=0; //상태: 0= 주행, 1= 정렬, 2= 회전, ...
     rclcpp::TimerBase::SharedPtr drive_timer;
 };
 

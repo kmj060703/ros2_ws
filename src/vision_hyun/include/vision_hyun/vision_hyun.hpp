@@ -72,9 +72,9 @@ private:
   cv::Scalar lower_green = cv::Scalar(160, 50, 50);
   cv::Scalar upper_green = cv::Scalar(179, 255, 255);
 
-  cv::Scalar lower_brown = cv::Scalar(0, 10, 30);
+  cv::Scalar lower_brown = cv::Scalar(0, 50, 50);
   cv::Scalar upper_brown = cv::Scalar(15, 190, 195);
-  cv::Scalar lower_brown_2 = cv::Scalar(165, 10, 30);
+  cv::Scalar lower_brown_2 = cv::Scalar(165, 50, 50);
   cv::Scalar upper_brown_2 = cv::Scalar(180, 190, 195);
 
   // 사다리꼴 원본 좌표 (feed 640x360 기준)

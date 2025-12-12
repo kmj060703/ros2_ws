@@ -366,10 +366,10 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             //갈색
             brown_pixel_count=0;
             for(int i=0;i<brown_mask.cols;i++){
-                if (brown_mask.at<uchar>(detect_line, i) > 0)
+                if (brown_mask.at<uchar>(detect_line-100, i) > 0)
                     {
                         brown_pixel_count++;
-                        cv::line(birdeye_with_lines, cv::Point(i, detect_line), cv::Point(i, detect_line), cv::Scalar(125, 50, 0), 1);
+                        cv::line(birdeye_with_lines, cv::Point(i, detect_line-100), cv::Point(i, detect_line-100), cv::Scalar(125, 50, 0), 1);
 
                 }
             
