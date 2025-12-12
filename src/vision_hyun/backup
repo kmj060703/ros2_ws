@@ -388,6 +388,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
         msg_out4->yellow_diff = global_yellow_diff;
         msg_out4->white_diff = global_white_diff;
         msg_out4->traffic_light = traffic_light_state; // 아무것도 아닐 때 0 || 빨간색 1 || 초록색 2
+        
 
         publisher_->publish(*msg_out);
         publisher_2->publish(*msg_out2);

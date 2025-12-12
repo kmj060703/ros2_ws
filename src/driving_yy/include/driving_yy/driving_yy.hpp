@@ -76,6 +76,10 @@ private:
     int mission_flag_ = 0;
     double current_pixel_diff_ = 0;
     int traffic_light_status_ = 0;
+    int brown_count = 0;
+    
+      //장애물용 기억
+    int Construction_mem = 1 ;
     rclcpp::TimerBase::SharedPtr drive_timer;
 };
 

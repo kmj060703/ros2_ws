@@ -5,3 +5,4 @@ int32 white_x
 int32 yellow_diff
 int32 white_diff
 int32 traffic_light
+int32 brown_count

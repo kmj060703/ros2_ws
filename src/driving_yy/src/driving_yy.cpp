@@ -113,6 +113,9 @@ void DrivingYY::pixel_diff_callback(const autorace_interfaces::msg::MasterJo::Sh
 void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg)
 {
     traffic_light_status_ = msg->traffic_light;
+    brown_count =msg->brown_count;
+
+
 
     if (traffic_light_status_ == 1)
     {
@@ -210,6 +213,23 @@ void DrivingYY::Itersection()
 }
 void DrivingYY::Construction()
 {
+    if(mission_flag_==4){
+        // if()
+        // current_yaw_=
+    
+        // if(Construction_mem==0){//좌
+        //     if((error_y==-321&&error_w==-321)||(error_y==-321&&z<=0)){
+        //         driving_msg.linear.x =0.09;
+        //         driving_msg.angular.z =  0.35;
+        //     }
+        // }
+        // else if(Construction_mem==1){//우
+        //     if((error_y==-321&&error_w==-321)||(error_w==-321&&z>=0)){
+        //         driving_msg.linear.x =0.09;
+        //         driving_msg.angular.z =  -0.35;
+        //     }
+        // }
+    }
 }
 void DrivingYY::Parking()
 {

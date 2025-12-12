@@ -21,7 +21,7 @@ extern cv::Mat white_mask;
 extern cv::Mat red_mask;
 extern cv::Mat green_mask;
 extern cv::Mat red_and_green_mask;
-extern cv::Mat brown_mask;
+extern cv::Mat brown_mask,brown_mask_2;
 extern cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy, red_and_green_mask_copy, brown_copy;
 
 // 전역 변수 추가
@@ -35,6 +35,7 @@ extern int white_x;
 
 // 신호등 감지 여부
 extern int traffic_light_state;
+extern int brown_pixel_count;
 
 // red && green 탐지 범위
 extern int detect_x_start;
@@ -70,8 +71,11 @@ private:
 
   cv::Scalar lower_green = cv::Scalar(160, 50, 50);
   cv::Scalar upper_green = cv::Scalar(179, 255, 255);
-  cv::Scalar lower_brown = cv::Scalar(50, 100, 150);
-  cv::Scalar upper_brown = cv::Scalar(90, 255, 255);
+
+  cv::Scalar lower_brown = cv::Scalar(0, 10, 30);
+  cv::Scalar upper_brown = cv::Scalar(15, 190, 195);
+  cv::Scalar lower_brown_2 = cv::Scalar(165, 10, 30);
+  cv::Scalar upper_brown_2 = cv::Scalar(180, 190, 195);
 
   // 사다리꼴 원본 좌표 (feed 640x360 기준)
   float distort_L_top_x = 160.0;
@@ -113,10 +117,14 @@ private:
   int red_pixel_count = 0;
   int green_pixel_count = 0;
   int yellow_pixel_count = 0 ;
+
+  int brown_pixel_count=0;
   // 신호등 상태 판단
   int red_threshold = 150;
   int green_threshold = 250;
   int yellow_threshold = 300;
+
+
 };
 
 #endif // IMAGE_VIEWER_HPP

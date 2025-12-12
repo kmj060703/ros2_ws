@@ -48,9 +48,9 @@ void ImuJo::topic_callback(const sensor_msgs::msg::Imu::SharedPtr msg)
     double corrected_yaw = atan2(sin(current_yaw - yaw_offset_), cos(current_yaw - yaw_offset_));
     
     auto angle_msg = geometry_msgs::msg::Vector3();
-    angle_msg.x = roll;
-    angle_msg.y = pitch;
-    angle_msg.z = corrected_yaw;
+    angle_msg.x = roll*60;
+    angle_msg.y = pitch*60;
+    angle_msg.z = corrected_yaw*60;
 
     angle_pub_->publish(angle_msg);
 }
