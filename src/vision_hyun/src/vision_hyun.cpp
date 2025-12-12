@@ -348,6 +348,18 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     }
                 }
             }
+            //갈색
+            brown_pixel_count=0;
+            for(int i=0;i<brown_mask.cols;i++){
+                
+                if (brown_mask.at<uchar>(detect_line-160, i) > 0)
+                    {
+                        brown_pixel_count++;
+                        cv::line(birdeye_with_lines, cv::Point(i, detect_line-160), cv::Point(i, detect_line-160), cv::Scalar(255, 125, 125), 3);
+
+                }
+            
+            }
 
             
             cv::line(birdeye_with_lines, cv::Point(0, detect_line), cv::Point(640, detect_line), cv::Scalar(255, 0, 255), 3);
@@ -363,17 +375,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             total_birdeye = yellow_mask + white_mask;
             red_and_green_mask = red_mask + green_mask;
 
-            //갈색
-            brown_pixel_count=0;
-            for(int i=0;i<brown_mask.cols;i++){
-                if (brown_mask.at<uchar>(detect_line-100, i) > 0)
-                    {
-                        brown_pixel_count++;
-                        cv::line(birdeye_with_lines, cv::Point(i, detect_line-100), cv::Point(i, detect_line-100), cv::Scalar(125, 50, 0), 1);
-
-                }
             
-            }
         }
 
     send_udp_image(frame, 0);
