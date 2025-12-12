@@ -18,52 +18,21 @@ void PsdJo::topic_callback(const std_msgs::msg::UInt16MultiArray::SharedPtr msg)
     uint16_t left_adc = msg->data[1];
     uint16_t right_adc = msg->data[2];
 
-    auto msg_f = std_msgs::msg::Int32();
-    auto msg_l = std_msgs::msg::Int32();
-    auto msg_r = std_msgs::msg::Int32();
+    std_msgs::msg::Int32 msg_f;
+    std_msgs::msg::Int32 msg_l;
+    std_msgs::msg::Int32 msg_r;
 
-    if (front_adc > detect_object_f)
-    {
-        flag_f++;
-        if (flag_f > 3)
-        {
-            msg_f.data = 1;
-        }
-    }
-    else
-    {
-        flag_f = 0;
-    }
-    if (left_adc > detect_object_l)
-    {
-        flag_l++;
-        if (flag_l > 3)
-        {
-            msg_l.data = 1;
-        }
-    }
-    else
-    {
-        flag_l = 0;
-    }
-    if (right_adc > detect_object_r)
-    {
-        flag_r++;
-        if (flag_r > 3)
-        {
-            msg_r.data = 1;
-        }
-    }
-    else
-    {
-        flag_r = 0;
-    }
+    msg_f.data = front_adc;
+    msg_l.data = left_adc;
+    msg_r.data = right_adc;
 
     pub_front_->publish(msg_f);
     pub_left_->publish(msg_l);
     pub_right_->publish(msg_r);
 
-    RCLCPP_INFO(this->get_logger(), "F:%d L:%d R:%d F_ADC: %d L_ADC: %d R_ADC: %d", msg_f.data, msg_l.data, msg_r.data, front_adc, left_adc, right_adc);
+    RCLCPP_INFO(this->get_logger(),
+                "F_ADC: %d  L_ADC: %d  R_ADC: %d",
+                front_adc, left_adc, right_adc);
 }
 
 int main(int argc, char **argv)

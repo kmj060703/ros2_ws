@@ -18,13 +18,6 @@ private:
     rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr pub_front_;
     rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr pub_left_;
     rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr pub_right_;
-
-    const uint16_t detect_object_f = 800;
-    const uint16_t detect_object_l = 520; 
-    const uint16_t detect_object_r = 560; 
-    int flag_f = 0;
-    int flag_l = 0;
-    int flag_r = 0;
 };
 
 #endif
