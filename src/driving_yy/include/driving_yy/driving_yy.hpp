@@ -33,6 +33,9 @@ public:
     double x;
     double z;
     double error;
+    double error_yw;
+    double error_w;
+    double error_y;
     double last_error;
     double max_x;
     double def_turn_x;

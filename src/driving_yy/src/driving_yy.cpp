@@ -9,6 +9,9 @@ DrivingYY::DrivingYY() : Node("driving_yy")
     x = 0.0;
     z = 0.0;
     error = 0.0;
+    error_yw = 0.0;
+    error_w = 0.0;
+    error_y = 0.0;
     last_error = 0.0;
     max_x = 0.0;
     def_turn_x = 0;
@@ -100,11 +103,9 @@ void DrivingYY::ui_callback(const autorace_interfaces::msg::Ui2Driving::SharedPt
 
 void DrivingYY::pixel_diff_callback(const autorace_interfaces::msg::MasterJo::SharedPtr msg)
 {
-    error = msg->pixel_diff;
-    yellow_x = msg->yellow_x;
-    white_x = msg->white_x;
-    yellow_diff = msg->yellow_diff;
-    white_diff = msg->white_diff;
+    error_yw = msg->pixel_diff;
+    error_y = msg->yellow_diff;
+    error_w = msg->white_diff;
 
     // RCLCPP_INFO(this->get_logger(), "Pixel Diff: %f", error);
 }
@@ -129,6 +130,17 @@ void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHy
 
 void DrivingYY::PD_control()
 {
+    if(error_yw!=-321){
+        error=error_yw;
+    }
+    else if(error_y!=-321){
+        error=error_y;
+    }
+    else if(error_w!=-321){
+        error=error_w;
+    }
+
+
     RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
                          "[DEBUG] flags: start_flag=%d, l_start_flag=%d, error=%.2f",
                          start_flag, l_start_flag, error);
@@ -136,9 +148,9 @@ void DrivingYY::PD_control()
     z = kp * error + kd * (error - last_error);
 
     // 디버깅 출력 추가
-    // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
-    //     "error=%.2f, last_error=%.2f, kp=%.2f, kd=%.2f, z=%.4f",
-    //     error, last_error, kp, kd, z);
+    RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+        "error=%.2f, last_error=%.2f, kp=%.2f, kd=%.2f, z=%.4f",
+        error, last_error, kp, kd, z);
 
     last_error = error;
 
@@ -151,24 +163,17 @@ void DrivingYY::PD_control()
     //     "ratio=%.2f, x_raw=%.4f, x=%.4f", ratio, x_raw, x);
 
     if (z < 0)
-        z = -std::max(z, -10.0);
+        z = -std::max(z, -0.46);
     else
-        z = -std::min(z, 10.0);
+        z = -std::min(z, 0.46);
     //}
 
-    if (l_start_flag == 1)
-    {
         driving_msg.linear.x = x;
         driving_msg.angular.z = z;
 
         // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
-        //     "Publishing: x=%.4f, z=%.4f", msg.linear.x, msg.angular.z);
-    }
-    else
-    {
-        driving_msg.linear.x = 0;
-        driving_msg.angular.z = 0;
-    }
+        //     "Publishing: x=%.4f, z=%.4f", driving_msg.linear.x, driving_msg.angular.z);
+
 }
 
 void DrivingYY::Traffic_light()
@@ -188,15 +193,19 @@ void DrivingYY::Traffic_light()
 }
 void DrivingYY::Itersection()
 {
-
-    if(mission_flag_==2){
-        driving_msg.linear.x = 0.02;
-        driving_msg.angular.z = 0.05;
+ 
+    if(mission_flag_==2){//좌
+        if((error_y==-321&&error_w==-321)||(error_y==-321&&z<=0)){
+            driving_msg.linear.x =0.09;
+            driving_msg.angular.z =  0.35;
+        }
     }
-    else if(mission_flag_==3){
-        driving_msg.linear.x = 0.02;
-        driving_msg.angular.z =-0.05;
-    }    
+    else if(mission_flag_==3){//우
+        if((error_y==-321&&error_w==-321)||(error_w==-321&&z>=0)){
+            driving_msg.linear.x =0.09;
+            driving_msg.angular.z =  -0.35;
+        }
+    }
     
 }
 void DrivingYY::Construction()
@@ -215,15 +224,25 @@ void DrivingYY::total_driving()
 
 void DrivingYY::drive_callback()
 {
-
-    if (traffic_light_status_ != 0)
-    {
-        Traffic_light();
-    }
-    else if (traffic_light_status_ == 0)
-    {
-        Itersection();
+    if (l_start_flag == 1){
+        if (traffic_light_status_ != 0)
+        {
+            Traffic_light();
+        }
+        else if (traffic_light_status_ == 0)
+        {
+            
+            PD_control();
+            
+        }
+        
         PD_control();
+        Itersection();
+    
+    }
+    else{
+        driving_msg.linear.x = 0;
+        driving_msg.angular.z = 0;
     }
     driving_msg.linear.y = 0;
     driving_msg.linear.z = 0;

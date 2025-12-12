@@ -33,14 +33,14 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
   {
     float confidence = std::stof(conf_str);
 
-    if (confidence >= 0.8)
+    if (confidence >= 0.85)
     {
       int detected_flag = 0;
 
       if (object_name == "T")
       {
         flag_T++;
-        if (flag_T > 4)
+        if (flag_T > 6)
         {
           detected_flag = 1;
         }
@@ -53,7 +53,7 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
       if (object_name == "L")
       {
         flag_L++;
-        if (flag_L > 4)
+        if (flag_L > 6)
         {
           detected_flag = 2;
         }
@@ -66,7 +66,7 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
       if (object_name == "R")
       {
         flag_R++;
-        if (flag_R > 4)
+        if (flag_R > 6)
         {
           detected_flag = 3;
         }
@@ -79,7 +79,7 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
       if (object_name == "D")
       {
         flag_D++;
-        if (flag_D > 4)
+        if (flag_D > 6)
         {
           detected_flag = 4;
         }
@@ -92,7 +92,7 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
       if (object_name == "P")
       {
         flag_P++;
-        if (flag_P > 4)
+        if (flag_P > 6)
         {
           detected_flag = 5;
         }
@@ -121,20 +121,18 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
 void MasterJo::vision_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg)
 {
   int center_x = msg->center_x;
-  int yellow_diff = msg->yellow_diff;
-  int white_diff = msg->white_diff;
   int yellow_x = msg->yellow_x;
   int white_x = msg->white_x;
 
   double pixel_diff = center_x - 320;
+  double yellow_diff = yellow_x - 320;
+  double white_diff = white_x - 320;
 
   auto diff_msg = autorace_interfaces::msg::MasterJo();
 
   diff_msg.pixel_diff = pixel_diff;
   diff_msg.yellow_diff = yellow_diff;
   diff_msg.white_diff = white_diff;
-  diff_msg.yellow_x = yellow_x;
-  diff_msg.white_x = white_x;
 
   pixel_diff_pub_->publish(diff_msg);
 }

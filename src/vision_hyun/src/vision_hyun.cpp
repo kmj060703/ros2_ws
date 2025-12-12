@@ -31,11 +31,10 @@ cv::Mat brown_mask;
 cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy, red_and_green_mask_copy;
 
 // 전역 변수 추가
+int detect_line = 350;
 int global_center_x = -1;
 int global_yellow_x = -1;
 int global_white_x = -1;
-int global_yellow_diff = 0;
-int global_white_diff = 0;
 int yellow_x = -1;
 int white_x = -1;
 
@@ -290,16 +289,12 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             std::cerr << traffic_light_state << std::endl;
             // 버드아이 중앙선 추출
             birdeye_with_lines = birdeye.clone();
+            global_center_x = -1;
+            global_yellow_x = -1;
+            global_white_x = -1;
             for (int i = 0; i < yellow_mask.rows; i++)
             {
                 // 초기화
-                yellow_x = -1;
-                white_x = -1;
-                global_center_x = -1;
-                global_yellow_x = -1;
-                global_white_x = -1;
-                global_yellow_diff = 0;
-                global_white_diff = 0;
                 yellow_x = -1;
                 white_x = -1;
 
@@ -339,24 +334,22 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     cv::line(birdeye_with_lines, cv::Point(center_w, i), cv::Point(center_w, i), cv::Scalar(255, 255, 255), 1);
                     cv::line(birdeye_with_lines, cv::Point(center_y, i), cv::Point(center_y, i), cv::Scalar(255, 255, 0), 1);
                     // 제어 기준선 (y=350)
-                    if (i == 350)
+                    if (i == detect_line)
                     {
                         global_center_x = center_yw;
                         global_yellow_x = center_y;
                         global_white_x = center_w;
-                        global_yellow_diff = (yellow_x != -1) ? yellow_x - 320 : 0;
-                        global_white_diff = (white_x != -1) ? white_x - 320 : 0;
                     }
                 }
             }
 
-            cv::line(birdeye_with_lines, cv::Point(0, 350), cv::Point(640, 350), cv::Scalar(255, 0, 255), 1);
+            cv::line(birdeye_with_lines, cv::Point(0, detect_line), cv::Point(640, detect_line), cv::Scalar(255, 0, 255), 3);
 
             if (global_center_x > 0)
             {
                 cv::putText(birdeye_with_lines, "C:" + std::to_string(global_center_x),
                             cv::Point(10, 80), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
-                cv::circle(birdeye_with_lines, cv::Point(global_center_x, 350), 5, cv::Scalar(0, 0, 255), -1);
+                cv::circle(birdeye_with_lines, cv::Point(global_center_x, detect_line), 5, cv::Scalar(0, 0, 255), -1);
             }
 
             bird_copy = birdeye_with_lines.clone();
@@ -386,8 +379,6 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
         msg_data->center_x = global_center_x;
         msg_data->yellow_x = global_yellow_x;
         msg_data->white_x = global_white_x;
-        msg_data->yellow_diff = global_yellow_diff;
-        msg_data->white_diff = global_white_diff;
         msg_data->traffic_light = traffic_light_state;
 
         publisher_4->publish(*msg_data);
