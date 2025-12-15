@@ -26,6 +26,8 @@ public:
     void Level_crossing();
     void total_driving();
 
+    double degreecal(double degree);
+
     int l_start_flag = 0;
     int start_flag = 0;
     double kp;
@@ -56,6 +58,8 @@ private:
     void pixel_diff_callback(const autorace_interfaces::msg::MasterJo::SharedPtr msg);
     void vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg);
 
+    
+
     geometry_msgs::msg::Twist driving_msg;
 
     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr imu_sub_;
@@ -77,11 +81,14 @@ private:
     double current_pixel_diff_ = 0;
     int traffic_light_status_ = 0;
     int brown_count = 0;
+    int yellow_count =0;
+    int white_count =0;
     int timer = 0;
 
       //장애물용 기억
+    int count=15; //local_yaw 정하기
     int Construction_mem = 1 ;//(0=노랑 중심, 1=하양 중심)
-    int local_yaw = 0 ;
+    double local_yaw = 0 ;
     int state=0; //상태: 0= 주행, 1= 정렬, 2= 회전, ...
     rclcpp::TimerBase::SharedPtr drive_timer;
 };

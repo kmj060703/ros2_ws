@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     camera_1_state = 1; // index 0
     camera_2_state = 2; // index 1
 
-    QImage default_img(640, 360, QImage::Format_RGB888);
+    QImage default_img(640, 360, QImage::Format_BGR888);
     default_img.fill(QColor(128, 128, 128));
     m_img[0] = QPixmap::fromImage(default_img);
     m_img[1] = QPixmap::fromImage(default_img);

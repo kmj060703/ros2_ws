@@ -48,6 +48,9 @@ int detect_x_end = 640;
 int detect_y_start = 0;
 int detect_y_end = 250;
 
+//장애물용 line 탐지 범위
+int line_d_top=250;
+
 void send_udp_image(cv::Mat &img, int id)
 {
     if (img.empty() || udp_sock < 0)
@@ -293,6 +296,27 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 traffic_light_state = 0;
             }
             std::cerr << traffic_light_state << std::endl;
+
+            //갈색
+            brown_pixel_count=0;
+            yellowline_pixel_count=0;
+            whiteline_pixel_count=0;
+            for(int i=0;i<brown_mask.cols;i++){
+                for( int j=0; j<brown_mask.rows;j++){
+                
+                    if (brown_mask.at<uchar>(j, i) > 0)
+                        {
+                            brown_pixel_count++;
+                            cv::line(birdeye_with_lines, cv::Point(i, j), cv::Point(i, j), cv::Scalar(255, 125, 125), 1);
+
+                    }
+                    if(j>line_d_top){
+                        if (yellow_mask.at<uchar>(j, i) > 0){yellowline_pixel_count++;}
+                        if (white_mask.at<uchar>(j, i) > 0){whiteline_pixel_count++;}
+                    }
+                }
+            }
+
             // 버드아이 중앙선 추출
             birdeye_with_lines = birdeye.clone();
             global_center_x = -1;
@@ -348,18 +372,10 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     }
                 }
             }
-            //갈색
-            brown_pixel_count=0;
-            for(int i=0;i<brown_mask.cols;i++){
-                
-                if (brown_mask.at<uchar>(detect_line-160, i) > 0)
-                    {
-                        brown_pixel_count++;
-                        cv::line(birdeye_with_lines, cv::Point(i, detect_line-160), cv::Point(i, detect_line-160), cv::Scalar(255, 125, 125), 3);
-
-                }
             
-            }
+            cv::line(birdeye_with_lines, cv::Point(birdeye_with_lines.cols*0.75, 0), cv::Point(birdeye_with_lines.cols*0.75, birdeye_with_lines.rows), cv::Scalar(0, 0, 255), 1);
+            cv::line(birdeye_with_lines, cv::Point(birdeye_with_lines.cols*0.25, 0), cv::Point(birdeye_with_lines.cols*0.25, birdeye_with_lines.rows), cv::Scalar(0, 0, 255), 1);
+
 
             
             cv::line(birdeye_with_lines, cv::Point(0, detect_line), cv::Point(640, detect_line), cv::Scalar(255, 0, 255), 3);
@@ -375,6 +391,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             total_birdeye = yellow_mask + white_mask;
             red_and_green_mask = red_mask + green_mask;
 
+            
             
         }
 
@@ -402,6 +419,8 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
     msg_data->white_x = global_white_x;
     msg_data->traffic_light = traffic_light_state;
     msg_data->brown_count =brown_pixel_count;
+    msg_data->yellowline_count = yellowline_pixel_count;
+    msg_data->whiteline_count = whiteline_pixel_count;
 
     publisher_4->publish(*msg_data);
     sensor_msgs::msg::Image::SharedPtr processed_msg = cv_bridge::CvImage(msg->header, "bgr8", frame).toImageMsg();

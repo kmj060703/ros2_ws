@@ -35,7 +35,6 @@ extern int white_x;
 
 // 신호등 감지 여부
 extern int traffic_light_state;
-extern int brown_pixel_count;
 
 // red && green 탐지 범위
 extern int detect_x_start;
@@ -58,7 +57,7 @@ private:
   rclcpp::Publisher<autorace_interfaces::msg::VisionHyun>::SharedPtr
       publisher_4;
 
-  cv::Scalar lower_white = cv::Scalar(0, 0, 180);
+  cv::Scalar lower_white = cv::Scalar(0, 0, 145);
   cv::Scalar upper_white = cv::Scalar(180, 50, 255);
   cv::Scalar lower_yellow = cv::Scalar(20, 100, 100); // H 179 // S 225 // V 225
   cv::Scalar upper_yellow = cv::Scalar(30, 255, 255);
@@ -72,9 +71,9 @@ private:
   cv::Scalar lower_green = cv::Scalar(160, 50, 50);
   cv::Scalar upper_green = cv::Scalar(179, 255, 255);
 
-  cv::Scalar lower_brown = cv::Scalar(0, 50, 50);
-  cv::Scalar upper_brown = cv::Scalar(15, 190, 195);
-  cv::Scalar lower_brown_2 = cv::Scalar(165, 50, 50);
+  cv::Scalar lower_brown = cv::Scalar(0, 60, 46);
+  cv::Scalar upper_brown = cv::Scalar(7, 190, 195);
+  cv::Scalar lower_brown_2 = cv::Scalar(173, 60, 46);
   cv::Scalar upper_brown_2 = cv::Scalar(180, 190, 195);
 
   // 사다리꼴 원본 좌표 (feed 640x360 기준)
@@ -119,6 +118,8 @@ private:
   int yellow_pixel_count = 0 ;
 
   int brown_pixel_count=0;
+  int yellowline_pixel_count=0;
+  int whiteline_pixel_count=0;
   // 신호등 상태 판단
   int red_threshold = 150;
   int green_threshold = 250;

@@ -114,6 +114,8 @@ void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHy
 {
     traffic_light_status_ = msg->traffic_light;
     brown_count =msg->brown_count;
+    yellow_count =msg->brown_count;
+    white_count =msg->brown_count;
 
 
 
@@ -213,8 +215,10 @@ void DrivingYY::Itersection()
 }
 void DrivingYY::Construction()
 {
-    int count=10;
+    
     if(mission_flag_==4){
+        if(error_y==-321){Construction_mem=1;}
+        else if(error_w==-321){Construction_mem=0;}
         if(timer<count){
             if((local_yaw-current_yaw_)<5&&(local_yaw-current_yaw_)>-5){timer++;}
             else{
@@ -223,14 +227,13 @@ void DrivingYY::Construction()
             }
         }
         if(timer>=count&&timer<1000){local_yaw=local_yaw-90;timer=100000;}
-        if(brown_count>280&&state==0){state=1;}
+        current_yaw_=degreecal(current_yaw_-local_yaw);
+        if(brown_count>42000&&state==0){state=1;}
         
         if(state==1){
             if(current_yaw_-local_yaw<2&&current_yaw_-local_yaw>-2){
-                if(brown_count>40){state=2;}
-                else{state=0;}
             }
-            else if(local_yaw-current_yaw_>0){
+            if(local_yaw-current_yaw_>0){
                 driving_msg.linear.x =0.0;
                 driving_msg.angular.z =  -0.25;
             }
@@ -241,36 +244,36 @@ void DrivingYY::Construction()
         }
         else if(state==2){
             if(Construction_mem==1){
-                if(local_yaw-current_yaw_<85&&local_yaw-current_yaw_>75){
+                if(current_yaw_<72&&current_yaw_>68){
                     state = 0;
                     last_error = 0;
                     error = 0 ;
                     driving_msg.linear.x =0.05;
                     driving_msg.angular.z =  0.0;
                 }
-                else if(local_yaw-current_yaw_>80){
+                else if(current_yaw_>70){
                     driving_msg.linear.x =0.0;
                     driving_msg.angular.z =  -0.25;
                 }
-                else if(local_yaw-current_yaw_<80){
+                else if(current_yaw_<70){
                     driving_msg.linear.x =0.0;
                     driving_msg.angular.z =  0.25;
                 }
                 else{state=0;Construction_mem=0;}
             }
             else if(Construction_mem==0){
-                if(current_yaw_-local_yaw>-85&&current_yaw_-local_yaw<-75){
+                if(current_yaw_>-72&&current_yaw_<-68){
                     state = 0;
                     last_error = 0;
                     error = 0 ;
                     driving_msg.linear.x =0.05;
                     driving_msg.angular.z =  0.0;
                 }
-                else if(local_yaw-current_yaw_>-80){
+                else if(current_yaw_>-70){
                     driving_msg.linear.x =0.02;
                     driving_msg.angular.z =  -0.25;
                 }
-                else if(local_yaw-current_yaw_<-80){
+                else if(current_yaw_<-70){
                     driving_msg.linear.x =0.02;
                     driving_msg.angular.z =  0.25;
                 }
@@ -326,6 +329,14 @@ void DrivingYY::drive_callback()
     driving_msg.angular.y = 0;
     if (start_flag == 0)
         publisher_drive->publish(driving_msg);
+}
+
+double DrivingYY::degreecal(double degree){
+    while(degree<=190&&degree>-190){
+        if(degree>190){degree-=380;}
+        else if(degree<=-190){degree+=380;}
+    }
+    return degree;
 }
 
 int main(int argc, char **argv)
