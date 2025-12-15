@@ -116,6 +116,7 @@ private:
   int red_pixel_count = 0;
   int green_pixel_count = 0;
   int yellow_pixel_count = 0 ;
+  int bar_red_pixel_count = 0;
 
   int brown_pixel_count=0;
   int yellowline_pixel_count=0;
@@ -124,8 +125,8 @@ private:
   int red_threshold = 150;
   int green_threshold = 250;
   int yellow_threshold = 300;
-
-
+  int park_whiteLine_threshold = 20000;
+  int bar_red_red_threshold = 5000;
 };
 
 #endif // IMAGE_VIEWER_HPP

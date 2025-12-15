@@ -269,6 +269,11 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             green_temp_mask.convertTo(green_mask, CV_8U, 255);
             green_mask = green_temp_mask.clone();
 
+            bar_red_pixel_count = 0;
+            red_pixel_count = 0;
+            yellow_pixel_count = 0;
+            green_pixel_count = 0;
+
             for (int i = detect_y_start; i < detect_y_end; i++)
             {
                 for (int j = detect_x_start; j < detect_x_end; j++)
@@ -281,23 +286,47 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                         yellow_pixel_count++;
                 }
             }
+
+                detect_x_start = 0;
+                detect_y_start = 180;
+                detect_y_end = 360;
+             for (int i = detect_y_start; i < detect_y_end; i++)
+            {
+                for (int j = detect_x_start; j < detect_x_end; j++)
+                {
+                    if (red_mask.at<uchar>(i, j) > 0)
+                        bar_red_pixel_count++;
+                   
+                }
+            }
+
+
+
             if (red_pixel_count > red_threshold) // 150 픽셀 이상
             {
                 traffic_light_state = 1;
             }
+            
             else if (green_pixel_count > green_threshold) // 300 픽셀 이상
             {
                 traffic_light_state = 2;
                 std::cerr << "2-flag count : " << green_pixel_count << std::endl;
             }
-
-            else
-
+            else if (bar_red_pixel_count > bar_red_red_threshold) // 150 픽셀 이상
             {
-
+                traffic_light_state = 4;
+            }
+            else
+            {
                 traffic_light_state = 0;
             }
             std::cerr << traffic_light_state << std::endl;
+
+
+
+
+
+
 
             // 갈색
             brown_pixel_count = 0;
