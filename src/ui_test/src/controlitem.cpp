@@ -24,6 +24,7 @@ int brown_count=0;
 int yellow_count=0;
 int white_count=0;
 int img_id=-1;
+int udp_crack=0;
 double imu_yaw = 0;
 double imu_yaw_local = 0;
 double x_ = 0.0;

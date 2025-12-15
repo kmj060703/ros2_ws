@@ -80,6 +80,7 @@ private:
 
   QTimer *new_timer1;
   QTimer *new_timer2;
+  std::atomic<double> last_udp_time_sec_;
 
 Q_SIGNALS:
   void rosShutDown();

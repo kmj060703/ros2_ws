@@ -86,6 +86,7 @@ private:
     int timer = 0;
     int right_turn=0;
     int left_turn=0;
+    int vision_valid_=1;
 
       //장애물용 기억
     int count=15; //local_yaw 정하기

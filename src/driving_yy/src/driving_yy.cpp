@@ -91,6 +91,7 @@ void DrivingYY::flag_callback(const std_msgs::msg::Int32::SharedPtr msg)
 void DrivingYY::ui_callback(const autorace_interfaces::msg::Ui2Driving::SharedPtr msg)
 {
     // 유아이
+    vision_valid_=msg->vision_lost_flag;
     max_x = msg->max_vel;
     l_start_flag = msg->l_start_flag;
     start_flag = msg->start_flag;
@@ -134,17 +135,27 @@ void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHy
 
 void DrivingYY::PD_control()
 {
-    if (error_yw != -321)
-    {
-        error = error_yw;
-    }
-    else if (error_y != -321)
-    {
-        error = error_y;
-    }
-    else if (error_w != -321)
-    {
-        error = error_w;
+
+    if (!vision_valid_) { //비전 끊겼을 때 대처
+        error = 0;
+        last_error = 0;
+        driving_msg.angular.z = 0.0;
+        driving_msg.linear.x = 0.01;
+        return;
+    } 
+    else{
+        if (error_yw != -321)
+        {
+            error = error_yw;
+        }
+        else if (error_y != -321)
+        {
+            error = error_y;
+        }
+        else if (error_w != -321)
+        {
+            error = error_w;
+        }
     }
 
     RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,

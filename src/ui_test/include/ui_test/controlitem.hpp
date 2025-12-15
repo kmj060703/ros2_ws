@@ -25,6 +25,7 @@ extern int traffic_state;
 extern int brown_count;
 extern int yellow_count;
 extern int white_count;
+extern int udp_crack;
 extern double imu_yaw;
 extern double imu_yaw_local;
 extern double x_;

@@ -237,6 +237,8 @@ void QNode::udp_receive_loop()
           vision_helper(frame, img_id);
           if (!frame.empty())
           {
+            last_udp_time_sec_.store(node->now().seconds()); //time stamp
+
             cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
             QImage qimage(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
             emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
@@ -293,7 +295,16 @@ void QNode::drive_callback()
 
 void QNode::ui2drive_callback()
 {
+  
+  double now = node->now().seconds();
+
+  if (now - last_udp_time_sec_.load() > 0.2) {
+      udp_crack = 1;
+  }
+  else udp_crack=0;
+  
   auto msg = autorace_interfaces::msg::Ui2Driving();
+  msg.vision_lost_flag=udp_crack;
   msg.state_flag = l_state_flag_;
   msg.start_flag = start_flag_;
   msg.kp = kp_;
