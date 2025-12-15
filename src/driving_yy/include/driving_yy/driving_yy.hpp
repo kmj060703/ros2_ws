@@ -84,6 +84,8 @@ private:
     int yellow_count =0;
     int white_count =0;
     int timer = 0;
+    int right_turn=0;
+    int left_turn=0;
 
       //장애물용 기억
     int count=15; //local_yaw 정하기
