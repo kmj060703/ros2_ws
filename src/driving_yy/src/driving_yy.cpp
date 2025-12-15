@@ -184,17 +184,23 @@ void DrivingYY::PD_control()
 
 void DrivingYY::Traffic_light()
 {
-    switch (traffic_light_status_)
-    {
-    case 1:
-    {
-        driving_msg.linear.x = 0;
-        driving_msg.angular.z = 0;
-    }
-    break;
-
-    default: // 노란색 감지를 위해 비워 놓는 것이다...
+        if (traffic_light_status_ != 0)
+            {
+                
+            
+        switch (traffic_light_status_)
+        {
+        case 1:
+        {
+            driving_msg.linear.x = 0;
+            driving_msg.angular.z = 0;
+        }
         break;
+
+        default: // 노란색 감지를 위해 비워 놓는 것이다...
+            break;
+        }
+
     }
 }
 void DrivingYY::Itersection()
@@ -303,22 +309,11 @@ void DrivingYY::total_driving()
 void DrivingYY::drive_callback()
 {
     if (l_start_flag == 1){
-        if (traffic_light_status_ != 0)
-        {
-            Traffic_light();
-        }
-        else if (traffic_light_status_ == 0)
-        {
-            
-            PD_control();
-            
-        }
         
         PD_control();
+        Traffic_light();
         Itersection();
         Construction();
-
-    
     }
     else{
         driving_msg.linear.x = 0;

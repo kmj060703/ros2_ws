@@ -31,9 +31,9 @@ void PsdJo::topic_callback(const std_msgs::msg::UInt16MultiArray::SharedPtr msg)
     pub_left_->publish(msg_l);
     pub_right_->publish(msg_r);
 
-    RCLCPP_INFO(this->get_logger(),
-                "F_ADC: %d  L_ADC: %d  R_ADC: %d",
-                front_adc, left_adc, right_adc);
+    // RCLCPP_INFO(this->get_logger(),
+    //             "F_ADC: %d  L_ADC: %d  R_ADC: %d",
+    //             front_adc, left_adc, right_adc);
 }
 
 int main(int argc, char **argv)
