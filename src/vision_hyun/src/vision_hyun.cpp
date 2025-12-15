@@ -166,7 +166,7 @@ ImageViewer::ImageViewer()
     publisher_3 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_total", 10);
     publisher_4 = this->create_publisher<autorace_interfaces::msg::VisionHyun>("/vision/line_diff_info", qos_profile);
 
-    RCLCPP_INFO(this->get_logger(), "Image viewer node started.");
+    //RCLCPP_INFO(this->get_logger(), "Image viewer node started.");
 
     cv::namedWindow("Spedal Feed");
     cv::namedWindow("Bird-Eye View");
