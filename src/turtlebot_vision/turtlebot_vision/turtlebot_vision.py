@@ -19,33 +19,41 @@ class ImageSubscriber(Node):
             10)
         
         self.yolo_pub_ = self.create_publisher(String, 'MasterJo_YOLO', 10)
-        
+        self.image_pub = self.create_publisher(Image,'feed_YOLO',10)
+
         self.br = CvBridge()
         cv2.namedWindow('Processed Image')
         cv2.namedWindow('YOLO Object Detection') 
     
     def listener_callback(self, data):
-        current_frame = self.br.imgmsg_to_cv2(data)
-        
-        results = self.model(current_frame, verbose=False)
-        annotated_frame = results[0].plot() 
+      current_frame = self.br.imgmsg_to_cv2(data, desired_encoding='bgr8')
 
-        if len(results[0].boxes) > 0:
-            box = results[0].boxes[0]
-            class_id = int(box.cls[0].item())
-            confidence = box.conf[0].item()
-            object_name = results[0].names[class_id]
+      results = self.model(current_frame, verbose=False)
 
-            msg = String()
-            msg.data = f"{object_name},{confidence:.2f}"
+    #  YOLO 이미지
+      annotated_frame = results[0].plot()
 
-            self.yolo_pub_.publish(msg)
+    # YOLO 결과 
+      if len(results[0].boxes) > 0:
+        box = results[0].boxes[0]
+        class_id = int(box.cls[0])
+        confidence = float(box.conf[0])
+        object_name = results[0].names[class_id]
 
-        cv2.imshow("Processed Image", current_frame)
-        cv2.moveWindow('Processed Image', 0, 300)
-        cv2.imshow('YOLO Object Detection', annotated_frame)  
-        cv2.moveWindow('YOLO Object Detection', 0, 1000)
-        cv2.waitKey(1)
+        msg = String()
+        msg.data = f"{object_name},{confidence:.2f}"
+        self.yolo_pub_.publish(msg)
+
+   
+      img_msg = self.br.cv2_to_imgmsg(annotated_frame, encoding='bgr8')
+      img_msg.header = data.header
+      self.image_pub.publish(img_msg)
+
+   
+      cv2.imshow("Processed Image", current_frame)
+      cv2.imshow("YOLO Object Detection", annotated_frame)
+      cv2.waitKey(1)
+ 
 
 def main(args=None):
     rclpy.init(args=args)

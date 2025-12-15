@@ -3,35 +3,100 @@
 
 #include <thread>
 #include <mutex>
+#include <vector>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <cstring>
+#include <cv_bridge/cv_bridge.h>
+#include <math.h>
 
-/* 이미지가 YUYV 4:2:2 포맷으로 퍼블리시되고 있다
-OpenCV cv::imshow에서 바로 BGR8으로 처리하려고 하면 채널 수 불일치 오류가 나
-run : ros2 run vision_hyun vision_hyun_node */
+#define REMOTE_IP "223.194.43.153"
+#define REMOTE_PORT 9999 // UI용 포트 하나만 사용
+#define PACKET_SIZE 4096
 
+int udp_sock = -1;
+struct sockaddr_in remote_addr;
+
+// mutex 기반 글로벌 변수 :전역 변수를 여러 스레드가 동시에 접근하니까 충돌이나 데이터 깨짐을 막기 위해 보호해서 쓴다고 함
 std::mutex frame_mutex;
 cv::Mat latest_frame;
 cv::Mat latest_birdeye;
 cv::Mat yellow_mask;
 cv::Mat white_mask;
-
+cv::Mat red_mask;
+cv::Mat green_mask;
 cv::Mat red_and_green_mask;
+cv::Mat brown_mask, brown_mask_2;
+cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy, red_and_green_mask_copy;
 
 // 전역 변수 추가
+int detect_line = 350;
 int global_center_x = -1;
 int global_yellow_x = -1;
 int global_white_x = -1;
-int global_yellow_diff = 0;
-int global_white_diff = 0;
 int yellow_x = -1;
 int white_x = -1;
-// 가로 640  세로 360
-cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy, red_and_green_mask_copy;
+
+int center_y = -1;
+int center_w = -1;
+int center_yw = -1;
+// 신호등 감지 여부
+int traffic_light_state = 0;
+int brown_pixel_count = 0;
+
+// red && green 탐지 범위 // 신호등 탐지 범위
+int detect_x_start = 320;
+int detect_x_end = 640;
+int detect_y_start = 0;
+int detect_y_end = 250;
+
+// 장애물용 line 탐지 범위
+int line_d_top = 250;
+
+void send_udp_image(cv::Mat &img, int id)
+{
+    if (img.empty() || udp_sock < 0)
+    {
+        return;
+    }
+
+    std::vector<uchar> encoded;
+    std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 50}; // 속도를 위해 50
+    bool success = cv::imencode(".jpg", img, encoded, params);
+
+    if (!success)
+        return;
+
+    int total_size = encoded.size();
+
+    if (total_size == 0)
+        return;
+
+    int header[2] = {id, total_size};
+    sendto(udp_sock, header, sizeof(header), 0, (struct sockaddr *)&remote_addr, sizeof(remote_addr));
+
+    int sent_bytes = 0;
+    while (sent_bytes < total_size)
+    {
+        int chunk_size = std::min(PACKET_SIZE, total_size - sent_bytes);
+        ssize_t sent_chunk_bytes = sendto(udp_sock, &encoded[sent_bytes], chunk_size, 0, (struct sockaddr *)&remote_addr, sizeof(remote_addr));
+
+        if (sent_chunk_bytes < 0)
+            break;
+
+        sent_bytes += sent_chunk_bytes;
+
+        // 패킷 손실 방지를 위한 딜레이
+        usleep(500);
+    }
+}
 
 void gui_thread()
 {
     while (rclcpp::ok())
     {
-        cv::Mat frame_display, bird_display, yellow_display, white_display, red_and_green_mask_copy;
+        cv::Mat frame_display, bird_display, yellow_display, white_display, red_and_green_mask_copy, brown_copy;
 
         {
             std::lock_guard<std::mutex> lock(frame_mutex);
@@ -44,41 +109,46 @@ void gui_thread()
             if (!white_mask.empty())
                 white_display = white_mask.clone();
             if (!red_and_green_mask.empty())
-                red_and_green_mask_display = red_and_green_mask.clone();
+                red_and_green_mask_copy = red_and_green_mask.clone();
+            if (!brown_mask.empty())
+                brown_copy = brown_mask.clone();
         }
 
         if (!frame_display.empty())
         {
+            std::stringstream ss;
+            ss << "Traffic Light flag : " << traffic_light_state;
+
             cv::line(frame_display, cv::Point(320, 0), cv::Point(320, 360), cv::Scalar(0, 0, 255), 1);
             cv::line(frame_display, cv::Point(0, 80), cv::Point(640, 80), cv::Scalar(0, 0, 255), 1);
+            cv::rectangle(
+                frame_display,
+                cv::Point(detect_x_start, detect_y_start),
+                cv::Point(detect_x_end, detect_y_end),
+                cv::Scalar(0, 255, 0), 2);
+
+            cv::putText(
+                frame_display,
+                ss.str(),
+                cv::Point(detect_x_start, detect_y_start - 5),
+                cv::FONT_HERSHEY_SIMPLEX,
+                0.5,
+                cv::Scalar(0, 255, 0),
+                1);
+
             cv::imshow("Spedal Feed", frame_display);
         }
 
         if (!bird_display.empty())
-        {
             cv::imshow("Bird's-Eye View", bird_display);
-        }
-
         if (!yellow_display.empty())
-        {
-            cv::line(yellow_display, cv::Point(320, 0), cv::Point(320, 360), cv::Scalar(255, 255, 255), 1);
-            cv::line(yellow_display, cv::Point(0, 270), cv::Point(640, 270), cv::Scalar(255, 255, 255), 1);
             cv::imshow("yellow_mask", yellow_display);
-        }
-
         if (!white_display.empty())
-        {
-            cv::line(white_display, cv::Point(320, 0), cv::Point(320, 360), cv::Scalar(255, 255, 255), 1);
-            cv::line(white_display, cv::Point(0, 270), cv::Point(640, 270), cv::Scalar(255, 255, 255), 1);
             cv::imshow("white_mask", white_display);
-        }
-
         if (!red_and_green_mask.empty())
-        {
-            cv::line(red_and_green_mask, cv::Point(320, 0), cv::Point(320, 360), cv::Scalar(255, 255, 255), 1);
-            cv::line(red_and_green_mask, cv::Point(0, 270), cv::Point(640, 270), cv::Scalar(255, 255, 255), 1);
             cv::imshow("traffic_mask", red_and_green_mask);
-        }
+        if (!brown_mask.empty())
+            cv::imshow("brown_mask", brown_mask);
 
         cv::waitKey(1);
     }
@@ -87,217 +157,212 @@ void gui_thread()
 ImageViewer::ImageViewer()
     : Node("vision_hyun_node")
 {
+    auto qos_profile = rclcpp::SensorDataQoS();
     const std::string image_topic = "/default_camera/image_raw";
 
     subscription_ = this->create_subscription<sensor_msgs::msg::Image>(
         image_topic, 10,
         std::bind(&ImageViewer::image_callback, this, std::placeholders::_1));
 
-    publisher_ = this->create_publisher<sensor_msgs::msg::Image>(
-        "/vision/image_processed", 10);
-    publisher_2 = this->create_publisher<sensor_msgs::msg::Image>(
-        "/vision/birdeye_raw", 10);
-    publisher_3 = this->create_publisher<sensor_msgs::msg::Image>(
-        "/vision/birdeye_total", 10);
-    publisher_4 = this->create_publisher<autorace_interfaces::msg::VisionHyun>(
-        "/vision/line_diff_info", 10);
+    publisher_ = this->create_publisher<sensor_msgs::msg::Image>("/vision/image_processed", 10);
+    publisher_2 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_raw", 10);
+    publisher_3 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_total", 10);
+    publisher_4 = this->create_publisher<autorace_interfaces::msg::VisionHyun>("/vision/line_diff_info", qos_profile);
 
-    RCLCPP_INFO(this->get_logger(), "Image viewer node started.");
-    RCLCPP_INFO(this->get_logger(), "Subscribing to: %s", image_topic.c_str());
-    RCLCPP_INFO(this->get_logger(), "Publishing to: /vision/image_processed");
-    RCLCPP_INFO(this->get_logger(), "Publishing to: /vision/birdeye_raw");
-    RCLCPP_INFO(this->get_logger(), "Publishing to: /vision/birdeye_total");
-    RCLCPP_INFO(this->get_logger(), "Publishing to: /vision/line_diff_info");
+    //RCLCPP_INFO(this->get_logger(), "Image viewer node started.");
 
     cv::namedWindow("Spedal Feed");
-    cv::namedWindow("Bird's-Eye View");
+    cv::namedWindow("Bird-Eye View");
     cv::namedWindow("yellow_mask");
     cv::namedWindow("white_mask");
-    cv::nameWindow("traffic_mask");
+    cv::namedWindow("traffic_mask");
+    cv::namedWindow("brown_mask");
 }
 
 void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
     try
     {
-        RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
-                             "Receiving images: %dx%d, encoding: %s",
-                             msg->width, msg->height, msg->encoding.c_str());
-
         cv::Mat frame;
-        cv::Mat birdeye;
-        cv::Mat birdeye_with_lines;
-        cv::Mat total_birdeye;
-        cv::Mat red_mask;
-        cv::Mat green_mask;
 
-        // RGB 또는 BGR 인코딩에 따라 처리
-        if (msg->encoding == "rgb8")
+        try
         {
-            // RGB8 데이터를 받아서 BGR로 변환
-            cv::Mat rgb_frame(msg->height, msg->width, CV_8UC3, (void *)msg->data.data());
-            cv::cvtColor(rgb_frame, frame, cv::COLOR_RGB2BGR);
+            frame = cv_bridge::toCvCopy(msg, "bgr8")->image;
         }
-        else
+        catch (cv_bridge::Exception &e)
         {
-            RCLCPP_WARN(this->get_logger(), "Unsupported encoding: %s", msg->encoding.c_str());
+            RCLCPP_ERROR(this->get_logger(), "cv_bridge exception: %s", e.what());
             return;
         }
 
         if (frame.empty())
-        {
-            RCLCPP_WARN(this->get_logger(), "Received empty frame!");
             return;
-        }
 
-        // 프레임 업데이트
+        cv::Mat birdeye, birdeye_with_lines, total_birdeye;
+
+        int red_pixel_count = 0;
+        int green_pixel_count = 0;
+
         {
             std::lock_guard<std::mutex> lock(frame_mutex);
             latest_frame = frame.clone();
-
-            // Bird's-Eye View
-            // 원본 이미지에서 사다리꼴 영역 (소실점 기준으로 도로/관심 영역)
+            // 버드아이 변환
             cv::Point2f src_pts[4] = {
-                cv::Point2f(distort_L_top_x, distort_L_top_y),     // 왼쪽 위
-                cv::Point2f(distort_R_top_x, distort_R_top_y),     // 오른쪽 위
-                cv::Point2f(distort_L_under_x, distort_L_under_y), // 왼쪽 아래
-                cv::Point2f(distort_R_under_x, distort_R_under_y)  // 오른쪽 아래
-            };
-
+                cv::Point2f(distort_L_top_x, distort_L_top_y) /*왼쪽 위*/, cv::Point2f(distort_R_top_x, distort_R_top_y) /*오른쪽 위*/,
+                cv::Point2f(distort_L_under_x, distort_L_under_y) /*왼쪽 아래*/, cv::Point2f(distort_R_under_x, distort_R_under_y) /*오른쪽 아래*/};
             cv::Point2f dst_pts[4] = {
-                cv::Point2f(flat_L_top_x, flat_L_top_y),     // 왼쪽 위
-                cv::Point2f(flat_R_top_x, flat_R_top_y),     // 오른쪽 위
-                cv::Point2f(flat_L_under_x, flat_L_under_y), // 왼쪽 아래
-                cv::Point2f(flat_R_under_x, flat_R_under_y)  // 오른쪽 아래
-            };
+                cv::Point2f(flat_L_top_x, flat_L_top_y), cv::Point2f(flat_R_top_x, flat_R_top_y),
+                cv::Point2f(flat_L_under_x, flat_L_under_y), cv::Point2f(flat_R_under_x, flat_R_under_y)}; // Z 모양 순서
 
             cv::Mat M = cv::getPerspectiveTransform(src_pts, dst_pts);
             cv::warpPerspective(frame, birdeye, M, cv::Size(640, 360));
-            latest_birdeye = birdeye.clone();
 
-            cv::Mat birdeye_hsv;
-            cv::cvtColor(birdeye, birdeye_hsv, cv::COLOR_BGR2HSV);
+            // 버드아이 > 가우시안 블러 적용
+            cv::Mat birdeye_blurred, birdeye_hsv, frame_hsv;
+            cv::GaussianBlur(birdeye, birdeye_blurred, cv::Size(5, 5), 1.5);
 
-            cv::Mat frame_hsv;
+            // hsv 변환
+            cv::cvtColor(birdeye_blurred, birdeye_hsv, cv::COLOR_BGR2HSV);
             cv::cvtColor(latest_frame, frame_hsv, cv::COLOR_BGR2HSV);
+
+            cv::inRange(birdeye_hsv, lower_brown, upper_brown, brown_mask);
+            cv::inRange(birdeye_hsv, lower_brown_2, upper_brown_2, brown_mask_2);
+            cv::add(brown_mask, brown_mask_2, brown_mask);
 
             cv::inRange(birdeye_hsv, lower_white, upper_white, white_mask);
             cv::inRange(birdeye_hsv, lower_yellow, upper_yellow, yellow_mask);
             cv::inRange(latest_frame, lower_red, upper_red, red_mask);
             cv::inRange(latest_frame, lower_green, upper_green, green_mask);
 
+            // 침식/팽창
             cv::Mat k = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
-            for (int i = 0; i < 5; i++)
-            {
-                cv::dilate(yellow_mask, yellow_mask, k);
-                cv::dilate(white_mask, white_mask, k);
-                cv::dilate(red_mask, red_mask, k);
-                cv::dilate(green_mask, green_mask, k);
-            }
-            for (int i = 0; i < 10; i++)
-            {
-                cv::erode(yellow_mask, yellow_mask, k);
-                cv::erode(white_mask, white_mask, k);
-                cv::erode(red_mask, red_mask, k);
-                cv::erode(green_mask, green_mask, k);
-            }
+            cv::dilate(yellow_mask, yellow_mask, k, cv::Point(-1, -1), 5);
+            cv::dilate(white_mask, white_mask, k, cv::Point(-1, -1), 5);
+            cv::dilate(brown_mask, brown_mask, k, cv::Point(-1, -1), 5);
+
+            // 신호등 감지 범위 및 플래그
+
+            /*
+            channels[0]  Blue 채널
+
+            channels[1]  Green 채널
+
+            channels[2]  Red 채널
+            */
+
+            // 아니 이거 신호등 불빛이 너무 강해서 hsv로 못따옴 그래서 bgr로 받아옴 에라이 시간만 날렸내
+            std::vector<cv::Mat> channels;
+            cv::split(latest_frame, channels); // BGR 형식으로 분리할 때 cv::split()
+
+            cv::Mat red_mask = (channels[2] > channels[0] + 30) &
+                               (channels[2] > channels[1] + 30) &
+                               (channels[2] > 150);
+
+            // 노이즈 제거
+            cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5));
+            cv::morphologyEx(red_mask, red_mask, cv::MORPH_OPEN, kernel);
+
+            cv::Mat green_temp_mask = (channels[1] > channels[0] + 30) &
+                                      (channels[1] > channels[2] + 30) &
+                                      (channels[1] > 100);
+
+            green_temp_mask.convertTo(green_mask, CV_8U, 255);
+            green_mask = green_temp_mask.clone();
+
+            bar_red_pixel_count = 0;
+            red_pixel_count = 0;
+            yellow_pixel_count = 0;
+            green_pixel_count = 0;
 
             for (int i = detect_y_start; i < detect_y_end; i++)
             {
                 for (int j = detect_x_start; j < detect_x_end; j++)
                 {
                     if (red_mask.at<uchar>(i, j) > 0)
-                    {
                         red_pixel_count++;
-                    }
                     if (green_mask.at<uchar>(i, j) > 0)
-                    {
                         green_pixel_count++;
-                    }
+                    if (yellow_mask.at<uchar>(i, j) > 0)
+                        yellow_pixel_count++;
                 }
             }
 
-            if (red_pixel_count > red_threshold)
+                detect_x_start = 0;
+                detect_y_start = 180;
+                detect_y_end = 360;
+             for (int i = detect_y_start; i < detect_y_end; i++)
             {
-                traffic_light_state = 1; // 빨간불
+                for (int j = detect_x_start; j < detect_x_end; j++)
+                {
+                    if (red_mask.at<uchar>(i, j) > 0)
+                        bar_red_pixel_count++;
+                   
+                }
             }
-            else if (green_pixel_count > green_threshold)
+
+            if (red_pixel_count > red_threshold) // 150 픽셀 이상
             {
-                traffic_light_state = 2; // 초록불
+                traffic_light_state = 1;
+            }
+            
+            else if (green_pixel_count > green_threshold) // 300 픽셀 이상
+            {
+                traffic_light_state = 2;
+                std::cerr << "2-flag count : " << green_pixel_count << std::endl;
+            }
+            else if (bar_red_pixel_count > bar_red_red_threshold) // 150 픽셀 이상
+            {
+                traffic_light_state = 4;
             }
             else
             {
-                traffic_light_state = 0; // 신호등 없음
+                traffic_light_state = 0;
             }
+          //  std::cerr << traffic_light_state << std::endl;
 
-            // y=scan_y 위치에서 노란색과 하얀색 선 찾기
 
-            // birdeye_with_lines = birdeye.clone();
-            // for (int i = 0; i < yellow_mask.rows; i++)
-            // {
-            //     yellow_x = -1;
-            //     white_x = -1;
+            // 갈색
+            brown_pixel_count = 0;
+            yellowline_pixel_count = 0;
+            whiteline_pixel_count = 0;
+            for (int i = 0; i < brown_mask.cols; i++)
+            {
+                for (int j = 0; j < brown_mask.rows; j++)
+                {
 
-            //     // 왼쪽 노란색 라인 찾기
-            //     for (int j = 0; j < yellow_mask.cols; j++)
-            //     {
-            //         if (yellow_mask.at<uchar>(i, j) > 0)
-            //         {
-            //             yellow_x = j;
-            //             cv::line(birdeye_with_lines, cv::Point(yellow_x, i), cv::Point(yellow_x, i), cv::Scalar(255, 255, 0), 1);
-            //             break;
-            //         }
-            //     }
-
-            //     // 오른쪽 흰색 라인 찾기
-            //     for (int j = white_mask.cols - 1; j >= 0; j--)
-            //     {
-            //         if (white_mask.at<uchar>(i, j) > 0)
-            //         {
-            //             white_x = j;
-            //             cv::line(birdeye_with_lines, cv::Point(white_x, i), cv::Point(white_x, i), cv::Scalar(255, 255, 255), 1);
-            //             break;
-            //         }
-            //     }
-
-            //     // 중앙선 계산 (수정됨)
-            //     int center = -1;
-            //     if (yellow_x != -1 && white_x != -1)
-            //     {
-            //         center = (yellow_x + white_x) / 2;
-            //     }
-            //     else if (yellow_x != -1)
-            //     {
-            //         center = yellow_x + 250; // 차선 폭 추정
-            //     }
-            //     else if (white_x != -1)
-            //     {
-            //         center = white_x - 250;
-            //     }
-
-            //     // 중앙선 그리기 및 저장
-            //     if (center != -1)
-            //     {
-            //         cv::line(birdeye_with_lines, cv::Point(center, i), cv::Point(center, i), cv::Scalar(0, 255, 0), 1);
-            //         if (i == 270)
-            //         {
-            //             global_center_x = center;
-            //             global_yellow_x = yellow_x;
-            //             global_white_x = white_x;
-            //             global_yellow_diff = (yellow_x != -1) ? yellow_x - 320 : 0;
-            //             global_white_diff = (white_x != -1) ? white_x - 320 : 0;
-            //         }
-            //     }
-            // }
-
-            // 라인 검출 및 중앙선 계산
+                    if (brown_mask.at<uchar>(j, i) > 0)
+                    {
+                        brown_pixel_count++;
+                        cv::line(birdeye_with_lines, cv::Point(i, j), cv::Point(i, j), cv::Scalar(255, 125, 125), 1);
+                    }
+                    if (j > line_d_top)
+                    {
+                        if (yellow_mask.at<uchar>(j, i) > 0)
+                        {
+                            yellowline_pixel_count++;
+                        }
+                        if (white_mask.at<uchar>(j, i) > 0)
+                        {
+                            whiteline_pixel_count++;
+                        }
+                    }
+                }
+            }
+            if (whiteline_pixel_count > park_whiteLine_threshold ) // 20000 픽셀 이상
+            {
+                traffic_light_state = 3; // -> 주차 구간에서 흰색 라인 감지하면 멈추게 하셈
+            }
+            // 버드아이 중앙선 추출
             birdeye_with_lines = birdeye.clone();
+            global_center_x = -1;
+            global_yellow_x = -1;
+            global_white_x = -1;
             for (int i = 0; i < yellow_mask.rows; i++)
             {
+                // 초기화
                 yellow_x = -1;
                 white_x = -1;
 
-                // 왼쪽 노란색 라인 찾기
                 for (int j = 0; j < yellow_mask.cols; j++)
                 {
                     if (yellow_mask.at<uchar>(i, j) > 0)
@@ -308,7 +373,6 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     }
                 }
 
-                // 오른쪽 흰색 라인 찾기
                 for (int j = white_mask.cols - 1; j >= 0; j--)
                 {
                     if (white_mask.at<uchar>(i, j) > 0)
@@ -319,81 +383,78 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     }
                 }
 
-                // 중앙선 계산 및 그리기
+                center_y = -1;
+                center_w = -1;
+                center_yw = -1;
                 if (yellow_x != -1 && white_x != -1)
+                    center_yw = (yellow_x + white_x) / 2;
+                if (yellow_x != -1)
+                    center_y = yellow_x + 235;
+                if (white_x != -1)
+                    center_w = white_x - 235;
+
+                if (!(center_w == center_yw && center_y == center_yw && center_yw == -1))
                 {
-                    int center = (yellow_x + white_x) / 2;
-                    if (i == 270)
+                    cv::line(birdeye_with_lines, cv::Point(center_yw, i), cv::Point(center_yw, i), cv::Scalar(0, 255, 0), 1);
+                    cv::line(birdeye_with_lines, cv::Point(center_w, i), cv::Point(center_w, i), cv::Scalar(255, 255, 255), 1);
+                    cv::line(birdeye_with_lines, cv::Point(center_y, i), cv::Point(center_y, i), cv::Scalar(255, 255, 0), 1);
+                    // 제어 기준선 (y=350)
+                    if (i == detect_line)
                     {
-                        global_center_x = center;
+                        global_center_x = center_yw;
+                        global_yellow_x = center_y;
+                        global_white_x = center_w;
                     }
-                    cv::line(birdeye_with_lines, cv::Point(center, i), cv::Point(center, i), cv::Scalar(0, 255, 0), 1);
-                }
-                else if (yellow_x != -1)
-                {
-                    cv::line(birdeye_with_lines, cv::Point(yellow_x + 250, i), cv::Point(yellow_x + 250, i), cv::Scalar(0, 255, 0), 1);
-                    int center = yellow_x + 250;
-                    if (i == 270)
-                    {
-                        global_center_x = center;
-                    }
-                   
-                }
-                else if (white_x != -1)
-                {
-                    cv::line(birdeye_with_lines, cv::Point(white_x - 250, i), cv::Point(white_x - 250, i), cv::Scalar(0, 255, 0), 1);
-                    int center = white_x - 250;
-                    if (i == 270)
-                    {
-                        global_center_x = center;
-                    }
-                    
                 }
             }
 
-            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // 화면에 lineWrite 로직
+            cv::line(birdeye_with_lines, cv::Point(birdeye_with_lines.cols * 0.75, 0), cv::Point(birdeye_with_lines.cols * 0.75, birdeye_with_lines.rows), cv::Scalar(0, 0, 255), 1);
+            cv::line(birdeye_with_lines, cv::Point(birdeye_with_lines.cols * 0.25, 0), cv::Point(birdeye_with_lines.cols * 0.25, birdeye_with_lines.rows), cv::Scalar(0, 0, 255), 1);
 
-            // 스캔 라인 표시 (y=270, 보라색)
-            cv::line(birdeye_with_lines, cv::Point(0, 270), cv::Point(640, 270), cv::Scalar(255, 0, 255), 1);
+            cv::line(birdeye_with_lines, cv::Point(0, detect_line), cv::Point(640, detect_line), cv::Scalar(255, 0, 255), 3);
 
-            // 정보 표시
             if (global_center_x > 0)
             {
-                cv::putText(birdeye_with_lines, "Yellow X: " + std::to_string(global_yellow_x) + " (diff: " + std::to_string(global_yellow_diff) + ")",
-                            cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 255), 2);
-                cv::putText(birdeye_with_lines, "White X: " + std::to_string(global_white_x) + " (diff: " + std::to_string(global_white_diff) + ")",
-                            cv::Point(10, 55), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 255), 2);
-                cv::putText(birdeye_with_lines, "Center X: " + std::to_string(global_center_x),
+                cv::putText(birdeye_with_lines, "C:" + std::to_string(global_center_x),
                             cv::Point(10, 80), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
+                cv::circle(birdeye_with_lines, cv::Point(global_center_x, detect_line), 5, cv::Scalar(0, 0, 255), -1);
             }
 
-            // bird_copy에 저장
             bird_copy = birdeye_with_lines.clone();
-
-            // total_birdeye 생성
             total_birdeye = yellow_mask + white_mask;
             red_and_green_mask = red_mask + green_mask;
         }
 
-        // Publish processed frames
-        auto msg_out = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", frame).toImageMsg();
-        auto msg_out2 = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", birdeye_with_lines).toImageMsg();
-        auto msg_out3 = cv_bridge::CvImage(std_msgs::msg::Header(), "mono8", total_birdeye).toImageMsg();
-        auto msg_out4 = std::make_unique<autorace_interfaces::msg::VisionHyun>();
-        msg_out4->header = msg->header;
-        msg_out4->center_x = global_center_x;
-        msg_out4->yellow_x = yellow_x;
-        msg_out4->white_x = white_x;
-        msg_out4->yellow_diff = global_yellow_diff;
-        msg_out4->white_diff = global_white_diff;
-        msg_out4->traffic_light = traffic_light_state; // 아무것도 아닐 때 0 || 빨간색 1 || 초록색 2
-        
+        send_udp_image(frame, 0);
+        send_udp_image(birdeye_with_lines, 1);
 
-        publisher_->publish(*msg_out);
-        publisher_2->publish(*msg_out2);
-        publisher_3->publish(*msg_out3);
-        publisher_4->publish(*msg_out4);
+        cv::Mat total_color;
+        cv::cvtColor(total_birdeye, total_color, cv::COLOR_GRAY2BGR);
+        send_udp_image(total_color, 2);
+
+        auto msg_data = std::make_unique<autorace_interfaces::msg::VisionHyun>();
+        msg_data->header = msg->header;
+        /*참고용 header 안에는
+        std_msgs/Header header
+        {
+        uint32 seq;         // 시퀀스 번호
+        time stamp;         // 메시지가 생성된 시간
+        string frame_id;    // TF 프레임 이름
+                }
+
+        이런게 있다*/
+
+        msg_data->center_x = global_center_x;
+        msg_data->yellow_x = global_yellow_x;
+        msg_data->white_x = global_white_x;
+        msg_data->traffic_light = traffic_light_state;
+        msg_data->brown_count = brown_pixel_count;
+        msg_data->yellowline_count = yellowline_pixel_count;
+        msg_data->whiteline_count = whiteline_pixel_count;
+
+        publisher_4->publish(*msg_data);
+        sensor_msgs::msg::Image::SharedPtr processed_msg = cv_bridge::CvImage(msg->header, "bgr8", frame).toImageMsg();
+        publisher_->publish(*processed_msg);
     }
     catch (cv_bridge::Exception &e)
     {
@@ -405,9 +466,20 @@ int main(int argc, char *argv[])
 {
     rclcpp::init(argc, argv);
 
-    if (getenv("DISPLAY") == nullptr)
+    udp_sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if (udp_sock < 0)
     {
-        std::cerr << "ERROR: DISPLAY environment variable not set!" << std::endl;
+        std::cerr << "소켓 생성 실패" << std::endl;
+        return 1;
+    }
+
+    memset(&remote_addr, 0, sizeof(remote_addr));
+    remote_addr.sin_family = AF_INET;
+    remote_addr.sin_port = htons(REMOTE_PORT);
+    if (inet_pton(AF_INET, REMOTE_IP, &remote_addr.sin_addr) <= 0)
+    {
+        std::cerr << "UI 주소 오류" << std::endl;
+        close(udp_sock);
         return 1;
     }
 
@@ -415,114 +487,10 @@ int main(int argc, char *argv[])
     std::thread t(gui_thread);
     t.detach();
 
-    RCLCPP_INFO(node->get_logger(), "Starting spin...");
     rclcpp::spin(node);
 
     rclcpp::shutdown();
+    close(udp_sock);
     cv::destroyAllWindows();
     return 0;
 }
-
-#ifndef IMAGE_VIEWER_HPP
-#define IMAGE_VIEWER_HPP
-#include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/image.hpp>
-#include <cv_bridge/cv_bridge.h>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/calib3d.hpp>
-#include <memory>
-#include <vector>
-#include "geometry_msgs/msg/point.hpp"
-#include <mutex>
-#include "autorace_interfaces/msg/vision_hyun.hpp"
-
-// mutex 기반 글로벌 변수
-extern std::mutex frame_mutex;
-extern cv::Mat latest_frame;
-extern cv::Mat latest_birdeye;
-extern cv::Mat yellow_mask;
-extern cv::Mat white_mask;
-extern cv::Mat red_mask;
-extern cv::Mat green_mask;
-extern cv::Mat red_and_green_mask;
-
-class ImageViewer : public rclcpp::Node
-{
-public:
-  ImageViewer();
-
-private:
-  void image_callback(const sensor_msgs::msg::Image::SharedPtr msg);
-
-  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr subscription_;
-  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher_;
-  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher_2;
-  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher_3;
-  rclcpp::Publisher<autorace_interfaces::msg::VisionHyun>::SharedPtr
-      publisher_4;
-
-  cv::Scalar lower_white = cv::Scalar(0, 0, 120);
-  cv::Scalar upper_white = cv::Scalar(180, 50, 255);
-  cv::Scalar lower_yellow = cv::Scalar(20, 100, 100);
-  cv::Scalar upper_yellow = cv::Scalar(30, 255, 255);
-  cv::Scalar lower_red = cv::Scalar(0, 100, 80);
-  cv::Scalar upper_red = cv::Scalar(0, 100, 100);
-  cv::Scalar lower_green = cv::Scalar(120, 100, 80);
-  cv::Scalar upper_green = cv::Scalar(120, 100, 100);
-
-  // 사다리꼴 원본 좌표 (feed 640x360 기준)
-  float distort_L_top_x = 160.0;
-  float distort_L_top_y = 250.0;
-  float distort_R_top_x = 640.0 - distort_L_top_x;
-  float distort_R_top_y = distort_L_top_y;
-  float distort_L_under_x = 72.0;
-  float distort_L_under_y = 360.0;
-  float distort_R_under_x = 640.0 - distort_L_under_x;
-  float distort_R_under_y = distort_L_under_y;
-
-  // 직사각형 목적지 좌표 (이미지 전체 640x360)
-  float flat_L_top_x = 120.0;
-  float flat_L_top_y = 0.0;
-  float flat_R_top_x = 640 - flat_L_top_x;
-  float flat_R_top_y = 0.0;
-  float flat_L_under_x = 120.0;
-  float flat_L_under_y = 360.0;
-  float flat_R_under_x = 640 - flat_L_under_x;
-  float flat_R_under_y = 360.0;
-
-  // 라인 감지 기억용 변수
-  int last_yellow_x = -1;
-  int last_white_x = -1;
-  bool yellow_detected_before = false;
-  bool white_detected_before = false;
-
-  int global_center_x = -1;
-  int global_yellow_x = -1;
-  int global_white_x = -1;
-  int global_yellow_diff = 0;
-  int global_white_diff = 0;
-
-  // 기준 x좌표
-  const int reference_x = 320;
-  const int scan_y = 270;
-
-  // 신호등 감지 여부
-  int traffic_light_state = 0;
-
-  // red && green 탐지 범위
-  int detect_x_start = 320;
-  int detect_x_end = 640;
-  int detect_y_start = 0;
-  int detect_y_end = 80;
-
-  // detect 영역의 빨간색/초록색 픽셀 카운트
-  int red_pixel_count = 0;
-  int green_pixel_count = 0;
-
-  // 신호등 상태 판단
-  int red_threshold = 500;
-  int green_threshold = 500;
-};
-
-#endif // IMAGE_VIEWER_HPP

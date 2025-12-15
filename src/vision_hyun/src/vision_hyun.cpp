@@ -300,8 +300,6 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 }
             }
 
-
-
             if (red_pixel_count > red_threshold) // 150 픽셀 이상
             {
                 traffic_light_state = 1;
@@ -320,12 +318,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             {
                 traffic_light_state = 0;
             }
-            std::cerr << traffic_light_state << std::endl;
-
-
-
-
-
+          //  std::cerr << traffic_light_state << std::endl;
 
 
             // 갈색
