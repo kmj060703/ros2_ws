@@ -38,6 +38,9 @@ int global_white_x = -1;
 int yellow_x = -1;
 int white_x = -1;
 
+int center_y = -1;
+int center_w = -1;
+int center_yw = -1;
 // 신호등 감지 여부
 int traffic_light_state = 0;
 int brown_pixel_count = 0;
@@ -48,8 +51,8 @@ int detect_x_end = 640;
 int detect_y_start = 0;
 int detect_y_end = 250;
 
-//장애물용 line 탐지 범위
-int line_d_top=250;
+// 장애물용 line 탐지 범위
+int line_d_top = 250;
 
 void send_udp_image(cv::Mat &img, int id)
 {
@@ -224,7 +227,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
             cv::inRange(birdeye_hsv, lower_brown, upper_brown, brown_mask);
             cv::inRange(birdeye_hsv, lower_brown_2, upper_brown_2, brown_mask_2);
-            cv::add(brown_mask,brown_mask_2,brown_mask);
+            cv::add(brown_mask, brown_mask_2, brown_mask);
 
             cv::inRange(birdeye_hsv, lower_white, upper_white, white_mask);
             cv::inRange(birdeye_hsv, lower_yellow, upper_yellow, yellow_mask);
@@ -237,7 +240,6 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             cv::dilate(white_mask, white_mask, k, cv::Point(-1, -1), 5);
             cv::dilate(brown_mask, brown_mask, k, cv::Point(-1, -1), 5);
 
-
             // 신호등 감지 범위 및 플래그
 
             /*
@@ -247,7 +249,6 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
             channels[2]  Red 채널
             */
-
 
             // 아니 이거 신호등 불빛이 너무 강해서 hsv로 못따옴 그래서 bgr로 받아옴 에라이 시간만 날렸내
             std::vector<cv::Mat> channels;
@@ -287,37 +288,48 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             else if (green_pixel_count > green_threshold) // 300 픽셀 이상
             {
                 traffic_light_state = 2;
-                std::cerr << "2-flag count : " <<green_pixel_count << std::endl;
+                std::cerr << "2-flag count : " << green_pixel_count << std::endl;
             }
 
             else
 
             {
-                
+
                 traffic_light_state = 0;
             }
             std::cerr << traffic_light_state << std::endl;
 
-            //갈색
-            brown_pixel_count=0;
-            yellowline_pixel_count=0;
-            whiteline_pixel_count=0;
-            for(int i=0;i<brown_mask.cols;i++){
-                for( int j=0; j<brown_mask.rows;j++){
-                
-                    if (brown_mask.at<uchar>(j, i) > 0)
-                        {
-                            brown_pixel_count++;
-                            cv::line(birdeye_with_lines, cv::Point(i, j), cv::Point(i, j), cv::Scalar(255, 125, 125), 1);
+            // 갈색
+            brown_pixel_count = 0;
+            yellowline_pixel_count = 0;
+            whiteline_pixel_count = 0;
+            for (int i = 0; i < brown_mask.cols; i++)
+            {
+                for (int j = 0; j < brown_mask.rows; j++)
+                {
 
+                    if (brown_mask.at<uchar>(j, i) > 0)
+                    {
+                        brown_pixel_count++;
+                        cv::line(birdeye_with_lines, cv::Point(i, j), cv::Point(i, j), cv::Scalar(255, 125, 125), 1);
                     }
-                    if(j>line_d_top){
-                        if (yellow_mask.at<uchar>(j, i) > 0){yellowline_pixel_count++;}
-                        if (white_mask.at<uchar>(j, i) > 0){whiteline_pixel_count++;}
+                    if (j > line_d_top)
+                    {
+                        if (yellow_mask.at<uchar>(j, i) > 0)
+                        {
+                            yellowline_pixel_count++;
+                        }
+                        if (white_mask.at<uchar>(j, i) > 0)
+                        {
+                            whiteline_pixel_count++;
+                        }
                     }
                 }
             }
-
+            if (whiteline_pixel_count > park_whiteLine_threshold ) // 20000 픽셀 이상
+            {
+                traffic_light_state = 3; // -> 주차 구간에서 흰색 라인 감지하면 멈추게 하셈
+            }
             // 버드아이 중앙선 추출
             birdeye_with_lines = birdeye.clone();
             global_center_x = -1;
@@ -349,9 +361,9 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     }
                 }
 
-                int center_y = -1;
-                int center_w = -1;
-                int center_yw = -1;
+                center_y = -1;
+                center_w = -1;
+                center_yw = -1;
                 if (yellow_x != -1 && white_x != -1)
                     center_yw = (yellow_x + white_x) / 2;
                 if (yellow_x != -1)
@@ -359,7 +371,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 if (white_x != -1)
                     center_w = white_x - 235;
 
-                if (!(center_w==center_yw&&center_y==center_yw&&center_yw==-1))
+                if (!(center_w == center_yw && center_y == center_yw && center_yw == -1))
                 {
                     cv::line(birdeye_with_lines, cv::Point(center_yw, i), cv::Point(center_yw, i), cv::Scalar(0, 255, 0), 1);
                     cv::line(birdeye_with_lines, cv::Point(center_w, i), cv::Point(center_w, i), cv::Scalar(255, 255, 255), 1);
@@ -373,12 +385,10 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     }
                 }
             }
-            
-            cv::line(birdeye_with_lines, cv::Point(birdeye_with_lines.cols*0.75, 0), cv::Point(birdeye_with_lines.cols*0.75, birdeye_with_lines.rows), cv::Scalar(0, 0, 255), 1);
-            cv::line(birdeye_with_lines, cv::Point(birdeye_with_lines.cols*0.25, 0), cv::Point(birdeye_with_lines.cols*0.25, birdeye_with_lines.rows), cv::Scalar(0, 0, 255), 1);
 
+            cv::line(birdeye_with_lines, cv::Point(birdeye_with_lines.cols * 0.75, 0), cv::Point(birdeye_with_lines.cols * 0.75, birdeye_with_lines.rows), cv::Scalar(0, 0, 255), 1);
+            cv::line(birdeye_with_lines, cv::Point(birdeye_with_lines.cols * 0.25, 0), cv::Point(birdeye_with_lines.cols * 0.25, birdeye_with_lines.rows), cv::Scalar(0, 0, 255), 1);
 
-            
             cv::line(birdeye_with_lines, cv::Point(0, detect_line), cv::Point(640, detect_line), cv::Scalar(255, 0, 255), 3);
 
             if (global_center_x > 0)
@@ -391,41 +401,38 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             bird_copy = birdeye_with_lines.clone();
             total_birdeye = yellow_mask + white_mask;
             red_and_green_mask = red_mask + green_mask;
-
-            
-            
         }
 
-    send_udp_image(frame, 0);
-    send_udp_image(birdeye_with_lines, 1);
+        send_udp_image(frame, 0);
+        send_udp_image(birdeye_with_lines, 1);
 
-    cv::Mat total_color;
-    cv::cvtColor(total_birdeye, total_color, cv::COLOR_GRAY2BGR);
-    send_udp_image(total_color, 2);
+        cv::Mat total_color;
+        cv::cvtColor(total_birdeye, total_color, cv::COLOR_GRAY2BGR);
+        send_udp_image(total_color, 2);
 
-    auto msg_data = std::make_unique<autorace_interfaces::msg::VisionHyun>();
-    msg_data->header = msg->header;
-    /*참고용 header 안에는
-    std_msgs/Header header
-    {
-    uint32 seq;         // 시퀀스 번호
-    time stamp;         // 메시지가 생성된 시간
-    string frame_id;    // TF 프레임 이름
-            }
+        auto msg_data = std::make_unique<autorace_interfaces::msg::VisionHyun>();
+        msg_data->header = msg->header;
+        /*참고용 header 안에는
+        std_msgs/Header header
+        {
+        uint32 seq;         // 시퀀스 번호
+        time stamp;         // 메시지가 생성된 시간
+        string frame_id;    // TF 프레임 이름
+                }
 
-    이런게 있다*/
+        이런게 있다*/
 
-    msg_data->center_x = global_center_x;
-    msg_data->yellow_x = global_yellow_x;
-    msg_data->white_x = global_white_x;
-    msg_data->traffic_light = traffic_light_state;
-    msg_data->brown_count =brown_pixel_count;
-    msg_data->yellowline_count = yellowline_pixel_count;
-    msg_data->whiteline_count = whiteline_pixel_count;
+        msg_data->center_x = global_center_x;
+        msg_data->yellow_x = global_yellow_x;
+        msg_data->white_x = global_white_x;
+        msg_data->traffic_light = traffic_light_state;
+        msg_data->brown_count = brown_pixel_count;
+        msg_data->yellowline_count = yellowline_pixel_count;
+        msg_data->whiteline_count = whiteline_pixel_count;
 
-    publisher_4->publish(*msg_data);
-    sensor_msgs::msg::Image::SharedPtr processed_msg = cv_bridge::CvImage(msg->header, "bgr8", frame).toImageMsg();
-    publisher_->publish(*processed_msg);
+        publisher_4->publish(*msg_data);
+        sensor_msgs::msg::Image::SharedPtr processed_msg = cv_bridge::CvImage(msg->header, "bgr8", frame).toImageMsg();
+        publisher_->publish(*processed_msg);
     }
     catch (cv_bridge::Exception &e)
     {
