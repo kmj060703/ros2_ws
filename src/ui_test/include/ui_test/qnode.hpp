@@ -59,6 +59,8 @@ private:
   rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_right_sub_;
   rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr flag_sub_;
   rclcpp::Subscription<autorace_interfaces::msg::VisionHyun>::SharedPtr vision_traffic_sub_;
+  //feed_YOLO
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr yolo_sub_;
 
   void imu_callback(const geometry_msgs::msg::Vector3::SharedPtr msg);
   void psd_front_callback(const std_msgs::msg::Int32::SharedPtr msg);
@@ -66,7 +68,8 @@ private:
   void psd_right_callback(const std_msgs::msg::Int32::SharedPtr msg);
   void flag_callback(const std_msgs::msg::Int32::SharedPtr msg);
   void vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg);
-  
+  void yolo_callback(const sensor_msgs::msg::Image::SharedPtr msg);
+
   int sockfd_;
   std::thread udp_thread_;
   bool is_running_;

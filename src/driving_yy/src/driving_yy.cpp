@@ -4,18 +4,18 @@ using std::placeholders::_1;
 
 DrivingYY::DrivingYY() : Node("driving_yy")
 {
-    kp = 0.006;
-    kd = 0.001;
-    x = 0.07;
-    z = 0.4;
+    kp = 0.00;
+    kd = 0.00;
+    x = 0.0;
+    z = 0.0;
     error = 0.0;
     error_yw = 0.0;
     error_w = 0.0;
     error_y = 0.0;
     last_error = 0.0;
-    max_x = 0.43;
-    def_turn_x = 0.03;
-    def_turn_z = 0.46;
+    max_x = 0.0;
+    def_turn_x = 0.0;
+    def_turn_z = 0.0;
 
     auto sensor_qos = rclcpp::SensorDataQoS();
     imu_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>(

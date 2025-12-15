@@ -34,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->comboBox_camera2->addItem("raw_bird");
     ui->comboBox_camera1->addItem("binary_bird");
     ui->comboBox_camera2->addItem("binary_bird");
+    ui->comboBox_camera1->addItem("yolo_camera");
+    ui->comboBox_camera2->addItem("yolo_camera");
 
 
     QImage default_img(640, 360, QImage::Format_BGR888);
@@ -41,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_img[0] = QPixmap::fromImage(default_img);
     m_img[1] = QPixmap::fromImage(default_img);
     m_img[2] = QPixmap::fromImage(default_img);
+    m_img[3] = QPixmap::fromImage(default_img);
 
     ui->horizontalSlider->setRange(0, 255);
     ui->horizontalSlider_2->setRange(0, 255);
@@ -845,7 +848,7 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index)
         // qDebug() << "[Debug] pixmap is null, returning.";
         return;
     }
-    if (index >= 0 && index < 3)
+    if (index >= 0 && index < 4)
     {
         m_img[index] = pixmap;
         // label_18 업데이트
@@ -865,13 +868,13 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index)
                 m_img[index].scaled(640, 360, Qt::KeepAspectRatio));
         }
     }
-    ui->label_wl->setPixmap(m_img[3].scaled(290, 163, Qt::KeepAspectRatio));
-    ui->label_yl->setPixmap(m_img[4].scaled(290, 163, Qt::KeepAspectRatio));
-    ui->label_rl->setPixmap(m_img[5].scaled(290, 163, Qt::KeepAspectRatio));
-    ui->label_rt->setPixmap(m_img[6].scaled(290, 163, Qt::KeepAspectRatio));
-    ui->label_yt->setPixmap(m_img[7].scaled(290, 163, Qt::KeepAspectRatio));
-    ui->label_gt->setPixmap(m_img[8].scaled(290, 163, Qt::KeepAspectRatio));
-    ui->label_bb->setPixmap(m_img[9].scaled(290, 163, Qt::KeepAspectRatio));
+    ui->label_wl->setPixmap(m_img[4].scaled(290, 163, Qt::KeepAspectRatio));
+    ui->label_yl->setPixmap(m_img[5].scaled(290, 163, Qt::KeepAspectRatio));
+    ui->label_rl->setPixmap(m_img[6].scaled(290, 163, Qt::KeepAspectRatio));
+    ui->label_rt->setPixmap(m_img[7].scaled(290, 163, Qt::KeepAspectRatio));
+    ui->label_yt->setPixmap(m_img[8].scaled(290, 163, Qt::KeepAspectRatio));
+    ui->label_gt->setPixmap(m_img[9].scaled(290, 163, Qt::KeepAspectRatio));
+    ui->label_bb->setPixmap(m_img[10].scaled(290, 163, Qt::KeepAspectRatio));
 }
 
 void MainWindow::on_horizontalSlider_sliderMoved(int position)

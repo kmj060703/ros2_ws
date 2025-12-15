@@ -177,7 +177,7 @@ private slots:
   void on_pushButton_113_clicked();
   void on_pushButton_drive_clicked();
   void on_pushButton_stop_clicked();
-  
+
   void on_pushButton_p90_2_clicked();
   void on_pushButton_m90_2_clicked();
   void on_pushButton_p180_2_clicked();
@@ -192,7 +192,7 @@ private:
   void keyPressEvent(QKeyEvent *event);
   void closeEvent(QCloseEvent *event);
   void combine_callback();
-  QPixmap m_img[10];
+  QPixmap m_img[11];
   QNode *qnode;
   QJsonObject h_high;
   QJsonObject s_high;

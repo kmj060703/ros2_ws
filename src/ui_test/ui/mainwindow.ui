@@ -544,7 +544,7 @@ color:rgb(0, 0, 0);</string>
        <double>0.000100000000000</double>
       </property>
       <property name="value">
-       <double>0.006000000000000</double>
+       <double>0.000000000000000</double>
       </property>
      </widget>
      <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
@@ -572,7 +572,7 @@ color:rgb(0, 0, 0);</string>
        <double>0.000100000000000</double>
       </property>
       <property name="value">
-       <double>0.001000000000000</double>
+       <double>0.000000000000000</double>
       </property>
      </widget>
      <widget class="QLabel" name="label_15">
@@ -647,7 +647,7 @@ color:rgb(255, 255, 255);</string>
         <double>0.010000000000000</double>
        </property>
        <property name="value">
-        <double>0.430000000000000</double>
+        <double>0.000000000000000</double>
        </property>
       </widget>
       <widget class="QLabel" name="label_24">
@@ -721,7 +721,7 @@ color:rgb(255, 255, 255);</string>
        <double>0.010000000000000</double>
       </property>
       <property name="value">
-       <double>0.030000000000000</double>
+       <double>0.000000000000000</double>
       </property>
      </widget>
      <widget class="QDoubleSpinBox" name="doubleSpinBox_6">
@@ -746,7 +746,7 @@ color:rgb(255, 255, 255);</string>
        <double>0.010000000000000</double>
       </property>
       <property name="value">
-       <double>0.460000000000000</double>
+       <double>0.000000000000000</double>
       </property>
      </widget>
      <widget class="QWidget" name="widget_7" native="true">
