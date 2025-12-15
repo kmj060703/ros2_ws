@@ -22,6 +22,7 @@ int psd_flag[3]={0};
 int traffic_state=0;
 int img_id=-1;
 double imu_yaw = 0;
+double imu_yaw_local = 0;
 double x_ = 0.0;
 double z_ = 0.0;
 double kp_ = 0.0;

@@ -133,12 +133,12 @@ private slots:
   void on_pushButton_42_clicked();
   void on_pushButton_43_clicked();
 
-  void on_radioButton_3_clicked();
-  void on_radioButton_clicked();
-  void on_radioButton_2_clicked();
-  void on_radioButton_6_clicked();
-  void on_radioButton_5_clicked();
-  void on_radioButton_4_clicked();
+  // void on_radioButton_3_clicked();
+  // void on_radioButton_clicked();
+  // void on_radioButton_2_clicked();
+  // void on_radioButton_6_clicked();
+  // void on_radioButton_5_clicked();
+  // void on_radioButton_4_clicked();
   void on_doubleSpinBox_7_valueChanged(double arg1);
   void updateImage(const QPixmap &pixmap, int index); // 이미지 업데이트 슬롯
 
@@ -177,6 +177,15 @@ private slots:
   void on_pushButton_113_clicked();
   void on_pushButton_drive_clicked();
   void on_pushButton_stop_clicked();
+  
+  void on_pushButton_p90_2_clicked();
+  void on_pushButton_m90_2_clicked();
+  void on_pushButton_p180_2_clicked();
+  void on_pushButton_setYaw_2_clicked();
+  void on_dial_localang_valueChanged(int value);
+  void on_dial_valueChanged(int value);
+  void on_comboBox_camera1_currentIndexChanged(int index);
+  void on_comboBox_camera2_currentIndexChanged(int index);
 
 private:
   Ui::MainWindowDesign *ui;

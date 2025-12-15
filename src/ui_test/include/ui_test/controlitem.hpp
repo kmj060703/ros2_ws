@@ -23,6 +23,7 @@ extern int img_id;
 extern int psd_flag[3];
 extern int traffic_state;
 extern double imu_yaw;
+extern double imu_yaw_local;
 extern double x_;
 extern double z_;
 extern double kp_;

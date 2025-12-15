@@ -28,6 +28,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     imshow_flag_2 = 1;
     camera_1_state = 1; // index 0
     camera_2_state = 2; // index 1
+    ui->comboBox_camera1->addItem("raw_camera");
+    ui->comboBox_camera2->addItem("raw_camera");
+    ui->comboBox_camera1->addItem("raw_bird");
+    ui->comboBox_camera2->addItem("raw_bird");
+    ui->comboBox_camera1->addItem("binary_bird");
+    ui->comboBox_camera2->addItem("binary_bird");
+
 
     QImage default_img(640, 360, QImage::Format_BGR888);
     default_img.fill(QColor(128, 128, 128));
@@ -44,6 +51,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->dial->setRange(-180, 180); // yaw
     ui->dial->setWrapping(true);
+    ui->dial_localang->setRange(-180, 180); // local_yaw
+    ui->dial_localang->setWrapping(true);
 
     // ui->dial_5->setRange(0, 1);  // x
     // ui->dial_6->setRange(-5, 5); // z
@@ -114,6 +123,7 @@ MainWindow::~MainWindow()
 void MainWindow::combine_callback()
 { // imu
     ui->dial->setValue(imu_yaw);
+    ui->dial_localang->setValue(imu_yaw_local);
     // psd
     if (psd_flag[0] == 1)
         ui->label_p_forward->setText("왼쪽 장애물!");
@@ -785,41 +795,41 @@ void MainWindow::on_pushButton_43_clicked()
     std::cout << "lane-detecting work stop" << std::endl;
 }
 
-void MainWindow::on_radioButton_3_clicked()
-{
-    // raw_bird1
-    camera_1_state = 2;
-}
+// void MainWindow::on_radioButton_3_clicked()
+// {
+//     // raw_bird1
+//     camera_1_state = 2;
+// }
 
-void MainWindow::on_radioButton_clicked()
-{
-    // raw1
-    camera_1_state = 1;
-}
+// void MainWindow::on_radioButton_clicked()
+// {
+//     // raw1
+//     camera_1_state = 1;
+// }
 
-void MainWindow::on_radioButton_2_clicked()
-{
-    // mask_bird1
-    camera_1_state = 3;
-}
+// void MainWindow::on_radioButton_2_clicked()
+// {
+//     // mask_bird1
+//     camera_1_state = 3;
+// }
 
-void MainWindow::on_radioButton_6_clicked()
-{
-    // raw_bird2
-    camera_2_state = 2;
-}
+// void MainWindow::on_radioButton_6_clicked()
+// {
+//     // raw_bird2
+//     camera_2_state = 2;
+// }
 
-void MainWindow::on_radioButton_5_clicked()
-{
-    // raw2
-    camera_2_state = 1;
-}
+// void MainWindow::on_radioButton_5_clicked()
+// {
+//     // raw2
+//     camera_2_state = 1;
+// }
 
-void MainWindow::on_radioButton_4_clicked()
-{
-    // mask_bird2
-    camera_2_state = 3;
-}
+// void MainWindow::on_radioButton_4_clicked()
+// {
+//     // mask_bird2
+//     camera_2_state = 3;
+// }
 
 void MainWindow::on_doubleSpinBox_7_valueChanged(double arg1)
 {
@@ -835,7 +845,7 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index)
         // qDebug() << "[Debug] pixmap is null, returning.";
         return;
     }
-    if (index >= 0 && index < 10)
+    if (index >= 0 && index < 3)
     {
         m_img[index] = pixmap;
         // label_18 업데이트
@@ -854,14 +864,14 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index)
             ui->label_19->setPixmap(
                 m_img[index].scaled(640, 360, Qt::KeepAspectRatio));
         }
-        ui->label_wl->setPixmap(m_img[3].scaled(290, 163, Qt::KeepAspectRatio));
-        ui->label_yl->setPixmap(m_img[4].scaled(290, 163, Qt::KeepAspectRatio));
-        ui->label_rl->setPixmap(m_img[5].scaled(290, 163, Qt::KeepAspectRatio));
-        ui->label_rt->setPixmap(m_img[6].scaled(290, 163, Qt::KeepAspectRatio));
-        ui->label_yt->setPixmap(m_img[7].scaled(290, 163, Qt::KeepAspectRatio));
-        ui->label_gt->setPixmap(m_img[8].scaled(290, 163, Qt::KeepAspectRatio));
-        ui->label_bb->setPixmap(m_img[9].scaled(290, 163, Qt::KeepAspectRatio));
     }
+    ui->label_wl->setPixmap(m_img[3].scaled(290, 163, Qt::KeepAspectRatio));
+    ui->label_yl->setPixmap(m_img[4].scaled(290, 163, Qt::KeepAspectRatio));
+    ui->label_rl->setPixmap(m_img[5].scaled(290, 163, Qt::KeepAspectRatio));
+    ui->label_rt->setPixmap(m_img[6].scaled(290, 163, Qt::KeepAspectRatio));
+    ui->label_yt->setPixmap(m_img[7].scaled(290, 163, Qt::KeepAspectRatio));
+    ui->label_gt->setPixmap(m_img[8].scaled(290, 163, Qt::KeepAspectRatio));
+    ui->label_bb->setPixmap(m_img[9].scaled(290, 163, Qt::KeepAspectRatio));
 }
 
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
@@ -1622,6 +1632,63 @@ void MainWindow::on_pushButton_stop_clicked()
     // driving stop
     l_start_flag_ = 0;
 }
+
+void MainWindow::on_pushButton_p90_2_clicked()
+{
+    //+90local
+    imu_yaw_local+=90;
+}
+
+
+void MainWindow::on_pushButton_m90_2_clicked()
+{
+    //-90local
+    imu_yaw_local-=90;
+}
+
+
+void MainWindow::on_pushButton_p180_2_clicked()
+{
+    //+180local
+    imu_yaw_local+=180;
+}
+
+
+void MainWindow::on_pushButton_setYaw_2_clicked()
+{
+    //set yaw local
+    imu_yaw_local=0;
+}
+
+
+void MainWindow::on_dial_localang_valueChanged(int value)
+{
+    //value표시?
+    //ui->label_l_ang->setText(imu_yaw_local.c_str());
+}
+
+
+void MainWindow::on_dial_valueChanged(int value)
+{
+    //value 표시
+    //ui->label_g_ang->setText(imu_yaw.c_str());
+}
+
+
+void MainWindow::on_comboBox_camera1_currentIndexChanged(int index)
+{
+    //camera_choose1
+    if(index!=0)camera_1_state=index-1;
+
+}
+
+
+void MainWindow::on_comboBox_camera2_currentIndexChanged(int index)
+{
+    //camera_choose2
+    if(index!=0)camera_2_state=index-1;
+}
+
 // 밑에 키보드 구현-->w s a d home탭에서 이동, space: 정지 enter: pd start
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
