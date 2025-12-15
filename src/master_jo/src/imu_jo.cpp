@@ -10,7 +10,7 @@ ImuJo::ImuJo() : Node("imu_jo")
         qos_profile,
         std::bind(&ImuJo::topic_callback, this, std::placeholders::_1));
 
-    angle_pub_ = this->create_publisher<geometry_msgs::msg::Vector3>("imu_angle", 10);
+    angle_pub_ = this->create_publisher<geometry_msgs::msg::Vector3>("imu_angle", qos_profile);
 
     RCLCPP_INFO(this->get_logger(), "ImuJo start");
 }

@@ -17,40 +17,41 @@ DrivingYY::DrivingYY() : Node("driving_yy")
     def_turn_x = 0;
     def_turn_z = 0;
 
+    auto sensor_qos = rclcpp::SensorDataQoS();
     imu_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>(
         "imu_angle",
-        10,
+        sensor_qos,
         std::bind(&DrivingYY::imu_callback, this, _1));
 
     psd_front_sub_ = this->create_subscription<std_msgs::msg::Int32>(
-        "psd_result_front", 10, std::bind(&DrivingYY::psd_front_callback, this, _1));
+        "psd_result_front", sensor_qos, std::bind(&DrivingYY::psd_front_callback, this, _1));
 
     psd_left_sub_ = this->create_subscription<std_msgs::msg::Int32>(
-        "psd_result_left", 10, std::bind(&DrivingYY::psd_left_callback, this, _1));
+        "psd_result_left", sensor_qos, std::bind(&DrivingYY::psd_left_callback, this, _1));
 
     psd_right_sub_ = this->create_subscription<std_msgs::msg::Int32>(
-        "psd_result_right", 10, std::bind(&DrivingYY::psd_right_callback, this, _1));
+        "psd_result_right", sensor_qos, std::bind(&DrivingYY::psd_right_callback, this, _1));
 
     flag_sub_ = this->create_subscription<std_msgs::msg::Int32>(
         "master_jo_flag",
-        10,
+        sensor_qos,
         std::bind(&DrivingYY::flag_callback, this, _1));
     ui_sub_ = this->create_subscription<autorace_interfaces::msg::Ui2Driving>(
         "/ui2driving_topic",
-        10,
+        sensor_qos,
         std::bind(&DrivingYY::ui_callback, this, _1));
 
     pixel_diff_sub_ = this->create_subscription<autorace_interfaces::msg::MasterJo>(
         "pixel_diff",
-        10,
+        sensor_qos,
         std::bind(&DrivingYY::pixel_diff_callback, this, std::placeholders::_1));
 
     vision_traffic_sub_ = this->create_subscription<autorace_interfaces::msg::VisionHyun>(
         "/vision/line_diff_info",
-        10,
+        sensor_qos,
         std::bind(&DrivingYY::vision_traffic_callback, this, _1));
 
-    publisher_drive = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 30);
+    publisher_drive = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", sensor_qos);
     drive_timer = this->create_wall_timer(100ms, std::bind(&DrivingYY::drive_callback, this));
 
     RCLCPP_INFO(this->get_logger(), "DrivingYY Start");

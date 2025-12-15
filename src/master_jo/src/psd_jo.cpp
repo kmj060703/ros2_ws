@@ -2,12 +2,13 @@
 
 PsdJo::PsdJo() : Node("psd_jo")
 {
+    auto qos_profile = rclcpp::SensorDataQoS();
     psd_sub_ = this->create_subscription<std_msgs::msg::UInt16MultiArray>(
-        "robit_psd", 10, std::bind(&PsdJo::topic_callback, this, std::placeholders::_1));
+        "robit_psd", qos_profile, std::bind(&PsdJo::topic_callback, this, std::placeholders::_1));
 
-    pub_front_ = this->create_publisher<std_msgs::msg::Int32>("psd_result_front", 10);
-    pub_left_ = this->create_publisher<std_msgs::msg::Int32>("psd_result_left", 10);
-    pub_right_ = this->create_publisher<std_msgs::msg::Int32>("psd_result_right", 10);
+    pub_front_ = this->create_publisher<std_msgs::msg::Int32>("psd_result_front", qos_profile);
+    pub_left_ = this->create_publisher<std_msgs::msg::Int32>("psd_result_left", qos_profile);
+    pub_right_ = this->create_publisher<std_msgs::msg::Int32>("psd_result_right", qos_profile);
 
     RCLCPP_INFO(this->get_logger(), "PsdJo publish start");
 }

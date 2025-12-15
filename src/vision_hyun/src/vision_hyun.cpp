@@ -154,6 +154,7 @@ void gui_thread()
 ImageViewer::ImageViewer()
     : Node("vision_hyun_node")
 {
+    auto qos_profile = rclcpp::SensorDataQoS();
     const std::string image_topic = "/default_camera/image_raw";
 
     subscription_ = this->create_subscription<sensor_msgs::msg::Image>(
@@ -163,7 +164,7 @@ ImageViewer::ImageViewer()
     publisher_ = this->create_publisher<sensor_msgs::msg::Image>("/vision/image_processed", 10);
     publisher_2 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_raw", 10);
     publisher_3 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_total", 10);
-    publisher_4 = this->create_publisher<autorace_interfaces::msg::VisionHyun>("/vision/line_diff_info", 10);
+    publisher_4 = this->create_publisher<autorace_interfaces::msg::VisionHyun>("/vision/line_diff_info", qos_profile);
 
     RCLCPP_INFO(this->get_logger(), "Image viewer node started.");
 

@@ -6,18 +6,19 @@
 MasterJo::MasterJo()
     : Node("master_jo")
 {
+  auto qos_profile = rclcpp::SensorDataQoS();
   yolo_sub_ = this->create_subscription<std_msgs::msg::String>(
       "MasterJo_YOLO",
-      10,
+      qos_profile,
       std::bind(&MasterJo::yolo_callback, this, std::placeholders::_1));
 
   vision_sub_ = this->create_subscription<autorace_interfaces::msg::VisionHyun>(
       "/vision/line_diff_info",
-      10,
+      qos_profile,
       std::bind(&MasterJo::vision_callback, this, std::placeholders::_1));
 
-  flag_pub_ = this->create_publisher<std_msgs::msg::Int32>("master_jo_flag", 10);
-  pixel_diff_pub_ = this->create_publisher<autorace_interfaces::msg::MasterJo>("pixel_diff", 10);
+  flag_pub_ = this->create_publisher<std_msgs::msg::Int32>("master_jo_flag", qos_profile);
+  pixel_diff_pub_ = this->create_publisher<autorace_interfaces::msg::MasterJo>("pixel_diff", qos_profile);
 
   RCLCPP_INFO(this->get_logger(), "MasterJo_YOLO & MasterJo_VISION Start");
 }

@@ -22,6 +22,7 @@
 
 QNode::QNode()
 {
+  auto qos_profile = rclcpp::SensorDataQoS();
   int argc = 0;
   char **argv = NULL;
   rclcpp::init(argc, argv);
@@ -30,8 +31,8 @@ QNode::QNode()
   new_timer1->setInterval(100);
   new_timer2 = new QTimer(this);
   new_timer2->setInterval(100);
-  publisher_drive = node->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 30);
-  publisher_ui2drive = node->create_publisher<autorace_interfaces::msg::Ui2Driving>("/ui2driving_topic", 30);
+  publisher_drive = node->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", qos_profile);
+  publisher_ui2drive = node->create_publisher<autorace_interfaces::msg::Ui2Driving>("/ui2driving_topic", qos_profile);
 
   connect(new_timer1, &QTimer::timeout, this, &QNode::drive_callback);
   connect(new_timer2, &QTimer::timeout, this, &QNode::ui2drive_callback);
