@@ -11,7 +11,7 @@ last_blink_time = 0
 blink_visible = True
 BLINK_INTERVAL = 500
 
-UDP_IP = "223.194.43.153"
+UDP_IP = "127.0.0.1"
 UDP_PORT = 5000
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
