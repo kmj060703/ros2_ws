@@ -287,7 +287,7 @@ void TurtleBot3::parameter_event_callback() {
 }
 
 void TurtleBot3::cmd_vel_callback() {
-  auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
+  auto qos = rclcpp::SensorDataQoS();
   cmd_vel_sub_ = this->create_subscription<geometry_msgs::msg::Twist>(
       "cmd_vel", qos,
       [this](const geometry_msgs::msg::Twist::SharedPtr msg) -> void {

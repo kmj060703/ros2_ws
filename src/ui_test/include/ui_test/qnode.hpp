@@ -60,6 +60,7 @@ private:
   rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_right_sub_;
   rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr flag_sub_;
   rclcpp::Subscription<autorace_interfaces::msg::VisionHyun>::SharedPtr vision_traffic_sub_;
+  
   //feed_YOLO
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr yolo_sub_;
 

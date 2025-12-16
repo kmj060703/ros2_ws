@@ -28,7 +28,10 @@
 background-color:rgb(255, 255, 255);</string>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>4</number>
+    </property>
+    <property name="tabBarAutoHide">
+     <bool>false</bool>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -210,7 +213,7 @@ color:rgb(237, 51, 59);</string>
        <double>0.010000000000000</double>
       </property>
       <property name="value">
-       <double>0.070000000000000</double>
+       <double>0.000000000000000</double>
       </property>
      </widget>
      <widget class="QLabel" name="label_4">
@@ -448,7 +451,7 @@ color:rgb(0, 0, 0);</string>
        <double>0.100000000000000</double>
       </property>
       <property name="value">
-       <double>0.400000000000000</double>
+       <double>0.000000000000000</double>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_22">
@@ -1977,7 +1980,7 @@ background-color:rgb(222, 221, 218);</string>
        <property name="geometry">
         <rect>
          <x>130</x>
-         <y>330</y>
+         <y>350</y>
          <width>111</width>
          <height>31</height>
         </rect>
@@ -2027,7 +2030,7 @@ background-color:rgb(222, 221, 218);</string>
        <property name="geometry">
         <rect>
          <x>620</x>
-         <y>330</y>
+         <y>350</y>
          <width>111</width>
          <height>31</height>
         </rect>
@@ -2094,7 +2097,7 @@ background-color:rgb(222, 221, 218);</string>
        <property name="geometry">
         <rect>
          <x>100</x>
-         <y>360</y>
+         <y>380</y>
          <width>171</width>
          <height>51</height>
         </rect>
@@ -2112,7 +2115,7 @@ background-color:rgb(222, 221, 218);
        <property name="geometry">
         <rect>
          <x>590</x>
-         <y>360</y>
+         <y>380</y>
          <width>161</width>
          <height>51</height>
         </rect>
@@ -2602,185 +2605,8 @@ background-color:rgb(222, 221, 218);
     </widget>
     <widget class="QWidget" name="tab_6">
      <attribute name="title">
-      <string>Localization</string>
+      <string>Odometry show</string>
      </attribute>
-    </widget>
-    <widget class="QWidget" name="tab_5">
-     <attribute name="title">
-      <string>Node log</string>
-     </attribute>
-     <widget class="QScrollArea" name="scrollArea">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>40</y>
-        <width>951</width>
-        <height>171</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
-background-color:rgb(222, 221, 218);</string>
-      </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>949</width>
-         <height>169</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QLabel" name="label_80">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>5</y>
-        <width>111</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
-      </property>
-      <property name="text">
-       <string>driving_yy</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_84">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>215</y>
-        <width>111</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
-      </property>
-      <property name="text">
-       <string>master_jo</string>
-      </property>
-     </widget>
-     <widget class="QScrollArea" name="scrollArea_2">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>250</y>
-        <width>951</width>
-        <height>171</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
-background-color:rgb(222, 221, 218);</string>
-      </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_18">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>949</width>
-         <height>169</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QLabel" name="label_85">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>425</y>
-        <width>111</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
-      </property>
-      <property name="text">
-       <string>ui_test</string>
-      </property>
-     </widget>
-     <widget class="QScrollArea" name="scrollArea_3">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>460</y>
-        <width>951</width>
-        <height>171</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
-background-color:rgb(222, 221, 218);</string>
-      </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_19">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>949</width>
-         <height>169</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QScrollArea" name="scrollArea_4">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>675</y>
-        <width>951</width>
-        <height>171</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">font: 11pt &quot;Ubuntu&quot;;
-background-color:rgb(222, 221, 218);</string>
-      </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_20">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>949</width>
-         <height>169</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QLabel" name="label_89">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>640</y>
-        <width>111</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">font: 15pt &quot;Ubuntu&quot;;</string>
-      </property>
-      <property name="text">
-       <string>vision_hyun</string>
-      </property>
-     </widget>
     </widget>
    </widget>
    <widget class="QLabel" name="label_16">

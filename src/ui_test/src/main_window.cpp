@@ -842,32 +842,25 @@ void MainWindow::on_doubleSpinBox_7_valueChanged(double arg1)
 
 void MainWindow::updateImage(const QPixmap &pixmap, int index)
 {
-    // qDebug() << "[Debug] updateImage called with index:" << index;
     if (pixmap.isNull())
-    {
-        // qDebug() << "[Debug] pixmap is null, returning.";
         return;
-    }
-    if (index >= 0 && index < 4)
+
+    if (index >= 0 && index < 11)
     {
         m_img[index] = pixmap;
-        // label_18 업데이트
-        // qDebug() << "[Debug] Checking for label_18 update. imshow_flag_1:" << imshow_flag_1 << "camera_1_state:" << camera_1_state << "index+1:" << index + 1;
-        if (imshow_flag_1 == 1 && camera_1_state == (index + 1))
-        {
-            // qDebug() << "[Debug] Updating label_18 with image index:" << index;
-            ui->label_18->setPixmap(
-                m_img[index].scaled(640, 360, Qt::KeepAspectRatio));
-        }
-        // label_19 업데이트
-        // qDebug() << "[Debug] Checking for label_19 update. imshow_flag_2:" << imshow_flag_2 << "camera_2_state:" << camera_2_state << "index+1:" << index + 1;
-        if (imshow_flag_2 == 1 && camera_2_state == (index + 1))
-        {
-            // qDebug() << "[Debug] Updating label_19 with image index:" << index;
-            ui->label_19->setPixmap(
-                m_img[index].scaled(640, 360, Qt::KeepAspectRatio));
-        }
     }
+
+    // 메인 카메라
+    if (index >= 0 && index < 4)
+    {
+        if (imshow_flag_1 == 1 && camera_1_state == (index + 1))
+            ui->label_18->setPixmap(m_img[index].scaled(640, 360, Qt::KeepAspectRatio));
+
+        if (imshow_flag_2 == 1 && camera_2_state == (index + 1))
+            ui->label_19->setPixmap(m_img[index].scaled(640, 360, Qt::KeepAspectRatio));
+    }
+
+    //보조 이미지 (4~10)
     ui->label_wl->setPixmap(m_img[4].scaled(290, 163, Qt::KeepAspectRatio));
     ui->label_yl->setPixmap(m_img[5].scaled(290, 163, Qt::KeepAspectRatio));
     ui->label_rl->setPixmap(m_img[6].scaled(290, 163, Qt::KeepAspectRatio));
@@ -876,6 +869,7 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index)
     ui->label_gt->setPixmap(m_img[9].scaled(290, 163, Qt::KeepAspectRatio));
     ui->label_bb->setPixmap(m_img[10].scaled(290, 163, Qt::KeepAspectRatio));
 }
+
 
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
@@ -1675,14 +1669,14 @@ void MainWindow::on_dial_valueChanged(int value)
 void MainWindow::on_comboBox_camera1_currentIndexChanged(int index)
 {
     //camera_choose1
-    if(index!=0)camera_1_state=index-1;
+    camera_1_state=index;
 
 }
 
 void MainWindow::on_comboBox_camera2_currentIndexChanged(int index)
 {
     //camera_choose2
-    if(index!=0)camera_2_state=index-1;
+    camera_2_state=index;
 }
 
 // 밑에 키보드 구현-->w s a d home탭에서 이동, space: 정지 enter: pd start

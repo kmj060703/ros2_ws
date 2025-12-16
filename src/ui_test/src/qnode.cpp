@@ -143,7 +143,6 @@ void QNode::vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::
 void QNode::yolo_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
     img_id = 3;
-
     cv_bridge::CvImagePtr cv_ptr;
     try
     {
@@ -167,7 +166,6 @@ void QNode::yolo_callback(const sensor_msgs::msg::Image::SharedPtr msg)
         frame.step,
         QImage::Format_RGB888
     );
-
     emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
 }
 
