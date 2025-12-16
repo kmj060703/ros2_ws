@@ -93,7 +93,7 @@ private:
     int Construction_mem = 1 ;//(0=노랑 중심, 1=하양 중심)
     double local_yaw = 0 ;
     double local_diff =0;
-    int state=0; //상태: 0= 주행, 1= 정렬, 2= 회전, ...
+    int state=0; //상태: 0= 주행, 1= 정렬, 2= 회전, 3= 선 직진, 4= 선 직진 ...
     rclcpp::TimerBase::SharedPtr drive_timer;
 };
 

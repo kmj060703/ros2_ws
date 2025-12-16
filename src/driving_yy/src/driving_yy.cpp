@@ -116,8 +116,8 @@ void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHy
 {
     traffic_light_status_ = msg->traffic_light;
     brown_count = msg->brown_count;
-    yellow_count = msg->brown_count;
-    white_count = msg->brown_count;
+    yellow_count = msg->yellowline_count;
+    white_count = msg->whiteline_count;
 
     if (traffic_light_status_ == 1)
     {
@@ -223,18 +223,18 @@ void DrivingYY::Itersection()
 
     if (mission_flag_ == 2)
     { // 좌
-        if ((error_y == -321 && error_w == -321) || (error_y == -321 && z <= 0))
+        if ((error_y == -321 && error_w == -321) || (error_y == -321 && z <= 0.08))
         {
             driving_msg.linear.x = 0.09;
-            driving_msg.angular.z = 0.35;
+            driving_msg.angular.z = 0.36;
         }
     }
     else if (mission_flag_ == 3)
     { // 우
-        if ((error_y == -321 && error_w == -321) || (error_w == -321 && z >= 0))
+        if ((error_y == -321 && error_w == -321) || (error_w == -321 && z >= -0.08))
         {
             driving_msg.linear.x = 0.09;
-            driving_msg.angular.z = -0.35;
+            driving_msg.angular.z = -0.36;
         }
     }
 }
@@ -253,62 +253,71 @@ void DrivingYY::Construction()
             }
         }
         if(timer==count){
-            local_diff=degreecal(current_yaw_-local_yaw-95);
+            local_diff=degreecal(local_yaw-current_yaw_-95);
         }
         
         RCLCPP_INFO(this->get_logger(), "degree_diff: %f", local_diff);
-        if(brown_count>42000&&state==0){state=1;}
+        if(brown_count>42000&&state==0){state=1;RCLCPP_INFO(this->get_logger(), "s0"); }
         
-        if(state==1){    
-            if(current_yaw_-local_yaw<2&&current_yaw_-local_yaw>-2){
+        if(state==1){   
+            RCLCPP_INFO(this->get_logger(), "s1"); 
+            if(local_diff<2&&local_diff>-2){
+                if(brown_count>2000){state=2;}
+                else{state=0;}
             }
-            if(local_yaw-current_yaw_>0){
-                driving_msg.linear.x =0.0;
-                driving_msg.angular.z =  -0.25;
-            }
-            else if(local_yaw-current_yaw_<0){
-                driving_msg.linear.x =0.0;
-                driving_msg.angular.z =  0.25;
+            else{
+                if(local_diff>0){
+                    driving_msg.linear.x =0.0;
+                    driving_msg.angular.z =  -0.25;
+                }
+                else if(local_diff<0){
+                    driving_msg.linear.x =0.0;
+                    driving_msg.angular.z =  0.25;
+                }
             }
         }
         else if(state==2){
+            RCLCPP_INFO(this->get_logger(), "s2"); 
             if(Construction_mem==1){
-                if(current_yaw_<72&&current_yaw_>68){
-                    state = 0;
-                    last_error = 0;
-                    error = 0 ;
+                if(local_diff<72&&local_diff>68){
+                    state = 3;
                     driving_msg.linear.x =0.05;
                     driving_msg.angular.z =  0.0;
                 }
-                else if(current_yaw_>70){
+                else if(local_diff>70){
                     driving_msg.linear.x =0.0;
                     driving_msg.angular.z =  -0.25;
                 }
-                else if(current_yaw_<70){
+                else if(local_diff<70){
                     driving_msg.linear.x =0.0;
                     driving_msg.angular.z =  0.25;
                 }
-                else{state=0;Construction_mem=0;}
+                else{state=1;Construction_mem=0;}
             }
             else if(Construction_mem==0){
-                if(current_yaw_>-72&&current_yaw_<-68){
-                    state = 0;
-                    last_error = 0;
-                    error = 0 ;
+                if(local_diff>-72&&local_diff<-68){
+                    state = 4;
                     driving_msg.linear.x =0.05;
                     driving_msg.angular.z =  0.0;
                 }
-                else if(current_yaw_>-70){
-                    driving_msg.linear.x =0.02;
+                else if(local_diff>-70){
+                    driving_msg.linear.x =0.00;
                     driving_msg.angular.z =  -0.25;
                 }
-                else if(current_yaw_<-70){
-                    driving_msg.linear.x =0.02;
+                else if(local_diff<-70){
+                    driving_msg.linear.x =0.00;
                     driving_msg.angular.z =  0.25;
                 }
-                else{state=0;Construction_mem=1;}
             }
 
+        }
+        else if(state==3){
+            RCLCPP_INFO(this->get_logger(), "s3"); 
+            if(yellow_count==2500){state=1;}
+        }
+        else if(state==4){
+            RCLCPP_INFO(this->get_logger(), "s4"); 
+            if(white_count==2500){state=1;}
         }
 
     }
