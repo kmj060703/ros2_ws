@@ -1206,7 +1206,7 @@ void MainWindow::on_pushButton_44_clicked()
     // to see the JSON output
     QJsonDocument doc(obj);
     qDebug() << doc.toJson(QJsonDocument::Indented);
-    QString filePath = "ui_test/work/visionData.json";
+    QString filePath = QDir::homePath() + "/ros2_ws/src/ui_test/work/visionData.json";
     saveJson(obj, filePath);
 }
 
@@ -1233,7 +1233,7 @@ QJsonObject MainWindow::loadJson(const QString &filePath)
 
 void MainWindow::on_pushButton_45_clicked()
 {
-    QString filePath = "ui_test/work/visionData.json";
+    QString filePath = QDir::homePath() + "/ros2_ws/src/ui_test/work/visionData.json";
     QJsonObject loadedObj = loadJson(filePath);
 
     // JSON 배열
