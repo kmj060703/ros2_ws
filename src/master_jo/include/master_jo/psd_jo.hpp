@@ -12,12 +12,17 @@ public:
 
 private:
     void topic_callback(const std_msgs::msg::UInt16MultiArray::SharedPtr msg);
-    
+
     rclcpp::Subscription<std_msgs::msg::UInt16MultiArray>::SharedPtr psd_sub_;
-    
     rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr pub_front_;
     rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr pub_left_;
     rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr pub_right_;
+
+    int front_adc[5] = {0};
+    int left_adc[5]  = {0};
+    int right_adc[5] = {0};
+
+    int idx = 0;
 };
 
 #endif

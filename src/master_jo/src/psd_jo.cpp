@@ -15,26 +15,40 @@ PsdJo::PsdJo() : Node("psd_jo")
 
 void PsdJo::topic_callback(const std_msgs::msg::UInt16MultiArray::SharedPtr msg)
 {
-    uint16_t front_adc = msg->data[0];
-    uint16_t left_adc = msg->data[1];
-    uint16_t right_adc = msg->data[2];
+    if (msg->data.size() < 3)
+        return;
+
+    front_adc[idx] = msg->data[0];
+    left_adc[idx]  = msg->data[1];
+    right_adc[idx] = msg->data[2];
+
+    idx++;
+    if (idx >= 5) idx = 0;
+
+    int front_sum = 0;
+    int left_sum  = 0;
+    int right_sum = 0;
+
+    for (int i = 0; i < 5; i++)
+    {
+        front_sum += front_adc[i];
+        left_sum  += left_adc[i];
+        right_sum += right_adc[i];
+    }
 
     std_msgs::msg::Int32 msg_f;
     std_msgs::msg::Int32 msg_l;
     std_msgs::msg::Int32 msg_r;
 
-    msg_f.data = front_adc;
-    msg_l.data = left_adc;
-    msg_r.data = right_adc;
+    msg_f.data = front_sum / 5;
+    msg_l.data = left_sum  / 5;
+    msg_r.data = right_sum / 5;
 
     pub_front_->publish(msg_f);
     pub_left_->publish(msg_l);
     pub_right_->publish(msg_r);
-
-    // RCLCPP_INFO(this->get_logger(),
-    //             "F_ADC: %d  L_ADC: %d  R_ADC: %d",
-    //             front_adc, left_adc, right_adc);
 }
+
 
 int main(int argc, char **argv)
 {
