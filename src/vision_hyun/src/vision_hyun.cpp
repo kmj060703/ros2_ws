@@ -106,10 +106,10 @@ void gui_thread()
                 frame_display = latest_frame.clone();
             if (!bird_copy.empty())
                 bird_display = bird_copy.clone();
-            if (!yellow_mask.empty())
-                yellow_display = yellow_mask.clone();
-            if (!white_mask.empty())
-                white_display = white_mask.clone();
+            // if (!yellow_mask.empty())
+            //     yellow_display = yellow_mask.clone();
+            // if (!white_mask.empty())
+            //     white_display = white_mask.clone();
             if (!red_and_green_mask.empty())
                 red_and_green_mask_copy = red_and_green_mask.clone();
             if (!brown_mask.empty())
@@ -143,10 +143,7 @@ void gui_thread()
 
         if (!bird_display.empty())
             cv::imshow("Bird's-Eye View", bird_display);
-        if (!yellow_display.empty())
-            cv::imshow("yellow_mask", yellow_display);
-        if (!white_display.empty())
-            cv::imshow("white_mask", white_display);
+    
         if (!red_and_green_mask.empty())
             cv::imshow("traffic_mask", red_and_green_mask);
         if (!brown_mask.empty())
@@ -296,7 +293,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             detect_y_end = 360;
 
             cv::Mat red_bar_frame = bar_temp_frame1 + bar_temp_frame2;
-            cv::imshow("bar", red_bar_frame);
+      
             for (int i = detect_y_start; i < detect_y_end; i++)
             {
                 for (int j = detect_x_start; j < detect_x_end; j++)
