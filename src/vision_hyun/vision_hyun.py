@@ -34,10 +34,14 @@ while True:
     # YOLO 객체 감지
     results = model(frame)
     person_count = 0
+    
+    MIN_BOX_AREA = 3000  
+    
     for r in results:
         for box in r.boxes:
-            cls = int(box.cls[0])
-            if cls == 0:
+            x, y, w, h = box.xywh[0].tolist()
+            area = w * h
+            if area > MIN_BOX_AREA:
                 person_count += 1
 
     # UDP 영상 송출
