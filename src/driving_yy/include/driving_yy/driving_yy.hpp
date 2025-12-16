@@ -46,6 +46,10 @@ public:
     int white_x;
     int yellow_diff;
     int white_diff;
+    int white_flag=0;
+    int for_count=0;
+    int park_comp=0;
+    int turn_flag=0;
 
 private:
     void imu_callback(const geometry_msgs::msg::Vector3::SharedPtr msg);
@@ -89,6 +93,7 @@ private:
     int vision_valid_=1;
     int traffic_mission_comp=0;
     int traffic_red=0;
+    int only_y=0;
 
       //장애물용 기억
     int count=10; //local_yaw 정하기
