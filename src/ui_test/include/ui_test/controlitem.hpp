@@ -3,6 +3,7 @@
 
 #include "autorace_interfaces/msg/ui2_driving.hpp"
 #include <cv_bridge/cv_bridge.h>
+#include <nav_msgs/msg/odometry.hpp>
 
 extern int l_state_flag_;
 extern int state_flag_;

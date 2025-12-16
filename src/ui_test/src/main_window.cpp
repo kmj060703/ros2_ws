@@ -1642,13 +1642,11 @@ void MainWindow::on_pushButton_p90_2_clicked()
     imu_yaw_local+=90;
 }
 
-
 void MainWindow::on_pushButton_m90_2_clicked()
 {
     //-90local
     imu_yaw_local-=90;
 }
-
 
 void MainWindow::on_pushButton_p180_2_clicked()
 {
@@ -1656,27 +1654,23 @@ void MainWindow::on_pushButton_p180_2_clicked()
     imu_yaw_local+=180;
 }
 
-
 void MainWindow::on_pushButton_setYaw_2_clicked()
 {
     //set yaw local
     imu_yaw_local=0;
 }
 
-
 void MainWindow::on_dial_localang_valueChanged(int value)
 {
     //value표시?
-    //ui->label_l_ang->setText(imu_yaw_local.c_str());
+    ui->label_l_ang->setText(std::to_string(imu_yaw_local).c_str());
 }
-
 
 void MainWindow::on_dial_valueChanged(int value)
 {
     //value 표시
-    //ui->label_g_ang->setText(imu_yaw.c_str());
+    ui->label_g_ang->setText(std::to_string(imu_yaw).c_str());
 }
-
 
 void MainWindow::on_comboBox_camera1_currentIndexChanged(int index)
 {
@@ -1684,7 +1678,6 @@ void MainWindow::on_comboBox_camera1_currentIndexChanged(int index)
     if(index!=0)camera_1_state=index-1;
 
 }
-
 
 void MainWindow::on_comboBox_camera2_currentIndexChanged(int index)
 {

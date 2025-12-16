@@ -54,6 +54,7 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_drive;
   rclcpp::Publisher<autorace_interfaces::msg::Ui2Driving>::SharedPtr publisher_ui2drive;
   rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr imu_sub_;
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_front_sub_;
   rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_left_sub_;
   rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_right_sub_;
@@ -69,6 +70,7 @@ private:
   void flag_callback(const std_msgs::msg::Int32::SharedPtr msg);
   void vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg);
   void yolo_callback(const sensor_msgs::msg::Image::SharedPtr msg);
+  void odom_callback(const nav_msgs::msg::Odometry msg);
 
   int sockfd_;
   std::thread udp_thread_;

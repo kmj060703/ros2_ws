@@ -338,11 +338,11 @@ void DrivingYY::Parking()
     case PARK_PD:
     {
         PD_control();
-        if (is_left_danger_){
+        if (is_left_danger_>500){
             pstate_ = AVOID_RIGHT;
             std::cout<<"오른쪽으로피하기 시작"<<std::endl;
         }
-        if (is_right_danger_){
+        else if (is_right_danger_>500){
             pstate_ = AVOID_LEFT;
             std::cout<<"왼쪽으로피하기 시작"<<std::endl;
         }
@@ -414,14 +414,14 @@ void DrivingYY::drive_callback()
     {
         PD_control();
         //Traffic_light();
-        Itersection();
-        Construction();
+        //Itersection();
+        //Construction();
         // if (mission_flag_ == 2 || mission_flag_ == 3)
         //     Itersection();
         // else if (mission_flag_ == 4)
         //     Construction();
         // else if (mission_flag_ == 5)
-        //     Parking();
+             Parking();
         // else if(traffic_light_status_==4){
         //     Level_crossing();
         // }
