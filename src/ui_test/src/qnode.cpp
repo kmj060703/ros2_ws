@@ -357,15 +357,18 @@ void QNode::vision_helper(cv::Mat image, int img_id)
       img_id=6;
     }
     if (!image.empty())
-    {
-      cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
-      QImage qimage(image.data,
-              image.cols,
-              image.rows,
-              image.step,
-              QImage::Format_Grayscale8);
-      emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
-    }
+{
+    cv::cvtColor(image, image, cv::COLOR_GRAY2RGB);
+
+    QImage qimage(image.data,
+                  image.cols,
+                  image.rows,
+                  image.step,
+                  QImage::Format_RGB888);
+
+    emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
+}
+
   }
   else if (img_id == 0)
   {
@@ -425,15 +428,18 @@ void QNode::vision_helper(cv::Mat image, int img_id)
       img_id=10;
     }
     if (!image.empty())
-    {
-      // cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
-      QImage qimage(image.data,
-              image.cols,
-              image.rows,
-              image.step,
-              QImage::Format_Grayscale8);
-      emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
-    }
+{
+    cv::cvtColor(image, image, cv::COLOR_GRAY2RGB);
+
+    QImage qimage(image.data,
+                  image.cols,
+                  image.rows,
+                  image.step,
+                  QImage::Format_RGB888);
+
+    emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
+}
+
   }
 }
 
