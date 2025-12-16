@@ -346,17 +346,17 @@ void QNode::vision_helper(cv::Mat image, int img_id)
     if (vision_hsv_state == 1)
     {
       image = line_white_mask;
-      img_id=3;
+      img_id=4;
     }
     else if (vision_hsv_state == 2)
     {
       image = line_yellow_mask;
-      img_id=4;
+      img_id=5;
     }
     else if (vision_hsv_state == 3)
     {
       image = red_l_mask;
-      img_id=5;
+      img_id=6;
     }
     if (!image.empty())
     {
@@ -405,22 +405,22 @@ void QNode::vision_helper(cv::Mat image, int img_id)
     if (vision_hsv_state == 4)
     {
       image = tra_red_mask;
-      img_id=6;
+      img_id=7;
     }
     else if (vision_hsv_state == 5)
     {
       image = tra_yellow_mask;
-      img_id=7;
+      img_id=8;
     }
     else if (vision_hsv_state == 6)
     {
       image = tra_green_mask;
-      img_id=8;
+      img_id=9;
     }
     else if (vision_hsv_state == 7)
     {
       image = brown_mask;
-      img_id=9;
+      img_id=10;
     }
     if (!image.empty())
     {
