@@ -841,35 +841,34 @@ void MainWindow::on_doubleSpinBox_7_valueChanged(double arg1)
 
 void MainWindow::updateImage(const QPixmap &pixmap, int index)
 {
-    if (pixmap.isNull())
-        return;
+    if (pixmap.isNull()) return;
+    if (index < 0 || index >= 11) return;
 
-    if (index >= 0 && index < 11)
+    m_img[index] = pixmap;
+
+    if (imshow_flag_1 == 1 && index == camera_1_state - 1)
     {
-        m_img[index] = pixmap;
+        ui->label_18->setPixmap(
+            pixmap.scaled(640, 360, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+        );
     }
 
-    // 메인 카메라
-    if (index >= 0 && index < 4)
+    if (imshow_flag_2 == 1 && index == camera_2_state - 1)
     {
-        if (imshow_flag_1 == 1 && camera_1_state == (index + 1))
-            ui->label_18->setPixmap(m_img[index].scaled(640, 360, Qt::KeepAspectRatio));
-
-        if (imshow_flag_2 == 1 && camera_2_state == (index + 1))
-        {
-            // qDebug() << "[Debug] Updating label_19 with image index:" << index;
-            ui->label_19->setPixmap(
-                m_img[index].scaled(640, 360, Qt::KeepAspectRatio));
-        }
+        ui->label_19->setPixmap(
+            pixmap.scaled(640, 360, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+        );
     }
-    ui->label_wl->setPixmap(m_img[4].scaled(290, 163, Qt::KeepAspectRatio));
-    ui->label_yl->setPixmap(m_img[5].scaled(290, 163, Qt::KeepAspectRatio));
-    ui->label_rl->setPixmap(m_img[6].scaled(290, 163, Qt::KeepAspectRatio));
-    ui->label_rt->setPixmap(m_img[7].scaled(290, 163, Qt::KeepAspectRatio));
-    ui->label_yt->setPixmap(m_img[8].scaled(290, 163, Qt::KeepAspectRatio));
-    ui->label_gt->setPixmap(m_img[9].scaled(290, 163, Qt::KeepAspectRatio));
-    ui->label_bb->setPixmap(m_img[10].scaled(290, 163, Qt::KeepAspectRatio));
+
+    if (index == 4) ui->label_wl->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
+    if (index == 5) ui->label_yl->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
+    if (index == 6) ui->label_rl->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
+    if (index == 7) ui->label_rt->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
+    if (index == 8) ui->label_yt->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
+    if (index == 9) ui->label_gt->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
+    if (index == 10) ui->label_bb->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
 }
+
 
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
