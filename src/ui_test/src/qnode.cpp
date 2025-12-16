@@ -33,30 +33,30 @@ QNode::QNode()
   new_timer1->setInterval(100);
   new_timer2 = new QTimer(this);
   new_timer2->setInterval(100);
-    imu_sub_ = node->create_subscription<geometry_msgs::msg::Vector3>(
-        "imu_angle",
-        sensor_qos,
-        std::bind(&QNode::imu_callback, this, _1));
+  imu_sub_ = node->create_subscription<geometry_msgs::msg::Vector3>(
+      "imu_angle",
+      sensor_qos,
+      std::bind(&QNode::imu_callback, this, _1));
 
-    psd_front_sub_ = node->create_subscription<std_msgs::msg::Int32>(
-        "psd_result_front", sensor_qos, std::bind(&QNode::psd_front_callback, this, _1));
+  psd_front_sub_ = node->create_subscription<std_msgs::msg::Int32>(
+      "psd_result_front", sensor_qos, std::bind(&QNode::psd_front_callback, this, _1));
 
-    psd_left_sub_ = node->create_subscription<std_msgs::msg::Int32>(
-        "psd_result_left", sensor_qos, std::bind(&QNode::psd_left_callback, this, _1));
+  psd_left_sub_ = node->create_subscription<std_msgs::msg::Int32>(
+      "psd_result_left", sensor_qos, std::bind(&QNode::psd_left_callback, this, _1));
 
-    psd_right_sub_ = node->create_subscription<std_msgs::msg::Int32>(
-        "psd_result_right", sensor_qos, std::bind(&QNode::psd_right_callback, this, _1));
+  psd_right_sub_ = node->create_subscription<std_msgs::msg::Int32>(
+      "psd_result_right", sensor_qos, std::bind(&QNode::psd_right_callback, this, _1));
 
-    flag_sub_ = node->create_subscription<std_msgs::msg::Int32>(
-        "master_jo_flag",
-        sensor_qos,
-        std::bind(&QNode::flag_callback, this, _1));
-    vision_traffic_sub_ = node->create_subscription<autorace_interfaces::msg::VisionHyun>(
-        "/vision/line_diff_info",
-        sensor_qos,
-        std::bind(&QNode::vision_traffic_callback, this, _1));
+  flag_sub_ = node->create_subscription<std_msgs::msg::Int32>(
+      "master_jo_flag",
+      sensor_qos,
+      std::bind(&QNode::flag_callback, this, _1));
+  vision_traffic_sub_ = node->create_subscription<autorace_interfaces::msg::VisionHyun>(
+      "/vision/line_diff_info",
+      sensor_qos,
+      std::bind(&QNode::vision_traffic_callback, this, _1));
 
-    yolo_sub_= node->create_subscription<sensor_msgs::msg::Image>("feed_YOLO",10,std::bind(&QNode::yolo_callback, this, std::placeholders::_1));
+  yolo_sub_ = node->create_subscription<sensor_msgs::msg::Image>("feed_YOLO", 10, std::bind(&QNode::yolo_callback, this, std::placeholders::_1));
 
   publisher_drive = node->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", sensor_qos);
   publisher_ui2drive = node->create_publisher<autorace_interfaces::msg::Ui2Driving>("/ui2driving_topic", sensor_qos);
@@ -89,84 +89,80 @@ QNode::~QNode()
 
 void QNode::imu_callback(const geometry_msgs::msg::Vector3::SharedPtr msg)
 {
-    imu_yaw = msg->z;
-    // RCLCPP_INFO(this->get_logger(), "Yaw: %.2f 도", current_yaw_ * 180.0 / M_PI);
+  imu_yaw = msg->z;
+  // RCLCPP_INFO(this->get_logger(), "Yaw: %.2f 도", current_yaw_ * 180.0 / M_PI);
 }
 
 void QNode::psd_front_callback(const std_msgs::msg::Int32::SharedPtr msg)
 {
-    psd_flag[1] = msg->data;
-    // RCLCPP_WARN(this->get_logger(), "정면 장애물 감지 여부: %d", is_front_danger_);
+  psd_flag[1] = msg->data;
+  // RCLCPP_WARN(this->get_logger(), "정면 장애물 감지 여부: %d", is_front_danger_);
 }
 
 void QNode::psd_left_callback(const std_msgs::msg::Int32::SharedPtr msg)
 {
-    psd_flag[0] = msg->data;
-    // RCLCPP_INFO(this->get_logger(), "왼쪽 장애물 감지 여부: %d", is_left_danger_);
+  psd_flag[0] = msg->data;
+  // RCLCPP_INFO(this->get_logger(), "왼쪽 장애물 감지 여부: %d", is_left_danger_);
 }
 
 void QNode::psd_right_callback(const std_msgs::msg::Int32::SharedPtr msg)
 {
-    psd_flag[2] = msg->data;
-    // RCLCPP_INFO(this->get_logger(), "오른쪽 장애물 감지 여부: %d", is_right_danger_);
+  psd_flag[2] = msg->data;
+  // RCLCPP_INFO(this->get_logger(), "오른쪽 장애물 감지 여부: %d", is_right_danger_);
 }
 
 void QNode::flag_callback(const std_msgs::msg::Int32::SharedPtr msg)
 {
-    driving_state = msg->data;
-    // RCLCPP_INFO(this->get_logger(), "플래그: %d", mission_flag_);
+  driving_state = msg->data;
+  // RCLCPP_INFO(this->get_logger(), "플래그: %d", mission_flag_);
 }
 
 void QNode::vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg)
 {
-    traffic_state = msg->traffic_light;
-    brown_count =msg->brown_count;
-    yellow_count =msg->yellowline_count;
-    white_count =msg->whiteline_count;
+  traffic_state = msg->traffic_light;
+  brown_count = msg->brown_count;
+  yellow_count = msg->yellowline_count;
+  white_count = msg->whiteline_count;
 
-
-    if (traffic_state == 1)
-    {
-        // RCLCPP_INFO(this->get_logger(), "빨간불 감지 %d", traffic_light_status_);
-    }
-    else if (traffic_state == 2)
-    {
-        // RCLCPP_INFO(this->get_logger(), "초록불 감지 %d", traffic_light_status_);
-    }
-    else
-    {
-        // RCLCPP_INFO(this->get_logger(), "감지 안됨 혹은 노란색 %d", traffic_light_status_);
-    }
+  if (traffic_state == 1)
+  {
+    // RCLCPP_INFO(this->get_logger(), "빨간불 감지 %d", traffic_light_status_);
+  }
+  else if (traffic_state == 2)
+  {
+    // RCLCPP_INFO(this->get_logger(), "초록불 감지 %d", traffic_light_status_);
+  }
+  else
+  {
+    // RCLCPP_INFO(this->get_logger(), "감지 안됨 혹은 노란색 %d", traffic_light_status_);
+  }
 }
-
 
 void QNode::yolo_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
-    img_id = 3;
-    cv_bridge::CvImagePtr cv_ptr;
-    try
-    {
-        cv_ptr = cv_bridge::toCvCopy(
-            msg,
-            sensor_msgs::image_encodings::RGB8
-        );
-        cv::cvtColor(cv_ptr->image, cv_ptr->image, cv::COLOR_BGR2RGB);
-    }
-    catch (cv_bridge::Exception &e)
-    {
-        return;
-    }
+  img_id = 3;
+  cv_bridge::CvImagePtr cv_ptr;
+  try
+  {
+    cv_ptr = cv_bridge::toCvCopy(
+        msg,
+        sensor_msgs::image_encodings::RGB8);
+    cv::cvtColor(cv_ptr->image, cv_ptr->image, cv::COLOR_BGR2RGB);
+  }
+  catch (cv_bridge::Exception &e)
+  {
+    return;
+  }
 
-    cv::Mat &frame = cv_ptr->image;
+  cv::Mat &frame = cv_ptr->image;
 
-    QImage qimage(
-        frame.data,
-        frame.cols,
-        frame.rows,
-        frame.step,
-        QImage::Format_RGB888
-    );
-    emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
+  QImage qimage(
+      frame.data,
+      frame.cols,
+      frame.rows,
+      frame.step,
+      QImage::Format_RGB888);
+  emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
 }
 
 // UDP 수신 및 이미지 처리
@@ -235,7 +231,7 @@ void QNode::udp_receive_loop()
           vision_helper(frame, img_id);
           if (!frame.empty())
           {
-            last_udp_time_sec_.store(node->now().seconds()); //time stamp
+            last_udp_time_sec_.store(node->now().seconds()); // time stamp
 
             cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
             QImage qimage(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
@@ -293,16 +289,18 @@ void QNode::drive_callback()
 
 void QNode::ui2drive_callback()
 {
-  
+
   double now = node->now().seconds();
 
-  if (now - last_udp_time_sec_.load() > 0.2) {
-      udp_crack = 1;
+  if (now - last_udp_time_sec_.load() > 0.2)
+  {
+    udp_crack = 1;
   }
-  else udp_crack=0;
-  
+  else
+    udp_crack = 0;
+
   auto msg = autorace_interfaces::msg::Ui2Driving();
-  msg.vision_lost_flag=udp_crack;
+  msg.vision_lost_flag = udp_crack;
   msg.state_flag = l_state_flag_;
   msg.start_flag = start_flag_;
   msg.kp = kp_;
@@ -316,6 +314,12 @@ void QNode::ui2drive_callback()
 
 void QNode::vision_helper(cv::Mat image, int img_id)
 {
+  if (image.empty())
+  {
+   
+    return;
+  }
+
   if (img_id == 1)
   {
     if (vision_hsv_state < 4)
@@ -344,31 +348,29 @@ void QNode::vision_helper(cv::Mat image, int img_id)
     if (vision_hsv_state == 1)
     {
       image = line_white_mask;
-      img_id=4;
+      img_id = 4;
     }
     else if (vision_hsv_state == 2)
     {
       image = line_yellow_mask;
-      img_id=5;
+      img_id = 5;
     }
     else if (vision_hsv_state == 3)
     {
       image = red_l_mask;
-      img_id=6;
+      img_id = 6;
     }
     if (!image.empty())
-{
-    
+    {
 
-    QImage qimage(image.data,
-                  image.cols,
-                  image.rows,
-                  image.step,
-                  QImage::Format_Grayscale8);
+      QImage qimage(image.data,
+                    image.cols,
+                    image.rows,
+                    image.step,
+                    QImage::Format_Grayscale8);
 
-    emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
-}
-
+      emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
+    }
   }
   else if (img_id == 0)
   {
@@ -410,36 +412,34 @@ void QNode::vision_helper(cv::Mat image, int img_id)
     if (vision_hsv_state == 4)
     {
       image = tra_red_mask;
-      img_id=7;
+      img_id = 7;
     }
     else if (vision_hsv_state == 5)
     {
       image = tra_yellow_mask;
-      img_id=8;
+      img_id = 8;
     }
     else if (vision_hsv_state == 6)
     {
       image = tra_green_mask;
-      img_id=9;
+      img_id = 9;
     }
     else if (vision_hsv_state == 7)
     {
       image = brown_mask;
-      img_id=10;
+      img_id = 10;
     }
     if (!image.empty())
-{
-   
+    {
 
-    QImage qimage(image.data,
-                  image.cols,
-                  image.rows,
-                  image.step,
-                  QImage::Format_Grayscale8);
+      QImage qimage(image.data,
+                    image.cols,
+                    image.rows,
+                    image.step,
+                    QImage::Format_Grayscale8);
 
-    emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
-}
-
+      emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
+    }
   }
 }
 

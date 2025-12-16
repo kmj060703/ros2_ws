@@ -21,7 +21,7 @@ extern cv::Mat white_mask;
 extern cv::Mat red_mask;
 extern cv::Mat green_mask;
 extern cv::Mat red_and_green_mask;
-extern cv::Mat brown_mask,brown_mask_2;
+extern cv::Mat brown_mask, brown_mask_2;
 extern cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy, red_and_green_mask_copy, brown_copy;
 
 // 전역 변수 추가
@@ -76,6 +76,12 @@ private:
   cv::Scalar lower_brown_2 = cv::Scalar(173, 60, 46);
   cv::Scalar upper_brown_2 = cv::Scalar(180, 190, 195);
 
+  cv::Scalar bar_lower_red = cv::Scalar(0, 111, 0);
+  cv::Scalar bar_upper_red = cv::Scalar(17, 255, 255);
+
+  cv::Scalar bar_lower_red_2 = cv::Scalar(150, 111, 0);
+  cv::Scalar bar_upper_red_2 = cv::Scalar(255, 255, 255);
+
   // 사다리꼴 원본 좌표 (feed 640x360 기준)
   float distort_L_top_x = 160.0;
   float distort_L_top_y = 250.0;
@@ -115,12 +121,12 @@ private:
   // detect 영역의 빨간색/초록색 픽셀 카운트
   int red_pixel_count = 0;
   int green_pixel_count = 0;
-  int yellow_pixel_count = 0 ;
+  int yellow_pixel_count = 0;
   int bar_red_pixel_count = 0;
 
-  int brown_pixel_count=0;
-  int yellowline_pixel_count=0;
-  int whiteline_pixel_count=0;
+  int brown_pixel_count = 0;
+  int yellowline_pixel_count = 0;
+  int whiteline_pixel_count = 0;
   // 신호등 상태 판단
   int red_threshold = 150;
   int green_threshold = 250;

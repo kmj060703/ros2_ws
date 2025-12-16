@@ -28,7 +28,9 @@ cv::Mat red_mask;
 cv::Mat green_mask;
 cv::Mat red_and_green_mask;
 cv::Mat brown_mask, brown_mask_2;
+cv::Mat bar_red_mask, bar_red_mask2;
 cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy, red_and_green_mask_copy;
+cv::Mat bar_temp_frame1, bar_temp_frame2;
 
 // 전역 변수 추가
 int detect_line = 350;
@@ -169,7 +171,7 @@ ImageViewer::ImageViewer()
     publisher_3 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_total", 10);
     publisher_4 = this->create_publisher<autorace_interfaces::msg::VisionHyun>("/vision/line_diff_info", qos_profile);
 
-    //RCLCPP_INFO(this->get_logger(), "Image viewer node started.");
+    // RCLCPP_INFO(this->get_logger(), "Image viewer node started.");
 
     cv::namedWindow("Spedal Feed");
     cv::namedWindow("Bird-Eye View");
@@ -233,6 +235,8 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             cv::inRange(birdeye_hsv, lower_yellow, upper_yellow, yellow_mask);
             cv::inRange(latest_frame, lower_red, upper_red, red_mask);
             cv::inRange(latest_frame, lower_green, upper_green, green_mask);
+            cv::inRange(frame_hsv, bar_lower_red, bar_upper_red, bar_temp_frame1);
+            cv::inRange(frame_hsv, bar_lower_red_2, bar_upper_red_2, bar_temp_frame2);
 
             // 침식/팽창
             cv::Mat k = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
@@ -273,7 +277,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             red_pixel_count = 0;
             yellow_pixel_count = 0;
             green_pixel_count = 0;
-
+            red_and_green_mask = red_mask + green_mask;
             for (int i = detect_y_start; i < detect_y_end; i++)
             {
                 for (int j = detect_x_start; j < detect_x_end; j++)
@@ -287,16 +291,18 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 }
             }
 
-                detect_x_start = 0;
-                detect_y_start = 180;
-                detect_y_end = 360;
-             for (int i = detect_y_start; i < detect_y_end; i++)
+            detect_x_start = 0;
+            detect_y_start = 90;
+            detect_y_end = 360;
+
+            cv::Mat red_bar_frame = bar_temp_frame1 + bar_temp_frame2;
+            cv::imshow("bar", red_bar_frame);
+            for (int i = detect_y_start; i < detect_y_end; i++)
             {
                 for (int j = detect_x_start; j < detect_x_end; j++)
                 {
-                    if (red_mask.at<uchar>(i, j) > 0)
+                    if (red_bar_frame.at<uchar>(i, j) > 0)
                         bar_red_pixel_count++;
-                   
                 }
             }
 
@@ -304,13 +310,13 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             {
                 traffic_light_state = 1;
             }
-            
+
             else if (green_pixel_count > green_threshold) // 300 픽셀 이상
             {
                 traffic_light_state = 2;
                 std::cerr << "2-flag count : " << green_pixel_count << std::endl;
             }
-            else if (bar_red_pixel_count > bar_red_red_threshold) // 150 픽셀 이상
+            else if (bar_red_pixel_count > bar_red_red_threshold)
             {
                 traffic_light_state = 4;
             }
@@ -318,8 +324,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             {
                 traffic_light_state = 0;
             }
-          //  std::cerr << traffic_light_state << std::endl;
-
+            //  std::cerr << traffic_light_state << std::endl;
 
             // 갈색
             brown_pixel_count = 0;
@@ -348,7 +353,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     }
                 }
             }
-            if (whiteline_pixel_count > park_whiteLine_threshold ) // 20000 픽셀 이상
+            if (whiteline_pixel_count > park_whiteLine_threshold) // 20000 픽셀 이상
             {
                 traffic_light_state = 3; // -> 주차 구간에서 흰색 라인 감지하면 멈추게 하셈
             }
@@ -422,7 +427,6 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
             bird_copy = birdeye_with_lines.clone();
             total_birdeye = yellow_mask + white_mask;
-            red_and_green_mask = red_mask + green_mask;
         }
 
         send_udp_image(frame, 0);
