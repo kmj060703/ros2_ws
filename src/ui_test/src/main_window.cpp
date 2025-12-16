@@ -1391,7 +1391,8 @@ void MainWindow::on_pushButton_51_clicked()
 void MainWindow::on_pushButton_52_clicked()
 {
     // vision_save1
-    QFile file("/home/yu/ros2_ws/src/ui_test/tmp/vision_set1.txt");
+    QString path= QDir::homePath()+"/ros2_ws/src/ui_test/tmp/vision_set1.txt";
+    QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         qDebug() << "cannot open vision_set1.txt file";
@@ -1412,7 +1413,8 @@ void MainWindow::on_pushButton_52_clicked()
 void MainWindow::on_pushButton_53_clicked()
 {
     // vision_save2
-    QFile file("/home/yu/ros2_ws/src/ui_test/tmp/vision_set2.txt");
+    QString path= QDir::homePath()+"/ros2_ws/src/ui_test/tmp/vision_set2.txt";
+    QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         qDebug() << "cannot open vision_set2.txt file";
@@ -1433,7 +1435,8 @@ void MainWindow::on_pushButton_53_clicked()
 void MainWindow::on_pushButton_55_clicked()
 {
     // vision_save3
-    QFile file("/home/yu/ros2_ws/src/ui_test/tmp/vision_set3.txt");
+    QString path= QDir::homePath()+"/ros2_ws/src/ui_test/tmp/vision_set3.txt";
+    QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         qDebug() << "cannot open vision_set3.txt file";
@@ -1455,7 +1458,8 @@ void MainWindow::on_pushButton_55_clicked()
 void MainWindow::on_pushButton_50_clicked()
 {
     // vision_set1
-    QFile file("/home/yu/ros2_ws/src/ui_test/tmp/vision_set1.txt");
+    QString path= QDir::homePath()+"/ros2_ws/src/ui_test/tmp/vision_set1.txt";
+    QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         qDebug() << "cannot open file";
@@ -1491,7 +1495,8 @@ void MainWindow::on_pushButton_50_clicked()
 void MainWindow::on_pushButton_54_clicked()
 {
     // vision_set2
-    QFile file("/home/yu/ros2_ws/src/ui_test/tmp/vision_set2.txt");
+    QString path= QDir::homePath()+"/ros2_ws/src/ui_test/tmp/vision_set2.txt";
+    QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         qDebug() << "cannot open file";
@@ -1528,7 +1533,8 @@ void MainWindow::on_pushButton_54_clicked()
 void MainWindow::on_pushButton_56_clicked()
 {
     // vision_set3
-    QFile file("/home/yu/ros2_ws/src/ui_test/tmp/vision_set3.txt");
+    QString path= QDir::homePath()+"/ros2_ws/src/ui_test/tmp/vision_set3.txt";
+    QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         qDebug() << "cannot open file";
