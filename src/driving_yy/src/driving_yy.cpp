@@ -367,6 +367,17 @@ bool near(double a, double b, double eps = 3.0)
 
 void DrivingYY::Parking()
 {
+
+    if(timer<count){
+            if((current_yaw_-local_yaw)<5&&(current_yaw_-local_yaw)>-5){timer++;}
+            else{
+                timer=0;
+                local_yaw=current_yaw_;
+            }
+    }
+    if(timer==count){
+        local_diff=degreecal(local_yaw-current_yaw_-95);
+    }
     switch (pstate_)
     {
     case PARK_PD:
@@ -395,7 +406,7 @@ void DrivingYY::Parking()
         driving_msg.angular.z = -0.35;
         right_turn = 1;
         std::cout<<"오른쪽으로피해"<<std::endl;
-        if (near(current_yaw_, -180) || near(current_yaw_, 180))
+        if (near(local_diff, 90)||near(local_diff, -90))
             pstate_ = GO_FRONT;
     }
     break;
@@ -405,7 +416,7 @@ void DrivingYY::Parking()
         driving_msg.angular.z = 0.35;
         left_turn = 1;
         std::cout<<"왼쪽으로피해"<<std::endl;
-        if (near(current_yaw_, 0))
+        if (near(local_diff, 90)||near(local_diff, -90))
             pstate_ = GO_FRONT;
     }
     break;
@@ -429,7 +440,7 @@ void DrivingYY::Parking()
             std::cout<<"pd안함 오른쪽 뒤로가기"<<std::endl;
             driving_msg.linear.x = -0.09;
             driving_msg.angular.z = -0.35;}
-        if (near(current_yaw_, 90))
+        if (near(local_diff, 90)||near(local_diff, -90))
             pstate_ = PARK_PD;
     }
     break;
