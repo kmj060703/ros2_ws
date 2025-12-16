@@ -37,7 +37,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->comboBox_camera1->addItem("yolo_camera");
     ui->comboBox_camera2->addItem("yolo_camera");
 
-
     QImage default_img(640, 360, QImage::Format_BGR888);
     default_img.fill(QColor(128, 128, 128));
     m_img[0] = QPixmap::fromImage(default_img);
@@ -857,10 +856,12 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index)
             ui->label_18->setPixmap(m_img[index].scaled(640, 360, Qt::KeepAspectRatio));
 
         if (imshow_flag_2 == 1 && camera_2_state == (index + 1))
-            ui->label_19->setPixmap(m_img[index].scaled(640, 360, Qt::KeepAspectRatio));
+        {
+            // qDebug() << "[Debug] Updating label_19 with image index:" << index;
+            ui->label_19->setPixmap(
+                m_img[index].scaled(640, 360, Qt::KeepAspectRatio));
+        }
     }
-
-    //보조 이미지 (4~10)
     ui->label_wl->setPixmap(m_img[4].scaled(290, 163, Qt::KeepAspectRatio));
     ui->label_yl->setPixmap(m_img[5].scaled(290, 163, Qt::KeepAspectRatio));
     ui->label_rl->setPixmap(m_img[6].scaled(290, 163, Qt::KeepAspectRatio));
@@ -869,7 +870,6 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index)
     ui->label_gt->setPixmap(m_img[9].scaled(290, 163, Qt::KeepAspectRatio));
     ui->label_bb->setPixmap(m_img[10].scaled(290, 163, Qt::KeepAspectRatio));
 }
-
 
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
@@ -1486,7 +1486,6 @@ void MainWindow::on_pushButton_50_clicked()
     }
     file.close();
     load_vision_data(index);
-    
 }
 
 void MainWindow::on_pushButton_54_clicked()
@@ -1521,7 +1520,6 @@ void MainWindow::on_pushButton_54_clicked()
             HSV_low[index + 2] = line.split("=")[1].toInt();
         // else if (line.startsWith("vision_state="))
         //     vision_hsv_state = line.split("=")[1].toInt();
-        
     }
     file.close();
     load_vision_data(index);
@@ -1558,7 +1556,6 @@ void MainWindow::on_pushButton_56_clicked()
             HSV_low[index + 2] = line.split("=")[1].toInt();
         // else if (line.startsWith("vision_state="))
         //     vision_hsv_state = line.split("=")[1].toInt();
-        
     }
     file.close();
     load_vision_data(index);
@@ -1633,50 +1630,49 @@ void MainWindow::on_pushButton_stop_clicked()
 void MainWindow::on_pushButton_p90_2_clicked()
 {
     //+90local
-    imu_yaw_local+=90;
+    imu_yaw_local += 90;
 }
 
 void MainWindow::on_pushButton_m90_2_clicked()
 {
     //-90local
-    imu_yaw_local-=90;
+    imu_yaw_local -= 90;
 }
 
 void MainWindow::on_pushButton_p180_2_clicked()
 {
     //+180local
-    imu_yaw_local+=180;
+    imu_yaw_local += 180;
 }
 
 void MainWindow::on_pushButton_setYaw_2_clicked()
 {
-    //set yaw local
-    imu_yaw_local=0;
+    // set yaw local
+    imu_yaw_local = 0;
 }
 
 void MainWindow::on_dial_localang_valueChanged(int value)
 {
-    //value표시?
+    // value표시?
     ui->label_l_ang->setText(std::to_string(imu_yaw_local).c_str());
 }
 
 void MainWindow::on_dial_valueChanged(int value)
 {
-    //value 표시
+    // value 표시
     ui->label_g_ang->setText(std::to_string(imu_yaw).c_str());
 }
 
 void MainWindow::on_comboBox_camera1_currentIndexChanged(int index)
 {
-    //camera_choose1
-    camera_1_state=index;
-
+    // camera_choose1
+    camera_1_state = index;
 }
 
 void MainWindow::on_comboBox_camera2_currentIndexChanged(int index)
 {
-    //camera_choose2
-    camera_2_state=index;
+    // camera_choose2
+    camera_2_state = index;
 }
 
 // 밑에 키보드 구현-->w s a d home탭에서 이동, space: 정지 enter: pd start
