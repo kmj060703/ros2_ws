@@ -87,6 +87,8 @@ private:
     int right_turn=0;
     int left_turn=0;
     int vision_valid_=1;
+    int traffic_mission_comp=0;
+    int traffic_red=0;
 
       //장애물용 기억
     int count=10; //local_yaw 정하기

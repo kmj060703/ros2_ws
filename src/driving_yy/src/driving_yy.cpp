@@ -208,12 +208,13 @@ void DrivingYY::Traffic_light()
         {
         case 1:
         {
+            traffic_red=1;
             driving_msg.linear.x = 0;
             driving_msg.angular.z = 0;
         }
         break;
 
-        default: // 노란색 감지를 위해 비워 놓는 것이다...
+        default:{if(traffic_red==1&&traffic_mission_comp==0)traffic_mission_comp=1;} // 노란색 감지를 위해 비워 놓는 것이다...
             break;
         }
     }
@@ -452,7 +453,7 @@ void DrivingYY::drive_callback()
     if (l_start_flag == 1)
     {
         PD_control();
-        //Traffic_light();
+        if(traffic_mission_comp==0)Traffic_light();
         Itersection();
         Construction();
         // if (mission_flag_ == 2 || mission_flag_ == 3)
@@ -460,7 +461,7 @@ void DrivingYY::drive_callback()
         // else if (mission_flag_ == 4)
         //     Construction();
         // else if (mission_flag_ == 5)
-        // Parking();
+        Parking();
         // else if(traffic_light_status_==4){
         //     Level_crossing();
         // }
