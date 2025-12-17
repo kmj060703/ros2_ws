@@ -144,7 +144,7 @@ void gui_thread()
 
         if (!bird_display.empty())
             cv::imshow("Bird's-Eye View", bird_display);
-    
+
         if (!red_and_green_mask.empty())
             cv::imshow("traffic_mask", red_and_green_mask);
         if (!brown_mask.empty())
@@ -172,9 +172,9 @@ ImageViewer::ImageViewer()
     // RCLCPP_INFO(this->get_logger(), "Image viewer node started.");
 
     cv::namedWindow("Spedal Feed");
-    //cv::namedWindow("Bird-Eye View");
-    //cv::namedWindow("yellow_mask");
-    //cv::namedWindow("white_mask");
+    // cv::namedWindow("Bird-Eye View");
+    // cv::namedWindow("yellow_mask");
+    // cv::namedWindow("white_mask");
     cv::namedWindow("traffic_mask");
     cv::namedWindow("brown_mask");
 }
@@ -294,7 +294,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             detect_y_end = 360;
 
             cv::Mat red_bar_frame = bar_temp_frame1 + bar_temp_frame2;
-      
+
             for (int i = detect_y_start; i < detect_y_end; i++)
             {
                 for (int j = detect_x_start; j < detect_x_end; j++)
@@ -304,15 +304,13 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 }
             }
 
-            if (red_pixel_count > red_threshold) // 150 픽셀 이상
-            {
-                traffic_light_state = 1;
-            }
-
-            else if (green_pixel_count > green_threshold) // 300 픽셀 이상
+            if (green_pixel_count > green_threshold) // 300 픽셀 이상
             {
                 traffic_light_state = 2;
-                std::cerr << "2-flag count : " << green_pixel_count << std::endl;
+            }
+            else if (red_pixel_count > red_threshold) // 150 픽셀 이상
+            {
+                traffic_light_state = 1;
             }
             else if (bar_red_pixel_count > bar_red_red_threshold)
             {
@@ -322,14 +320,13 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             {
                 traffic_light_state = 0;
             }
-            //  std::cerr << traffic_light_state << std::endl;
 
             // 갈색
             brown_pixel_count = 0;
             yellowline_pixel_count_low = 0;
-            yellowline_pixel_count_top =0;
+            yellowline_pixel_count_top = 0;
             whiteline_pixel_count_low = 0;
-            whiteline_pixel_count_top=0;
+            whiteline_pixel_count_top = 0;
             for (int i = 0; i < brown_mask.cols; i++)
             {
                 for (int j = 0; j < brown_mask.rows; j++)
@@ -398,7 +395,8 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                         break;
                     }
                 }
-                if(yellow_x>white_x&&white_x!=-1){
+                if (yellow_x > white_x && white_x != -1)
+                {
                     yellow_x = -1;
                     white_x = -1;
                 }

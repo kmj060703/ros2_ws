@@ -468,7 +468,7 @@ void DrivingYY::Parking()
             if (only_y == 2)
             {
                 // PD는 라인이 보일 때만
-                if (error_y != -321 && error_y < 325)
+                if (error_y != -321 && error_y < 325 && error_y > 310)
                 {
                     PD_control();
                     std::cout << "지금은 PD제어 중22, " << error_w << "," << error_y << std::endl;
@@ -707,10 +707,10 @@ void DrivingYY::drive_callback()
         PD_control();
         // std::cout << "pd안함 뒤로가기1, " << "white_low:"<<white_count_low <<"white_top:"<<white_count_top <<"yellow_low:"<<yellow_count_low <<"yellow_top:"<<yellow_count_top << std::endl;
         // std::cout<<"yaw:"<<current_yaw_<<std::endl;
-        //  if (traffic_mission_comp == 0)
-        //  {
-        //      Traffic_light();
-        //  }
+         if (traffic_mission_comp == 0)
+         {
+             Traffic_light();
+         }
         //  if(mission_flag_==1||mission_flag_==2||mission_flag_==3)
         Itersection();
         // if(mission_flag_==4)
