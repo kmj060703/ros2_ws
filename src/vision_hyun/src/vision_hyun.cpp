@@ -171,9 +171,9 @@ ImageViewer::ImageViewer()
     // RCLCPP_INFO(this->get_logger(), "Image viewer node started.");
 
     cv::namedWindow("Spedal Feed");
-    cv::namedWindow("Bird-Eye View");
-    cv::namedWindow("yellow_mask");
-    cv::namedWindow("white_mask");
+    //cv::namedWindow("Bird-Eye View");
+    //cv::namedWindow("yellow_mask");
+    //cv::namedWindow("white_mask");
     cv::namedWindow("traffic_mask");
     cv::namedWindow("brown_mask");
 }
@@ -384,7 +384,10 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                         break;
                     }
                 }
-
+                if(yellow_x>white_x&&white_x!=-1){
+                    yellow_x = -1;
+                    white_x = -1;
+                }
                 center_y = -1;
                 center_w = -1;
                 center_yw = -1;

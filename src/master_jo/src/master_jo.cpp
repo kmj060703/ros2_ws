@@ -34,7 +34,7 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
   {
     float confidence = std::stof(conf_str);
 
-    if (confidence >= 0.85)
+    if (confidence >= 0.87)
     {
       int detected_flag = 0;
 
@@ -107,7 +107,18 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
       {
         if (current_mission_flag_ != detected_flag)
         {
-          current_mission_flag_ = detected_flag;
+          if(current_mission_flag_==0&&detected_flag==1){
+            current_mission_flag_ = detected_flag;
+          }
+          else if(current_mission_flag_==1&&(detected_flag==2||detected_flag==3)){
+            current_mission_flag_ = detected_flag;
+          }
+          else if((current_mission_flag_==2||current_mission_flag_==3)&&detected_flag==4){
+            current_mission_flag_ = detected_flag;
+          }
+          else if(current_mission_flag_==4&&detected_flag==5){
+            current_mission_flag_ = detected_flag;
+          }
           RCLCPP_WARN(this->get_logger(), "구간 변경: %s || 플래그: %d", object_name.c_str(), current_mission_flag_);
         }
 
