@@ -21,6 +21,10 @@ private:
     int front_adc[5] = {0};
     int left_adc[5]  = {0};
     int right_adc[5] = {0};
+    double front_lpf=0;
+    double right_lpf=0;
+    double left_lpf=0;
+    double alpha=0.2;
 
     int idx = 0;
 };

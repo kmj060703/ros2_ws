@@ -61,6 +61,7 @@ private:
     void drive_callback();
     void pixel_diff_callback(const autorace_interfaces::msg::MasterJo::SharedPtr msg);
     void vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg);
+    void park_callback();
 
     
 
@@ -99,6 +100,12 @@ private:
     int avoid_mem=0;
     int yellow_flag=0;
     int back_flag=0;
+    int yaw_count=0;
+    int gos_flag=0;
+    int park_time=0;
+    int last_time=0;
+    int time_flag=0;
+
 
       //장애물용 기억
     int count=5; //local_yaw 정하기
@@ -107,6 +114,7 @@ private:
     double local_diff =0;
     int state=0; //상태: 0= 주행, 1= 정렬, 2= 회전, 3= 선 직진, 4= 선 직진 ...
     rclcpp::TimerBase::SharedPtr drive_timer;
+    rclcpp::TimerBase::SharedPtr park_timer;
 };
 
 #endif
