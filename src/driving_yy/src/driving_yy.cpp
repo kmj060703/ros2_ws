@@ -455,7 +455,7 @@ void DrivingYY::Parking()
             {
                 only_y = 1;
             }
-            if (only_y == 1 && (error_y > 365 || error_y == -321))
+            if (only_y == 1 && (error_y > 325 || error_y == -321))
             {
                 driving_msg.linear.x = 0.095;
                 driving_msg.angular.z = 0.36;
@@ -468,7 +468,7 @@ void DrivingYY::Parking()
             if (only_y == 2)
             {
                 // PD는 라인이 보일 때만
-                if (error_y != -321 && error_y < 325 && error_y > 310)
+                if (error_y != -321 && error_y < 325 && error_y > 300)
                 {
                     PD_control();
                     std::cout << "지금은 PD제어 중22, " << error_w << "," << error_y << std::endl;
