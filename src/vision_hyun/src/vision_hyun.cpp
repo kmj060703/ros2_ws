@@ -55,6 +55,7 @@ int detect_y_end = 250;
 
 // 장애물용 line 탐지 범위
 int line_d_top = 250;
+int line_d_bottom = 110;
 
 void send_udp_image(cv::Mat &img, int id)
 {
@@ -325,8 +326,10 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
             // 갈색
             brown_pixel_count = 0;
-            yellowline_pixel_count = 0;
-            whiteline_pixel_count = 0;
+            yellowline_pixel_count_low = 0;
+            yellowline_pixel_count_top =0;
+            whiteline_pixel_count_low = 0;
+            whiteline_pixel_count_top=0;
             for (int i = 0; i < brown_mask.cols; i++)
             {
                 for (int j = 0; j < brown_mask.rows; j++)
@@ -341,16 +344,27 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     {
                         if (yellow_mask.at<uchar>(j, i) > 0)
                         {
-                            yellowline_pixel_count++;
+                            yellowline_pixel_count_low++;
                         }
                         if (white_mask.at<uchar>(j, i) > 0)
                         {
-                            whiteline_pixel_count++;
+                            whiteline_pixel_count_low++;
+                        }
+                    }
+                    if (j < line_d_bottom)
+                    {
+                        if (yellow_mask.at<uchar>(j, i) > 0)
+                        {
+                            yellowline_pixel_count_top++;
+                        }
+                        if (white_mask.at<uchar>(j, i) > 0)
+                        {
+                            whiteline_pixel_count_top++;
                         }
                     }
                 }
             }
-            if (whiteline_pixel_count > park_whiteLine_threshold) // 20000 픽셀 이상
+            if (whiteline_pixel_count_low > park_whiteLine_threshold) // 20000 픽셀 이상
             {
                 traffic_light_state = 3; // -> 주차 구간에서 흰색 라인 감지하면 멈추게 하셈
             }
@@ -453,8 +467,10 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
         msg_data->white_x = global_white_x;
         msg_data->traffic_light = traffic_light_state;
         msg_data->brown_count = brown_pixel_count;
-        msg_data->yellowline_count = yellowline_pixel_count;
-        msg_data->whiteline_count = whiteline_pixel_count;
+        msg_data->yellowline_count_low = yellowline_pixel_count_low;
+        msg_data->whiteline_count_low = whiteline_pixel_count_low;
+        msg_data->yellowline_count_top = yellowline_pixel_count_top;
+        msg_data->whiteline_count_top = whiteline_pixel_count_top;
 
         publisher_4->publish(*msg_data);
         sensor_msgs::msg::Image::SharedPtr processed_msg = cv_bridge::CvImage(msg->header, "bgr8", frame).toImageMsg();

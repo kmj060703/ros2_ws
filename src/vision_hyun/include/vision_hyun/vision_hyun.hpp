@@ -125,8 +125,10 @@ private:
   int bar_red_pixel_count = 0;
 
   int brown_pixel_count = 0;
-  int yellowline_pixel_count = 0;
-  int whiteline_pixel_count = 0;
+  int yellowline_pixel_count_low = 0;
+  int whiteline_pixel_count_low = 0;
+  int yellowline_pixel_count_top = 0;
+  int whiteline_pixel_count_top = 0;
   // 신호등 상태 판단
   int red_threshold = 150;
   int green_threshold = 250;

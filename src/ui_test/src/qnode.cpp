@@ -121,8 +121,10 @@ void QNode::vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::
 {
   traffic_state = msg->traffic_light;
   brown_count = msg->brown_count;
-  yellow_count = msg->yellowline_count;
-  white_count = msg->whiteline_count;
+  yellow_count_low = msg->yellowline_count_low;
+  white_count_low = msg->whiteline_count_low;
+  yellow_count_top = msg->yellowline_count_top;
+  white_count_top = msg->whiteline_count_top;
 
   if (traffic_state == 1)
   {

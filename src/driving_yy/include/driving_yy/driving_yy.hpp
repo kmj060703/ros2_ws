@@ -85,8 +85,10 @@ private:
     double current_pixel_diff_ = 0;
     int traffic_light_status_ = 0;
     int brown_count = 0;
-    int yellow_count =0;
-    int white_count =0;
+    int yellow_count_low =0;
+    int white_count_low =0;
+    int yellow_count_top =0;
+    int white_count_top =0;
     int timer = 0;
     int right_turn=0;
     int left_turn=0;
@@ -94,6 +96,9 @@ private:
     int traffic_mission_comp=0;
     int traffic_red=0;
     int only_y=0;
+    int avoid_mem=0;
+    int yellow_flag=0;
+    int back_flag=0;
 
       //장애물용 기억
     int count=5; //local_yaw 정하기
