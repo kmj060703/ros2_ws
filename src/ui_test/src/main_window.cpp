@@ -1719,7 +1719,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         std::cout
             << "d key pressed" << std::endl;
     }
-    else if (event->key() == Qt::Key_Up)
+    else if (event->key() == Qt::Key_I)
     {
         currentIndex = ui->tabWidget->currentIndex();
         if (currentIndex == 0)
@@ -1735,7 +1735,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
         std::cout << "up key pressed" << std::endl;
     }
-    else if (event->key() == Qt::Key_Down)
+    else if (event->key() == Qt::Key_K)
     {
         currentIndex = ui->tabWidget->currentIndex();
         if (currentIndex == 0)
@@ -1750,7 +1750,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         }
         std::cout << "down key pressed" << std::endl;
     }
-    else if (event->key() == Qt::Key_Left)
+    else if (event->key() == Qt::Key_L)
     {
         currentIndex = ui->tabWidget->currentIndex();
         if (currentIndex == 0)
@@ -1765,7 +1765,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         }
         std::cout << "left key pressed" << std::endl;
     }
-    else if (event->key() == Qt::Key_Right)
+    else if (event->key() == Qt::Key_J)
     {
         currentIndex = ui->tabWidget->currentIndex();
         if (currentIndex == 0)
@@ -1782,8 +1782,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
     else if (event->key() == Qt::Key_Space)
     {
-        start_flag_ = 0;
-        l_start_flag_ = 0;
+        if(start_flag_ == 0)state_flag_=1;
+        else start_flag_ = 0;
+        if(l_start_flag_==0)l_start_flag_ = 1;
+        else l_start_flag_=0;
         std::cout << "space key pressed" << std::endl;
     }
 
