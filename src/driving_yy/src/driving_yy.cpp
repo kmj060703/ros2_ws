@@ -151,12 +151,10 @@ void DrivingYY::PD_control()
     {
         error = error_w;
     }
-    // if(mission_flag_==5){
-    //     if(error_y>300&&error_y<360)
-    //     error=error_y;
-    //     else return;
-    // }
-    //}
+    if (park_comp==0&&mission_flag_ == 5)
+    {
+        error = error_y;
+    }
 
     // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 500,
     //                      "[DEBUG] flags: start_flag=%d, l_start_flag=%d, error=%.2f",
@@ -461,20 +459,20 @@ void DrivingYY::Parking()
                 driving_msg.angular.z = 0.36;
                 std::cout << "지금은 진입 좌회전 중" << std::endl;
             }
-            else if (only_y == 1 && error_y < 340 && error_y != -321)
+            else if (near(current_yaw_, 110)&&only_y == 1 && error_y < 340 && error_y != -321)
             {
                 only_y = 2;
             }
             if (only_y == 2)
             {
                 // PD는 라인이 보일 때만
-                if (error_y != -321 && error_y < 325 && error_y > 300)
+                if (error_y != -321 && error_y < 330 && error_y > 290)
                 {
                     PD_control();
                     std::cout << "지금은 PD제어 중22, " << error_w << "," << error_y << std::endl;
                 }
 
-                // 라인이 안 보이고 + 각도 정렬이 맞으면 전이
+                //정렬이 맞으면 전이
                 if (
                     (std::abs(error_y - 0) < 10))
                 {
@@ -659,13 +657,13 @@ void DrivingYY::Parking()
                 driving_msg.linear.x = 0.09;
                 driving_msg.angular.z = 0.0;
             }
-            if (avoid_mem == -1 && time_flag == 0 && park_time - last_time >= 20)
+            if (time_flag == 0 && park_time - last_time >= 20)
             {
                 time_flag = 1;
-                return;
             }
             if (time_flag == 1)
             {
+                park_comp = 1;
                 if (park_comp == 0 && error_y == -321 && gos_flag == 0)
                 {
                     std::cout << "빠져나가, " << error_y << std::endl;
@@ -681,7 +679,9 @@ void DrivingYY::Parking()
                     driving_msg.angular.z = 0.0;
                 }
                 else
+                {
                     PD_control();
+                }
             }
         }
         break;
