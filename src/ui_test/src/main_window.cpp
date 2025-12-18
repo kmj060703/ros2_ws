@@ -872,6 +872,7 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index)
 
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
+    std::cout<<"h_high:"<<position<<std::endl;
     // hue_high
     switch (vision_hsv_state)
     {
@@ -903,6 +904,7 @@ void MainWindow::on_horizontalSlider_sliderMoved(int position)
 
 void MainWindow::on_horizontalSlider_2_sliderMoved(int position)
 {
+    std::cout<<"h_low:"<<position<<std::endl;
     // hue_low
     switch (vision_hsv_state)
     {
@@ -934,6 +936,7 @@ void MainWindow::on_horizontalSlider_2_sliderMoved(int position)
 
 void MainWindow::on_horizontalSlider_4_sliderMoved(int position)
 {
+    std::cout<<"s_high:"<<position<<std::endl;
     // S_high
     switch (vision_hsv_state)
     {
@@ -965,6 +968,7 @@ void MainWindow::on_horizontalSlider_4_sliderMoved(int position)
 
 void MainWindow::on_horizontalSlider_3_sliderMoved(int position)
 {
+    std::cout<<"s_low:"<<position<<std::endl;
     // S_low
     switch (vision_hsv_state)
     {
@@ -995,6 +999,7 @@ void MainWindow::on_horizontalSlider_3_sliderMoved(int position)
 }
 void MainWindow::on_horizontalSlider_6_sliderMoved(int position)
 {
+    std::cout<<"v_high:"<<position<<std::endl;
     // V_high
     switch (vision_hsv_state)
     {
@@ -1026,6 +1031,7 @@ void MainWindow::on_horizontalSlider_6_sliderMoved(int position)
 
 void MainWindow::on_horizontalSlider_5_sliderMoved(int position)
 {
+    std::cout<<"v_low:"<<position<<std::endl;
     // V_low
     switch (vision_hsv_state)
     {
@@ -1784,8 +1790,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         if(start_flag_ == 0)state_flag_=1;
         else start_flag_ = 0;
-        if(l_start_flag_==0)l_start_flag_ = 1;
-        else l_start_flag_=0;
         std::cout << "space key pressed" << std::endl;
     }
 
