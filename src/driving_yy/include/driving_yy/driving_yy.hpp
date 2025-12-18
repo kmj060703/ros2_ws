@@ -23,8 +23,6 @@ public:
     void Itersection();
     void Construction();
     void Parking();
-    void Parking_new();
-    void Parking_halfnew();
     void Level_crossing();
     void total_driving();
 
