@@ -651,7 +651,7 @@ void DrivingYY::Parking()
         break;
         case GO_OUT:
         {
-            if (avoid_mem == -1 && time_flag == 0)
+            if (time_flag == 0)
             {
                 std::cout << "지금은 직진 중" << std::endl;
                 driving_msg.linear.x = 0.09;
@@ -671,7 +671,7 @@ void DrivingYY::Parking()
                     driving_msg.angular.z = 0.0;
                     return;
                 }
-                else if (gos_flag == 0 && (error_y > 350 || error_y < 300))
+                else if (gos_flag == 0 && (error_y > 320 || error_y < 300))
                 {
                     gos_flag = 1;
                     std::cout << "빠져나가22 " << error_y << std::endl;
