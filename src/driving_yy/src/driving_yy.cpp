@@ -398,531 +398,531 @@ ParkingState pstate_;
 
 bool near(double a, double b, double eps = 2.0) { return fabs(a - b) < eps; }
 // void DrivingYY::Parking_new()
-{
-    if (mission_flag_ == 5)
-    {
-        if(error_y>260){error_y=-321;}
-        // if (timer == count)
-        // {
-        //     local_diff = degreecal(local_yaw - current_yaw_ - 5);
-        // }
-        switch (pstate_)
-        {
-        case PARK_PD:
-        {
+// {
+//     if (mission_flag_ == 5)
+//     {
+//         if(error_y>260){error_y=-321;}
+//         // if (timer == count)
+//         // {
+//         //     local_diff = degreecal(local_yaw - current_yaw_ - 5);
+//         // }
+//         switch (pstate_)
+//         {
+//         case PARK_PD:
+//         {
 
-            if (only_y == 0 && error_y != -321 && error_yw != -321)
-            {
-                PD_control();
-                std::cout << "지금은 PD제어 중" << std::endl;
-            }
+//             if (only_y == 0 && error_y != -321 && error_yw != -321)
+//             {
+//                 PD_control();
+//                 std::cout << "지금은 PD제어 중" << std::endl;
+//             }
 
-            if (only_y == 0 && error_yw == -321 &&
-                error_y == -321)
-            {
-                only_y = 1;
-            }
-            if (only_y == 1 && (error_y > 325 || error_y == -321))
-            {
-                driving_msg.linear.x = 0.095;
-                driving_msg.angular.z = 0.36;
-                std::cout << "지금은 진입 좌회전 중" << std::endl;
-            }
-            else if (near(current_yaw_, 110)&&only_y == 1 && error_y < 340 && error_y != -321)
-            {
-                only_y = 2;
-            }
-            if (only_y == 2)
-            {
-                // PD는 라인이 보일 때만
-                if (error_y != -321 && error_y < 330 && error_y > 290)
-                {
-                    PD_control();
-                    std::cout << "지금은 PD제어 중22, " << error_w << "," << error_y << std::endl;
-                }
+//             if (only_y == 0 && error_yw == -321 &&
+//                 error_y == -321)
+//             {
+//                 only_y = 1;
+//             }
+//             if (only_y == 1 && (error_y > 325 || error_y == -321))
+//             {
+//                 driving_msg.linear.x = 0.095;
+//                 driving_msg.angular.z = 0.36;
+//                 std::cout << "지금은 진입 좌회전 중" << std::endl;
+//             }
+//             else if (near(current_yaw_, 110)&&only_y == 1 && error_y < 340 && error_y != -321)
+//             {
+//                 only_y = 2;
+//             }
+//             if (only_y == 2)
+//             {
+//                 // PD는 라인이 보일 때만
+//                 if (error_y != -321 && error_y < 330 && error_y > 290)
+//                 {
+//                     PD_control();
+//                     std::cout << "지금은 PD제어 중22, " << error_w << "," << error_y << std::endl;
+//                 }
 
-                //정렬이 맞으면 전이
-                if (
-                    (std::abs(error_y - 0) < 10))
-                {
-                    std::cout << "이제 직진" << std::endl;
-                    pstate_ = PARK_START;
-                }
-            }
-        }
-        break;
+//                 //정렬이 맞으면 전이
+//                 if (
+//                     (std::abs(error_y - 0) < 10))
+//                 {
+//                     std::cout << "이제 직진" << std::endl;
+//                     pstate_ = PARK_START;
+//                 }
+//             }
+//         }
+//         break;
 
-        case PARK_START:
-        {
-            if (error_y != -321 &&
-                (std::abs(error_y - 0) > 10))
-            {
-                PD_control();
-                std::cout << "지금은 PD제어 중333" << white_count_low << std::endl;
-            }
-            else
-            {
-                std::cout << "계속 직진" << white_count_low << std::endl;
-                driving_msg.linear.x = 0.09;
-                driving_msg.angular.z = 0.0;
-            }
-            // if(std::abs(error_y-0)<4)yaw_count++;
-            // if(yaw_count>4)local_yaw=current_yaw_;
-            if (white_count_top > 15000 && is_left_danger_ > 300)
-            {
-                pstate_ = AVOID_RIGHT;
-                std::cout << "오른쪽으로피하기 시작" << std::endl;
-            }
-            else if (white_count_top > 15000 && is_right_danger_ > 300)
-            {
-                pstate_ = AVOID_LEFT;
-                std::cout << "왼쪽으로피하기 시작" << std::endl;
-            }
-        }
-        break;
-        case AVOID_RIGHT:
-        {
-            avoid_mem = -1;
-            driving_msg.linear.x = -0.01;
-            driving_msg.angular.z = 0.35;
-            right_turn = 1;
-            std::cout << "오른쪽으로피해" << std::endl;
-            if (near(current_yaw_, 10))
-                pstate_ = GO_FRONT;
-        }
-        break;
-        case AVOID_LEFT:
-        {
-            avoid_mem = 1;
-            driving_msg.linear.x = -0.01;
-            driving_msg.angular.z = -0.35;
-            left_turn = 1;
-            std::cout << "왼쪽으로피해" << std::endl;
-            if (near(current_yaw_, -185))
-                pstate_ = GO_FRONT;
-        }
-        break;
-        case GO_FRONT:
-        {
-            if (avoid_mem == -1)
-            {
-                if (time_flag == 0)
-                {
-                    last_time = park_time;
-                    time_flag = 1;
-                }
-                std::cout << "pd안함 뒤로가기 경우1, " << is_front_danger_ << std::endl;
-                driving_msg.linear.x = -0.07;
-                driving_msg.angular.z = 0.0;
-                if (park_time - last_time >= 35)
-                {
-                    last_time = park_time;
-                    time_flag = 0;
-                    pstate_ = GO_BACK;
-                    for_count = 0;
+//         case PARK_START:
+//         {
+//             if (error_y != -321 &&
+//                 (std::abs(error_y - 0) > 10))
+//             {
+//                 PD_control();
+//                 std::cout << "지금은 PD제어 중333" << white_count_low << std::endl;
+//             }
+//             else
+//             {
+//                 std::cout << "계속 직진" << white_count_low << std::endl;
+//                 driving_msg.linear.x = 0.09;
+//                 driving_msg.angular.z = 0.0;
+//             }
+//             // if(std::abs(error_y-0)<4)yaw_count++;
+//             // if(yaw_count>4)local_yaw=current_yaw_;
+//             if (white_count_top > 15000 && is_left_danger_ > 300)
+//             {
+//                 pstate_ = AVOID_RIGHT;
+//                 std::cout << "오른쪽으로피하기 시작" << std::endl;
+//             }
+//             else if (white_count_top > 15000 && is_right_danger_ > 300)
+//             {
+//                 pstate_ = AVOID_LEFT;
+//                 std::cout << "왼쪽으로피하기 시작" << std::endl;
+//             }
+//         }
+//         break;
+//         case AVOID_RIGHT:
+//         {
+//             avoid_mem = -1;
+//             driving_msg.linear.x = -0.01;
+//             driving_msg.angular.z = 0.35;
+//             right_turn = 1;
+//             std::cout << "오른쪽으로피해" << std::endl;
+//             if (near(current_yaw_, 10))
+//                 pstate_ = GO_FRONT;
+//         }
+//         break;
+//         case AVOID_LEFT:
+//         {
+//             avoid_mem = 1;
+//             driving_msg.linear.x = -0.01;
+//             driving_msg.angular.z = -0.35;
+//             left_turn = 1;
+//             std::cout << "왼쪽으로피해" << std::endl;
+//             if (near(current_yaw_, -185))
+//                 pstate_ = GO_FRONT;
+//         }
+//         break;
+//         case GO_FRONT:
+//         {
+//             if (avoid_mem == -1)
+//             {
+//                 if (time_flag == 0)
+//                 {
+//                     last_time = park_time;
+//                     time_flag = 1;
+//                 }
+//                 std::cout << "pd안함 뒤로가기 경우1, " << is_front_danger_ << std::endl;
+//                 driving_msg.linear.x = -0.07;
+//                 driving_msg.angular.z = 0.0;
+//                 if (park_time - last_time >= 35)
+//                 {
+//                     last_time = park_time;
+//                     time_flag = 0;
+//                     pstate_ = GO_BACK;
+//                     for_count = 0;
 
-                    pstate_ = GO_BACK;
-                    for_count = 0;
-                    return;
-                }
-            }
-            else if (avoid_mem == 1) // 둘다 뒤로갔다 앞으로가기
-            {
+//                     pstate_ = GO_BACK;
+//                     for_count = 0;
+//                     return;
+//                 }
+//             }
+//             else if (avoid_mem == 1) // 둘다 뒤로갔다 앞으로가기
+//             {
 
-                if (time_flag == 0)
-                {
-                    last_time = park_time;
-                    time_flag = 1;
-                }
-                std::cout << "pd안함 뒤로가기 경우1, " << is_front_danger_ << std::endl;
-                driving_msg.linear.x = -0.07;
-                driving_msg.angular.z = 0.0;
-                if (park_time - last_time >= 35)
-                {
-                    last_time = park_time;
-                    time_flag = 0;
-                    pstate_ = GO_BACK;
-                    for_count = 0;
+//                 if (time_flag == 0)
+//                 {
+//                     last_time = park_time;
+//                     time_flag = 1;
+//                 }
+//                 std::cout << "pd안함 뒤로가기 경우1, " << is_front_danger_ << std::endl;
+//                 driving_msg.linear.x = -0.07;
+//                 driving_msg.angular.z = 0.0;
+//                 if (park_time - last_time >= 35)
+//                 {
+//                     last_time = park_time;
+//                     time_flag = 0;
+//                     pstate_ = GO_BACK;
+//                     for_count = 0;
 
-                    pstate_ = GO_BACK;
-                    for_count = 0;
-                    return;
-                }
-            }
-        }
-        break;
-        case GO_BACK: // 여기서 문제생기는듯
-        {
-            if (avoid_mem == -1)
-            {
-                if (time_flag == 0)
-                {
-                    last_time = park_time;
-                    time_flag = 1;
-                }
-                if (turn_flag == 0 && park_time - last_time < 35)
-                {
-                    std::cout << "pd안함 오른쪽앞으로가기, " << park_time - last_time << std::endl;
-                    driving_msg.linear.x = 0.07;
-                    driving_msg.angular.z = 0.0;
-                    return;
-                }
-                else if (turn_flag == 0 && park_time - last_time >= 35)
-                {
-                    turn_flag = 1;
-                }
-                if (turn_flag == 1)
-                {
-                    std::cout << "pd안함 오른쪽 돌고있다, " << is_front_danger_ << std::endl;
-                    driving_msg.linear.x = 0.02;
-                    driving_msg.angular.z = 0.5;
-                }
-                if (near(current_yaw_, -80))
-                {
-                    pstate_ = GO_OUT;
-                    last_time = park_time;
-                    time_flag = 0;
-                }
-            }
-            else if (avoid_mem == 1)
-            {
+//                     pstate_ = GO_BACK;
+//                     for_count = 0;
+//                     return;
+//                 }
+//             }
+//         }
+//         break;
+//         case GO_BACK: // 여기서 문제생기는듯
+//         {
+//             if (avoid_mem == -1)
+//             {
+//                 if (time_flag == 0)
+//                 {
+//                     last_time = park_time;
+//                     time_flag = 1;
+//                 }
+//                 if (turn_flag == 0 && park_time - last_time < 35)
+//                 {
+//                     std::cout << "pd안함 오른쪽앞으로가기, " << park_time - last_time << std::endl;
+//                     driving_msg.linear.x = 0.07;
+//                     driving_msg.angular.z = 0.0;
+//                     return;
+//                 }
+//                 else if (turn_flag == 0 && park_time - last_time >= 35)
+//                 {
+//                     turn_flag = 1;
+//                 }
+//                 if (turn_flag == 1)
+//                 {
+//                     std::cout << "pd안함 오른쪽 돌고있다, " << is_front_danger_ << std::endl;
+//                     driving_msg.linear.x = 0.02;
+//                     driving_msg.angular.z = 0.5;
+//                 }
+//                 if (near(current_yaw_, -80))
+//                 {
+//                     pstate_ = GO_OUT;
+//                     last_time = park_time;
+//                     time_flag = 0;
+//                 }
+//             }
+//             else if (avoid_mem == 1)
+//             {
 
-                if (time_flag == 0)
-                {
-                    last_time = park_time;
-                    time_flag = 1;
-                }
-                if (turn_flag == 0 && park_time - last_time < 35)
-                {
-                    std::cout << "pd안함 왼쪽앞으로가기, " << park_time - last_time << std::endl;
-                    driving_msg.linear.x = 0.07;
-                    driving_msg.angular.z = 0.0;
-                    return;
-                }
-                else if (turn_flag == 0 && park_time - last_time >= 35)
-                {
-                    turn_flag = 1;
-                }
-                if (turn_flag == 1)
-                {
-                    std::cout << "pd안함 왼쪽 돌고있다, " << is_front_danger_ << std::endl;
-                    driving_msg.linear.x = 0.02;
-                    driving_msg.angular.z = -0.5;
-                }
-                if (near(current_yaw_, -100))
-                {
-                    pstate_ = GO_OUT;
-                    last_time = park_time;
-                    time_flag = 0;
-                }
-            }
-        }
-        break;
-        case GO_OUT:
-        {
-            if (time_flag == 0)
-            {
-                std::cout << "지금은 직진 중" << std::endl;
-                driving_msg.linear.x = 0.09;
-                driving_msg.angular.z = 0.0;
-            }
-            if (time_flag == 0 && park_time - last_time >= 20)
-            {
-                time_flag = 1;
-            }
-            if (time_flag == 1)
-            {
-                park_comp = 1;
-                if (park_comp == 0 && error_y == -321 && gos_flag == 0)
-                {
-                    std::cout << "빠져나가, " << error_y << std::endl;
-                    driving_msg.linear.x = 0.09;
-                    driving_msg.angular.z = 0.0;
-                    return;
-                }
-                else if (gos_flag == 0 && (error_y > 320 || error_y < 300))
-                {
-                    gos_flag = 1;
-                    std::cout << "빠져나가22 " << error_y << std::endl;
-                    driving_msg.linear.x = 0.09;
-                    driving_msg.angular.z = 0.0;
-                }
-                else
-                {
-                    PD_control();
-                    if (((error_y == -321 && error_w == -321) || (error_y == -321 && z <= 0.25))&&passed_Level==0)
-                    {
-                        driving_msg.linear.x = 0.09;
-                        driving_msg.angular.z = 0.36;
-                    }
-                }
-            }
-        }
-        break;
-        default:
-            break;
-        }
-    }
-}
+//                 if (time_flag == 0)
+//                 {
+//                     last_time = park_time;
+//                     time_flag = 1;
+//                 }
+//                 if (turn_flag == 0 && park_time - last_time < 35)
+//                 {
+//                     std::cout << "pd안함 왼쪽앞으로가기, " << park_time - last_time << std::endl;
+//                     driving_msg.linear.x = 0.07;
+//                     driving_msg.angular.z = 0.0;
+//                     return;
+//                 }
+//                 else if (turn_flag == 0 && park_time - last_time >= 35)
+//                 {
+//                     turn_flag = 1;
+//                 }
+//                 if (turn_flag == 1)
+//                 {
+//                     std::cout << "pd안함 왼쪽 돌고있다, " << is_front_danger_ << std::endl;
+//                     driving_msg.linear.x = 0.02;
+//                     driving_msg.angular.z = -0.5;
+//                 }
+//                 if (near(current_yaw_, -100))
+//                 {
+//                     pstate_ = GO_OUT;
+//                     last_time = park_time;
+//                     time_flag = 0;
+//                 }
+//             }
+//         }
+//         break;
+//         case GO_OUT:
+//         {
+//             if (time_flag == 0)
+//             {
+//                 std::cout << "지금은 직진 중" << std::endl;
+//                 driving_msg.linear.x = 0.09;
+//                 driving_msg.angular.z = 0.0;
+//             }
+//             if (time_flag == 0 && park_time - last_time >= 20)
+//             {
+//                 time_flag = 1;
+//             }
+//             if (time_flag == 1)
+//             {
+//                 park_comp = 1;
+//                 if (park_comp == 0 && error_y == -321 && gos_flag == 0)
+//                 {
+//                     std::cout << "빠져나가, " << error_y << std::endl;
+//                     driving_msg.linear.x = 0.09;
+//                     driving_msg.angular.z = 0.0;
+//                     return;
+//                 }
+//                 else if (gos_flag == 0 && (error_y > 320 || error_y < 300))
+//                 {
+//                     gos_flag = 1;
+//                     std::cout << "빠져나가22 " << error_y << std::endl;
+//                     driving_msg.linear.x = 0.09;
+//                     driving_msg.angular.z = 0.0;
+//                 }
+//                 else
+//                 {
+//                     PD_control();
+//                     if (((error_y == -321 && error_w == -321) || (error_y == -321 && z <= 0.25))&&passed_Level==0)
+//                     {
+//                         driving_msg.linear.x = 0.09;
+//                         driving_msg.angular.z = 0.36;
+//                     }
+//                 }
+//             }
+//         }
+//         break;
+//         default:
+//             break;
+//         }
+//     }
+// }
 // void DrivingYY::Parking_halfnew()
-{
-    if (mission_flag_ == 5)
-    {
-        RCLCPP_INFO(this->get_logger(), "degree_now: %f", current_yaw_);
-        RCLCPP_INFO(this->get_logger(), "degree_goal: %f", local_yaw);
-        RCLCPP_INFO(this->get_logger(), "degree_diff: %f", local_diff);
+// {
+//     if (mission_flag_ == 5)
+//     {
+//         RCLCPP_INFO(this->get_logger(), "degree_now: %f", current_yaw_);
+//         RCLCPP_INFO(this->get_logger(), "degree_goal: %f", local_yaw);
+//         RCLCPP_INFO(this->get_logger(), "degree_diff: %f", local_diff);
 
-        if(error_y>260){error_y=-321;}
-        if (timer == count)
-        {
-            local_diff = degreecal(local_yaw - current_yaw_);
-        }
-        switch (pstate_)
-        {
-        case PARK_PD:
-        {
+//         if(error_y>260){error_y=-321;}
+//         if (timer == count)
+//         {
+//             local_diff = degreecal(local_yaw - current_yaw_);
+//         }
+//         switch (pstate_)
+//         {
+//         case PARK_PD:
+//         {
 
-            if ((error_y == -321 && error_w == -321) || (error_y == -321 && z <= 0.25))
-            {
-                driving_msg.linear.x = 0.09;
-                driving_msg.angular.z = 0.36;
-            }
-            if(yellow_count_low>9000&&timer<count){
-                if ((current_yaw_ - local_yaw) < 5 && (current_yaw_ - local_yaw) > -5)
-                {
-                    timer++;
-                }
-                else
-                {
-                    timer = 0;
-                    local_yaw = current_yaw_;
-                }
-            }
-            if (timer == count)
-            {
-                pstate_=PARK_START;
-            }
-        }
+//             if ((error_y == -321 && error_w == -321) || (error_y == -321 && z <= 0.25))
+//             {
+//                 driving_msg.linear.x = 0.09;
+//                 driving_msg.angular.z = 0.36;
+//             }
+//             if(yellow_count_low>9000&&timer<count){
+//                 if ((current_yaw_ - local_yaw) < 5 && (current_yaw_ - local_yaw) > -5)
+//                 {
+//                     timer++;
+//                 }
+//                 else
+//                 {
+//                     timer = 0;
+//                     local_yaw = current_yaw_;
+//                 }
+//             }
+//             if (timer == count)
+//             {
+//                 pstate_=PARK_START;
+//             }
+//         }
 
         
-        break;
+//         break;
 
-        case PARK_START:
-        {
-            if (error_y != -321 &&
-                (std::abs(error_y - 0) > 10))
-            {
-                PD_control();
-                std::cout << "지금은 PD제어 중333" << white_count_low << std::endl;
-            }
-            else
-            {
-                std::cout << "계속 직진" << white_count_low << std::endl;
-                driving_msg.linear.x = 0.09;
-                driving_msg.angular.z = 0.0;
-            }
-            // if(std::abs(error_y-0)<4)yaw_count++;
-            // if(yaw_count>4)local_yaw=current_yaw_;
-            if (white_count_top > 15000 && is_left_danger_ > 300)
-            {
-                pstate_ = AVOID_RIGHT;
-                std::cout << "오른쪽으로피하기 시작" << std::endl;
-            }
-            else if (white_count_top > 15000 && is_right_danger_ > 300)
-            {
-                pstate_ = AVOID_LEFT;
-                std::cout << "왼쪽으로피하기 시작" << std::endl;
-            }
-        }
-        break;
-        case AVOID_RIGHT:
-        {
-            avoid_mem = -1;
-            driving_msg.linear.x = -0.01;
-            driving_msg.angular.z = 0.35;
-            right_turn = 1;
-            std::cout << "왼쪽으로피해" << std::endl;
-            if(near(local_diff,95)){
-                pstate_ = GO_FRONT;
-                local_diff+=190;
-            }
-        }
-        break;
-        case AVOID_LEFT:
-        {
-            avoid_mem = 1;
-            driving_msg.linear.x = -0.01;
-            driving_msg.angular.z = -0.35;
-            left_turn = 1;
-            std::cout << "오른쪽으로피해" << std::endl;
-            if(near(local_diff,-95)){
-                pstate_ = GO_FRONT;
-                local_diff+=190;
-            }
-        }
-        break;
-        case GO_FRONT:
-        {
-            if (avoid_mem == -1)
-            {
-                if (time_flag == 0)
-                {
-                    last_time = park_time;
-                    time_flag = 1;
-                }
-                std::cout << "pd안함 뒤로가기 경우1, " << is_front_danger_ << std::endl;
-                driving_msg.linear.x = -0.07;
-                driving_msg.angular.z = 0.0;
-                if (park_time - last_time >= 35)
-                {
-                    last_time = park_time;
-                    time_flag = 0;
-                    pstate_ = GO_BACK;
-                    for_count = 0;
+//         case PARK_START:
+//         {
+//             if (error_y != -321 &&
+//                 (std::abs(error_y - 0) > 10))
+//             {
+//                 PD_control();
+//                 std::cout << "지금은 PD제어 중333" << white_count_low << std::endl;
+//             }
+//             else
+//             {
+//                 std::cout << "계속 직진" << white_count_low << std::endl;
+//                 driving_msg.linear.x = 0.09;
+//                 driving_msg.angular.z = 0.0;
+//             }
+//             // if(std::abs(error_y-0)<4)yaw_count++;
+//             // if(yaw_count>4)local_yaw=current_yaw_;
+//             if (white_count_top > 15000 && is_left_danger_ > 300)
+//             {
+//                 pstate_ = AVOID_RIGHT;
+//                 std::cout << "오른쪽으로피하기 시작" << std::endl;
+//             }
+//             else if (white_count_top > 15000 && is_right_danger_ > 300)
+//             {
+//                 pstate_ = AVOID_LEFT;
+//                 std::cout << "왼쪽으로피하기 시작" << std::endl;
+//             }
+//         }
+//         break;
+//         case AVOID_RIGHT:
+//         {
+//             avoid_mem = -1;
+//             driving_msg.linear.x = -0.01;
+//             driving_msg.angular.z = 0.35;
+//             right_turn = 1;
+//             std::cout << "왼쪽으로피해" << std::endl;
+//             if(near(local_diff,95)){
+//                 pstate_ = GO_FRONT;
+//                 local_diff+=190;
+//             }
+//         }
+//         break;
+//         case AVOID_LEFT:
+//         {
+//             avoid_mem = 1;
+//             driving_msg.linear.x = -0.01;
+//             driving_msg.angular.z = -0.35;
+//             left_turn = 1;
+//             std::cout << "오른쪽으로피해" << std::endl;
+//             if(near(local_diff,-95)){
+//                 pstate_ = GO_FRONT;
+//                 local_diff+=190;
+//             }
+//         }
+//         break;
+//         case GO_FRONT:
+//         {
+//             if (avoid_mem == -1)
+//             {
+//                 if (time_flag == 0)
+//                 {
+//                     last_time = park_time;
+//                     time_flag = 1;
+//                 }
+//                 std::cout << "pd안함 뒤로가기 경우1, " << is_front_danger_ << std::endl;
+//                 driving_msg.linear.x = -0.07;
+//                 driving_msg.angular.z = 0.0;
+//                 if (park_time - last_time >= 35)
+//                 {
+//                     last_time = park_time;
+//                     time_flag = 0;
+//                     pstate_ = GO_BACK;
+//                     for_count = 0;
 
-                    pstate_ = GO_BACK;
-                    for_count = 0;
-                    return;
-                }
-            }
-            else if (avoid_mem == 1) // 둘다 뒤로갔다 앞으로가기
-            {
+//                     pstate_ = GO_BACK;
+//                     for_count = 0;
+//                     return;
+//                 }
+//             }
+//             else if (avoid_mem == 1) // 둘다 뒤로갔다 앞으로가기
+//             {
 
-                if (time_flag == 0)
-                {
-                    last_time = park_time;
-                    time_flag = 1;
-                }
-                std::cout << "pd안함 뒤로가기 경우1, " << is_front_danger_ << std::endl;
-                driving_msg.linear.x = -0.07;
-                driving_msg.angular.z = 0.0;
-                if (park_time - last_time >= 35)
-                {
-                    last_time = park_time;
-                    time_flag = 0;
-                    pstate_ = GO_BACK;
-                    for_count = 0;
+//                 if (time_flag == 0)
+//                 {
+//                     last_time = park_time;
+//                     time_flag = 1;
+//                 }
+//                 std::cout << "pd안함 뒤로가기 경우1, " << is_front_danger_ << std::endl;
+//                 driving_msg.linear.x = -0.07;
+//                 driving_msg.angular.z = 0.0;
+//                 if (park_time - last_time >= 35)
+//                 {
+//                     last_time = park_time;
+//                     time_flag = 0;
+//                     pstate_ = GO_BACK;
+//                     for_count = 0;
 
-                    pstate_ = GO_BACK;
-                    for_count = 0;
-                    return;
-                }
-            }
-        }
-        break;
-        case GO_BACK: // 여기서 문제생기는듯
-        {
-            if (avoid_mem == -1)
-            {
-                if (time_flag == 0)
-                {
-                    last_time = park_time;
-                    time_flag = 1;
-                }
-                if (turn_flag == 0 && park_time - last_time < 35)
-                {
-                    std::cout << "pd안함 오른쪽앞으로가기, " << park_time - last_time << std::endl;
-                    driving_msg.linear.x = 0.07;
-                    driving_msg.angular.z = 0.0;
-                    return;
-                }
-                else if (turn_flag == 0 && park_time - last_time >= 35)
-                {
-                    turn_flag = 1;
-                }
-                if (turn_flag == 1)
-                {
-                    std::cout << "pd안함 오른쪽 돌고있다, " << is_front_danger_ << std::endl;
-                    driving_msg.linear.x = 0.02;
-                    driving_msg.angular.z = 0.5;
-                }
-                if (near(local_diff, 0))
-                {
-                    pstate_ = GO_OUT;
-                    last_time = park_time;
-                    time_flag = 0;
-                }
-            }
-            else if (avoid_mem == 1)
-            {
+//                     pstate_ = GO_BACK;
+//                     for_count = 0;
+//                     return;
+//                 }
+//             }
+//         }
+//         break;
+//         case GO_BACK: // 여기서 문제생기는듯
+//         {
+//             if (avoid_mem == -1)
+//             {
+//                 if (time_flag == 0)
+//                 {
+//                     last_time = park_time;
+//                     time_flag = 1;
+//                 }
+//                 if (turn_flag == 0 && park_time - last_time < 35)
+//                 {
+//                     std::cout << "pd안함 오른쪽앞으로가기, " << park_time - last_time << std::endl;
+//                     driving_msg.linear.x = 0.07;
+//                     driving_msg.angular.z = 0.0;
+//                     return;
+//                 }
+//                 else if (turn_flag == 0 && park_time - last_time >= 35)
+//                 {
+//                     turn_flag = 1;
+//                 }
+//                 if (turn_flag == 1)
+//                 {
+//                     std::cout << "pd안함 오른쪽 돌고있다, " << is_front_danger_ << std::endl;
+//                     driving_msg.linear.x = 0.02;
+//                     driving_msg.angular.z = 0.5;
+//                 }
+//                 if (near(local_diff, 0))
+//                 {
+//                     pstate_ = GO_OUT;
+//                     last_time = park_time;
+//                     time_flag = 0;
+//                 }
+//             }
+//             else if (avoid_mem == 1)
+//             {
 
-                if (time_flag == 0)
-                {
-                    last_time = park_time;
-                    time_flag = 1;
-                }
-                if (turn_flag == 0 && park_time - last_time < 35)
-                {
-                    std::cout << "pd안함 왼쪽앞으로가기, " << park_time - last_time << std::endl;
-                    driving_msg.linear.x = 0.07;
-                    driving_msg.angular.z = 0.0;
-                    return;
-                }
-                else if (turn_flag == 0 && park_time - last_time >= 35)
-                {
-                    turn_flag = 1;
-                }
-                if (turn_flag == 1)
-                {
-                    std::cout << "pd안함 왼쪽 돌고있다, " << is_front_danger_ << std::endl;
-                    driving_msg.linear.x = 0.02;
-                    driving_msg.angular.z = -0.5;
-                }
-                if (near(local_diff, 0))
-                {
-                    pstate_ = GO_OUT;
-                    last_time = park_time;
-                    time_flag = 0;
-                }
-            }
-        }
-        break;
-        case GO_OUT:
-        {
-            if (time_flag == 0)
-            {
-                std::cout << "지금은 직진 중" << std::endl;
-                driving_msg.linear.x = 0.09;
-                driving_msg.angular.z = 0.0;
-            }
-            if (time_flag == 0 && park_time - last_time >= 20)
-            {
-                time_flag = 1;
-            }
-            if (time_flag == 1)
-            {
-                park_comp = 1;
-                if (park_comp == 0 && error_y == -321 && gos_flag == 0)
-                {
-                    std::cout << "빠져나가, " << error_y << std::endl;
-                    driving_msg.linear.x = 0.09;
-                    driving_msg.angular.z = 0.0;
-                    return;
-                }
-                else if (gos_flag == 0 && (error_y > 320 || error_y < 300))
-                {
-                    gos_flag = 1;
-                    std::cout << "빠져나가22 " << error_y << std::endl;
-                    driving_msg.linear.x = 0.09;
-                    driving_msg.angular.z = 0.0;
-                }
-                else
-                {
-                    PD_control();
-                    if (((error_y == -321 && error_w == -321) || (error_y == -321 && z <= 0.25))&&passed_Level==0)
-                    {
-                        driving_msg.linear.x = 0.09;
-                        driving_msg.angular.z = 0.36;
-                    }
-                }
-            }
-        }
-        break;
-        default:
-            break;
-        }
-    }
-}
+//                 if (time_flag == 0)
+//                 {
+//                     last_time = park_time;
+//                     time_flag = 1;
+//                 }
+//                 if (turn_flag == 0 && park_time - last_time < 35)
+//                 {
+//                     std::cout << "pd안함 왼쪽앞으로가기, " << park_time - last_time << std::endl;
+//                     driving_msg.linear.x = 0.07;
+//                     driving_msg.angular.z = 0.0;
+//                     return;
+//                 }
+//                 else if (turn_flag == 0 && park_time - last_time >= 35)
+//                 {
+//                     turn_flag = 1;
+//                 }
+//                 if (turn_flag == 1)
+//                 {
+//                     std::cout << "pd안함 왼쪽 돌고있다, " << is_front_danger_ << std::endl;
+//                     driving_msg.linear.x = 0.02;
+//                     driving_msg.angular.z = -0.5;
+//                 }
+//                 if (near(local_diff, 0))
+//                 {
+//                     pstate_ = GO_OUT;
+//                     last_time = park_time;
+//                     time_flag = 0;
+//                 }
+//             }
+//         }
+//         break;
+//         case GO_OUT:
+//         {
+//             if (time_flag == 0)
+//             {
+//                 std::cout << "지금은 직진 중" << std::endl;
+//                 driving_msg.linear.x = 0.09;
+//                 driving_msg.angular.z = 0.0;
+//             }
+//             if (time_flag == 0 && park_time - last_time >= 20)
+//             {
+//                 time_flag = 1;
+//             }
+//             if (time_flag == 1)
+//             {
+//                 park_comp = 1;
+//                 if (park_comp == 0 && error_y == -321 && gos_flag == 0)
+//                 {
+//                     std::cout << "빠져나가, " << error_y << std::endl;
+//                     driving_msg.linear.x = 0.09;
+//                     driving_msg.angular.z = 0.0;
+//                     return;
+//                 }
+//                 else if (gos_flag == 0 && (error_y > 320 || error_y < 300))
+//                 {
+//                     gos_flag = 1;
+//                     std::cout << "빠져나가22 " << error_y << std::endl;
+//                     driving_msg.linear.x = 0.09;
+//                     driving_msg.angular.z = 0.0;
+//                 }
+//                 else
+//                 {
+//                     PD_control();
+//                     if (((error_y == -321 && error_w == -321) || (error_y == -321 && z <= 0.25))&&passed_Level==0)
+//                     {
+//                         driving_msg.linear.x = 0.09;
+//                         driving_msg.angular.z = 0.36;
+//                     }
+//                 }
+//             }
+//         }
+//         break;
+//         default:
+//             break;
+//         }
+//     }
+// }
 void DrivingYY::Parking()
 {
     if (mission_flag_ == 5)
