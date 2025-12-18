@@ -1792,6 +1792,12 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         else start_flag_ = 0;
         std::cout << "space key pressed" << std::endl;
     }
+    else if (event->key() == Qt::Key_G)
+    {
+        if(start_flag_ == 0)state_flag_=1;
+        else start_flag_ = 0;
+        std::cout << "space key pressed" << std::endl;
+    }
 
     else if (event->key() == Qt::Key_Enter)
     {
