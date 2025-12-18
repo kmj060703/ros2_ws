@@ -397,7 +397,7 @@ enum ParkingState
 ParkingState pstate_;
 
 bool near(double a, double b, double eps = 2.0) { return fabs(a - b) < eps; }
-void DrivingYY::Parking_new()
+// void DrivingYY::Parking_new()
 {
     if (mission_flag_ == 5)
     {
@@ -664,7 +664,7 @@ void DrivingYY::Parking_new()
         }
     }
 }
-void DrivingYY::Parking_halfnew()
+// void DrivingYY::Parking_halfnew()
 {
     if (mission_flag_ == 5)
     {
@@ -1213,7 +1213,7 @@ void DrivingYY::drive_callback()
         // if(mission_flag_==4)
         Construction();
         // else if(mission_flag_==5)
-        Parking_new();
+        Parking();
         // else
         Level_crossing();
         //     Level_crossing();
