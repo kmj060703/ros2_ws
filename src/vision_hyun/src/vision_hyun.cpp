@@ -161,12 +161,12 @@ ImageViewer::ImageViewer()
     const std::string image_topic = "/default_camera/image_raw";
 
     subscription_ = this->create_subscription<sensor_msgs::msg::Image>(
-        image_topic, 10,
+        image_topic, qos_profile,
         std::bind(&ImageViewer::image_callback, this, std::placeholders::_1));
 
-    publisher_ = this->create_publisher<sensor_msgs::msg::Image>("/vision/image_processed", 10);
-    publisher_2 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_raw", 10);
-    publisher_3 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_total", 10);
+    publisher_ = this->create_publisher<sensor_msgs::msg::Image>("/vision/image_processed", qos_profile);
+    publisher_2 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_raw", qos_profile);
+    publisher_3 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_total", qos_profile);
     publisher_4 = this->create_publisher<autorace_interfaces::msg::VisionHyun>("/vision/line_diff_info", qos_profile);
 
     // RCLCPP_INFO(this->get_logger(), "Image viewer node started.");
