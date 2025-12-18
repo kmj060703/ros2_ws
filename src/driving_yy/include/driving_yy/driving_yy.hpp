@@ -23,6 +23,8 @@ public:
     void Itersection();
     void Construction();
     void Parking();
+    void Parking_new();
+    void Parking_halfnew();
     void Level_crossing();
     void total_driving();
 
@@ -105,6 +107,7 @@ private:
     int park_time=0;
     int last_time=0;
     int time_flag=0;
+    int passed_Level=0;
 
 
       //장애물용 기억
