@@ -135,6 +135,7 @@ private:
   int yellow_threshold = 300;
   int park_whiteLine_threshold = 20000;
   int bar_red_red_threshold = 5000;
+  
 };
 
 #endif // IMAGE_VIEWER_HPP
