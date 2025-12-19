@@ -11,7 +11,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <math.h>
 
-#define REMOTE_IP "223.194.43.67"
+#define REMOTE_IP "127.0.0.1"
 #define REMOTE_PORT 9999 // UI용 포트 하나만 사용
 #define PACKET_SIZE 4096
 
@@ -395,7 +395,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                         break;
                     }
                 }
-                if (yellow_x > white_x && white_x != -1)
+                if ((yellow_x > white_x && white_x != -1)||((yellow_x - white_x)<50&&(yellow_x - white_x)>-50))
                 {
                     yellow_x = -1;
                     white_x = -1;

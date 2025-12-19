@@ -19,10 +19,12 @@ class DrivingYY : public rclcpp::Node
 public:
     DrivingYY();
     void PD_control();
+    void Fast_PD();
     void Traffic_light();
     void Itersection();
     void Construction();
     void Parking();
+    void Parking_tune();
     void Level_crossing();
     void total_driving();
 
