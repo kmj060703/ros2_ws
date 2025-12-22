@@ -22,7 +22,7 @@ class ImageSubscriber(Node):
         self.image_pub = self.create_publisher(Image,'feed_YOLO', qos_profile_sensor_data)
 
         self.br = CvBridge()
-        self.MIN_BOX_AREA = 3700  
+        self.MIN_BOX_AREA = 3500  
 
         cv2.namedWindow('Processed Image')
         cv2.namedWindow('YOLO Object Detection') 

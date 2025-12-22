@@ -108,10 +108,10 @@ void gui_thread()
                 frame_display = latest_frame.clone();
             if (!bird_copy.empty())
                 bird_display = bird_copy.clone();
-            // if (!yellow_mask.empty())
-            //     yellow_display = yellow_mask.clone();
-            // if (!white_mask.empty())
-            //     white_display = white_mask.clone();
+            if (!yellow_mask.empty())
+                yellow_display = yellow_mask.clone();
+            if (!white_mask.empty())
+                white_display = white_mask.clone();
             if (!red_and_green_mask.empty())
                 red_and_green_mask_copy = red_and_green_mask.clone();
             if (!brown_mask.empty())
@@ -150,6 +150,12 @@ void gui_thread()
             cv::imshow("traffic_mask", red_and_green_mask);
         if (!brown_mask.empty())
             cv::imshow("brown_mask", brown_mask);
+
+        if (!white_mask.empty())
+            cv::imshow("white_mask View", white_mask);
+
+        if (!yellow_mask.empty())
+            cv::imshow("yellow_mask View", yellow_mask);
 
         cv::waitKey(1);
     }
@@ -220,7 +226,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
             // 버드아이 > 가우시안 블러 적용
             cv::Mat birdeye_blurred, birdeye_hsv, frame_hsv;
-            cv::GaussianBlur(birdeye, birdeye_blurred, cv::Size(5, 5), 1.5);
+            cv::GaussianBlur(birdeye, birdeye_blurred, cv::Size(5, 5), 20);
 
             // hsv 변환
             cv::cvtColor(birdeye_blurred, birdeye_hsv, cv::COLOR_BGR2HSV);

@@ -109,10 +109,12 @@ private:
     int last_time=0;
     int time_flag=0;
     int passed_Level=0;
+    int set_yaw_com=0;
+    int gooutcom=0;
 
 
       //장애물용 기억
-    int count=5; //local_yaw 정하기
+    int count=10; //local_yaw 정하기
     int Construction_mem = 1 ;//(0=노랑 중심, 1=하양 중심)
     double local_yaw = 0 ;
     double local_diff =0;
