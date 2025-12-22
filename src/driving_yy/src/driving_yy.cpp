@@ -811,17 +811,17 @@ void DrivingYY::Parking_tune()
             }
             // if(std::abs(error_y-0)<4)yaw_count++;
             // if(yaw_count>4)local_yaw=current_yaw_;
-            if (white_count_top > 20000 && (is_left_danger_ > 400))
+            if (white_count_top > 20000 && (is_left_danger_ > 300))
             {
                 pstate_ = AVOID_RIGHT;
                 std::cout << "오른쪽으로피하기 시작" << std::endl;
             }
-            else if (white_count_top > 20000 && (is_right_danger_ > 400))
+            else if (white_count_top > 20000 && (is_right_danger_ > 300))
             {
                 pstate_ = AVOID_LEFT;
                 std::cout << "왼쪽으로피하기 시작" << std::endl;
             }
-            if (white_count_top > 20000 && is_left_danger_ < 400 && is_right_danger_ < 400)
+            if (white_count_top > 20000 && is_left_danger_ < 300 && is_right_danger_ < 300)
             {
                 pstate_ = PSD_AGAIN;
             }
@@ -831,7 +831,7 @@ void DrivingYY::Parking_tune()
         {
             if (only_y == 1 && white_count_top > 0)
             {
-                driving_msg.linear.x = 0.7;
+                driving_msg.linear.x = 0.07;
                 driving_msg.angular.z = 0.0;
             }
             else
@@ -841,7 +841,7 @@ void DrivingYY::Parking_tune()
             {
                 if (white_count_top < 20000 || is_right_danger_ < 250 || is_left_danger_ < 250)
                 {
-                    driving_msg.linear.x = -0.7;
+                    driving_msg.linear.x = -0.07;
                     driving_msg.angular.z = 0.0;
                 }
                 else
