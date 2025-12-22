@@ -52,6 +52,7 @@ public:
     int for_count=0;
     int park_comp=0;
     int turn_flag=0;
+    int degree_flag=0;
 
 private:
     void imu_callback(const geometry_msgs::msg::Vector3::SharedPtr msg);

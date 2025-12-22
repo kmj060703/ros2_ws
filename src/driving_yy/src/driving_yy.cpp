@@ -455,10 +455,10 @@ void DrivingYY::Parking()
 {
     if (mission_flag_ == 5)
     {
-        // if (timer == count)
-        // {
-        //     local_diff = degreecal(local_yaw - current_yaw_ - 5);
-        // }
+        if (timer == count)
+        {
+            local_diff = degreecal(local_yaw - current_yaw_ - 5);
+        }
         switch (pstate_)
         {
         case PARK_PD:
@@ -543,7 +543,7 @@ void DrivingYY::Parking()
         {
             if (only_y == 1 && white_count_top > 0)
             {
-                driving_msg.linear.x = 0.7;
+                driving_msg.linear.x = 0.07;
                 driving_msg.angular.z = 0.0;
             }
             else
@@ -553,7 +553,7 @@ void DrivingYY::Parking()
             {
                 if (white_count_top < 20000 || is_right_danger_ < 250 || is_left_danger_ < 250)
                 {
-                    driving_msg.linear.x = -0.7;
+                    driving_msg.linear.x = -0.07;
                     driving_msg.angular.z = 0.0;
                 }
                 else
@@ -581,6 +581,7 @@ void DrivingYY::Parking()
             driving_msg.angular.z = 0.5;
             right_turn = 1;
             std::cout << "오른쪽으로피해" << std::endl;
+
             if (near(current_yaw_, 20))
                 pstate_ = GO_FRONT;
         }
@@ -768,8 +769,17 @@ void DrivingYY::Parking()
 
 void DrivingYY::Parking_tune()
 {
+    if (timer == count)
+    {
+        local_diff = degreecal(local_yaw - current_yaw_ - 5);
+    }
+    if(degree_flag==0){
+        local_yaw=current_yaw_;
+        degree_flag=1;
+    }
     if (mission_flag_ == 5)
     {
+
         switch (pstate_)
         {
         case PARK_PD:
@@ -783,8 +793,9 @@ void DrivingYY::Parking_tune()
                 driving_msg.linear.x = 0.09;
                 driving_msg.angular.z = 0.34;
             }
-            if(yellow_count_top>8000&&yellow_count_low>8000){
-                pstate_=PARK_START;
+            if (yellow_count_top > 8000 && yellow_count_low > 8000)
+            {
+                pstate_ = PARK_START;
             }
         }
         break;
@@ -869,7 +880,7 @@ void DrivingYY::Parking_tune()
             driving_msg.angular.z = 0.5;
             right_turn = 1;
             std::cout << "오른쪽으로피해" << std::endl;
-            if (near(current_yaw_, 20))
+            if (near(local_diff, std::abs(88)))
                 pstate_ = GO_FRONT;
         }
         break;
@@ -880,7 +891,7 @@ void DrivingYY::Parking_tune()
             driving_msg.angular.z = -0.5;
             left_turn = 1;
             std::cout << "왼쪽으로피해" << std::endl;
-            if (near(current_yaw_, -185))
+            if (near(local_diff, std::abs(88)))
                 pstate_ = GO_FRONT;
         }
         break;
@@ -959,7 +970,7 @@ void DrivingYY::Parking_tune()
                     driving_msg.linear.x = 0.02;
                     driving_msg.angular.z = 0.5;
                 }
-                if (near(current_yaw_, -70))
+                if (near(local_diff, std::abs(180)))
                 {
                     pstate_ = GO_OUT;
                     last_time = park_time;
@@ -991,7 +1002,7 @@ void DrivingYY::Parking_tune()
                     driving_msg.linear.x = 0.02;
                     driving_msg.angular.z = -0.5;
                 }
-                if (near(current_yaw_, -90))
+                if (near(local_diff, std::abs(180)))
                 {
                     pstate_ = GO_OUT2;
                     last_time = park_time;
@@ -1020,7 +1031,7 @@ void DrivingYY::Parking_tune()
                     driving_msg.angular.z = 0.3;
                 }
             }
-            if (gos_flag == 0 && (error_y > 270 ||error_y==-321)&&park_comp != 2)
+            if (gos_flag == 0 && (error_y > 270 || error_y == -321) && park_comp != 2)
             {
                 std::cout << "지금은 직진 중" << std::endl;
                 driving_msg.linear.x = 0.09;
@@ -1041,15 +1052,18 @@ void DrivingYY::Parking_tune()
         break;
         case GO_OUT2:
         {
-            if(yellow_count_low<4000){
+            if (yellow_count_low < 4000)
+            {
                 driving_msg.linear.x = 0.2;
                 driving_msg.angular.z = 0.0;
             }
-            else{
-                 park_comp = 1;
+            else
+            {
+                park_comp = 1;
             }
             Fast_PD();
-            if(park_comp==1){
+            if (park_comp == 1)
+            {
                 if (error_y > 270)
                 {
                     error_y = -321;
@@ -1060,7 +1074,6 @@ void DrivingYY::Parking_tune()
                     driving_msg.angular.z = 0.65;
                 }
             }
-            
         }
         break;
         default:
