@@ -30,6 +30,7 @@ public:
 
     
 
+    geometry_msgs::msg::Twist driving_msg;
     int l_start_flag = 0;
     int start_flag = 0;
     double kp;
@@ -68,7 +69,6 @@ private:
 
     
 
-    geometry_msgs::msg::Twist driving_msg;
 
     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr imu_sub_;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_front_sub_;

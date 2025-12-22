@@ -130,8 +130,8 @@ private:
   int yellowline_pixel_count_top = 0;
   int whiteline_pixel_count_top = 0;
   // 신호등 상태 판단
-  int red_threshold = 150;
-  int green_threshold = 250;
+  int red_threshold = 100;
+  int green_threshold = 5;
   int yellow_threshold = 300;
   int park_whiteLine_threshold = 20000;
   int bar_red_red_threshold = 5000;
