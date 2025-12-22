@@ -56,7 +56,7 @@ QNode::QNode()
       sensor_qos,
       std::bind(&QNode::vision_traffic_callback, this, _1));
 
-  yolo_sub_ = node->create_subscription<sensor_msgs::msg::Image>("feed_YOLO", 10, std::bind(&QNode::yolo_callback, this, std::placeholders::_1));
+  yolo_sub_ = node->create_subscription<sensor_msgs::msg::Image>("feed_YOLO", sensor_qos, std::bind(&QNode::yolo_callback, this, std::placeholders::_1));
 
   publisher_drive = node->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", sensor_qos);
   publisher_ui2drive = node->create_publisher<autorace_interfaces::msg::Ui2Driving>("/ui2driving_topic", sensor_qos);

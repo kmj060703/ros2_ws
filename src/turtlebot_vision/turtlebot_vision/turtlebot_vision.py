@@ -18,8 +18,8 @@ class ImageSubscriber(Node):
             self.listener_callback,
             qos_profile_sensor_data)
         
-        self.yolo_pub_ = self.create_publisher(String, 'MasterJo_YOLO', 10)
-        self.image_pub = self.create_publisher(Image,'feed_YOLO',10)
+        self.yolo_pub_ = self.create_publisher(String, 'MasterJo_YOLO', qos_profile_sensor_data)
+        self.image_pub = self.create_publisher(Image,'feed_YOLO', qos_profile_sensor_data)
 
         self.br = CvBridge()
         self.MIN_BOX_AREA = 3700  
