@@ -223,7 +223,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
             // 버드아이 > 가우시안 블러 적용
             cv::Mat birdeye_blurred, birdeye_hsv, frame_hsv;
-            cv::GaussianBlur(birdeye, birdeye_blurred, cv::Size(5, 5), 1.5);
+            cv::GaussianBlur(birdeye, birdeye_blurred, cv::Size(5, 5), 20);
 
             // hsv 변환
             cv::cvtColor(birdeye_blurred, birdeye_hsv, cv::COLOR_BGR2HSV);
