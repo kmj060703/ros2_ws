@@ -59,7 +59,7 @@ int line_d_bottom = 110;
 
 bool start_line = false;
 bool detect_red_light = false;
-int start_red_threshold = 3000;
+int start_red_threshold = 1000;
 
 void send_udp_image(cv::Mat &img, int id)
 {
@@ -223,7 +223,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
             // 버드아이 > 가우시안 블러 적용
             cv::Mat birdeye_blurred, birdeye_hsv, frame_hsv;
-            cv::GaussianBlur(birdeye, birdeye_blurred, cv::Size(5, 5), 20);
+            cv::GaussianBlur(birdeye, birdeye_blurred, cv::Size(5, 5), 1.5);
 
             // hsv 변환
             cv::cvtColor(birdeye_blurred, birdeye_hsv, cv::COLOR_BGR2HSV);
@@ -239,7 +239,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             cv::inRange(latest_frame, lower_green, upper_green, green_mask);
             cv::inRange(frame_hsv, bar_lower_red, bar_upper_red, bar_temp_frame1);
             cv::inRange(frame_hsv, bar_lower_red_2, bar_upper_red_2, bar_temp_frame2);
-            
+
             // 침식/팽창
             cv::Mat k = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
             cv::dilate(yellow_mask, yellow_mask, k, cv::Point(-1, -1), 5);
@@ -291,27 +291,8 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             detect_x_end = 640;
             detect_y_start = 0;
             detect_y_end = 250;
-            if (start_line)
-            {
 
-                for (int i = detect_y_start; i < detect_y_end; i++)
-                {
-                    for (int j = detect_x_start; j < detect_x_end; j++)
-                    {
-                        if (red_mask.at<uchar>(i, j) > 0)
-                            red_pixel_count++;
-                        if (green_mask.at<uchar>(i, j) > 0)
-                            green_pixel_count++;
-                       
-                    }
-                }
-                if (red_pixel_count > red_threshold)
-                {
-                    detect_red_light = true;
-                }
-                std::cerr << red_pixel_count << std::endl;
-            }
-            else
+            if (traffic_light_state!=1)
             {
                 for (int i = 180; i < 360; i++)
                 {
@@ -328,7 +309,28 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 else
                     start_line = false;
             }
-            // std::cerr << red_pixel_count << std::endl;
+            if (traffic_light_state)
+            {
+
+                for (int i = detect_y_start; i < detect_y_end; i++)
+                {
+                    for (int j = detect_x_start; j < detect_x_end; j++)
+                    {
+                        if (red_mask.at<uchar>(i, j) > 0)
+                            red_pixel_count++;
+                        if (green_mask.at<uchar>(i, j) > 0)
+                            green_pixel_count++;
+                    }
+                }
+                if (red_pixel_count > red_threshold)
+                {
+                    detect_red_light = true;
+                }
+        
+               
+            }
+
+            
             cv::imshow("red_traffic", red_mask);
             detect_x_start = 0;
             detect_y_start = 90;
@@ -361,7 +363,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             {
                 traffic_light_state = 0;
             }
-            //  std::cerr << traffic_light_state << std::endl;
+            std::cerr << traffic_light_state << std::endl;
             //  갈색
             brown_pixel_count = 0;
             yellowline_pixel_count_low = 0;
