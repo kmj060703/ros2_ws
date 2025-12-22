@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from std_msgs.msg import String
+from rclpy.qos import qos_profile_sensor_data
 import cv2
 from cv_bridge import CvBridge
 from ultralytics import YOLO
@@ -11,18 +12,17 @@ class ImageSubscriber(Node):
         super().__init__('turtlebot_vision_subscriber')
 
         self.model = YOLO('src/best.pt')
-        
-        self.subscription = self.create_subscription(
+        self.subscription = self.create_subscription(   
             Image,
             '/vision/image_processed',
             self.listener_callback,
-            10)
+            qos_profile_sensor_data)
         
-        self.yolo_pub_ = self.create_publisher(String, 'MasterJo_YOLO', 10)
-        self.image_pub = self.create_publisher(Image,'feed_YOLO',10)
+        self.yolo_pub_ = self.create_publisher(String, 'MasterJo_YOLO', qos_profile_sensor_data)
+        self.image_pub = self.create_publisher(Image,'feed_YOLO', qos_profile_sensor_data)
 
         self.br = CvBridge()
-        self.MIN_BOX_AREA = 4000  
+        self.MIN_BOX_AREA = 3500  
 
         cv2.namedWindow('Processed Image')
         cv2.namedWindow('YOLO Object Detection') 

@@ -19,15 +19,18 @@ class DrivingYY : public rclcpp::Node
 public:
     DrivingYY();
     void PD_control();
+    void Fast_PD();
     void Traffic_light();
     void Itersection();
     void Construction();
     void Parking();
+    void Parking_tune();
     void Level_crossing();
     void total_driving();
 
     
 
+    geometry_msgs::msg::Twist driving_msg;
     int l_start_flag = 0;
     int start_flag = 0;
     double kp;
@@ -50,6 +53,7 @@ public:
     int for_count=0;
     int park_comp=0;
     int turn_flag=0;
+    int degree_flag=0;
 
 private:
     void imu_callback(const geometry_msgs::msg::Vector3::SharedPtr msg);
@@ -65,7 +69,6 @@ private:
 
     
 
-    geometry_msgs::msg::Twist driving_msg;
 
     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr imu_sub_;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr psd_front_sub_;
@@ -106,10 +109,12 @@ private:
     int last_time=0;
     int time_flag=0;
     int passed_Level=0;
+    int set_yaw_com=0;
+    int gooutcom=0;
 
 
       //장애물용 기억
-    int count=5; //local_yaw 정하기
+    int count=10; //local_yaw 정하기
     int Construction_mem = 1 ;//(0=노랑 중심, 1=하양 중심)
     double local_yaw = 0 ;
     double local_diff =0;
