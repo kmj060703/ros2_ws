@@ -11,7 +11,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <math.h>
 
-#define REMOTE_IP "223.194.43.67"
+#define REMOTE_IP "192.168.0.38"
 #define REMOTE_PORT 9999 // UI용 포트 하나만 사용
 #define PACKET_SIZE 4096
 
