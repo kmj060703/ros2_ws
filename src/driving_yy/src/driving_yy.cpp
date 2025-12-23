@@ -494,12 +494,12 @@ void DrivingYY::Parking_tune()
                 driving_msg.angular.z = 0.0;
             }
             if(set_yaw_com==1){
-                if ((is_left_danger_ > 400))
+                if ((is_left_danger_ > 450))
                 {
                     pstate_ = AVOID_RIGHT;
                     std::cout << "오른쪽으로피하기 시작" << std::endl;
                 }
-                else if ((is_right_danger_ > 400))
+                else if ((is_right_danger_ > 450))
                 {
                     pstate_ = AVOID_LEFT;
                     std::cout << "왼쪽으로피하기 시작" << std::endl;
@@ -689,11 +689,11 @@ void DrivingYY::Parking_tune()
                     }
                 }
             }
-            if (gooutcom == 2 || (gooutcom == 1 && white_count_low > 2000 && yellow_count_low > 2000))
-            {
-                std::cout << "aaaaaaaaaaaaaaaaaaaa " << std::endl;
-                gooutcom = 2;
-            }
+            // if (gooutcom == 2 || (gooutcom == 1 && white_count_low > 2000 && yellow_count_low > 2000))
+            // {
+            //     std::cout << "aaaaaaaaaaaaaaaaaaaa " << std::endl;
+            //     gooutcom = 2;
+            // }
         }
         break;
         default:
@@ -705,7 +705,7 @@ void DrivingYY::Parking_tune()
 void DrivingYY::Level_crossing()
 {
     RCLCPP_INFO(this->get_logger(), "traffic_light_status_: %d", traffic_light_status_);
-    if (mission_flag_ == 5)
+    if (mission_flag_ == 5&&gooutcom==2)
     {
 
         if (traffic_light_status_ == 4||brown_count>10000)

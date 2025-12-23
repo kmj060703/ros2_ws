@@ -58,8 +58,8 @@ class ImageSubscriber(Node):
         img_msg.header = data.header
         self.image_pub.publish(img_msg)
 
-        cv2.imshow("Processed Image", current_frame)
-        cv2.imshow("YOLO Object Detection", annotated_frame)
+        #cv2.imshow("Processed Image", current_frame)
+        #cv2.imshow("YOLO Object Detection", annotated_frame)
         cv2.waitKey(1)
 
 def main(args=None):

@@ -159,7 +159,6 @@ void QNode::yolo_callback(const sensor_msgs::msg::Image::SharedPtr msg)
     cv_ptr = cv_bridge::toCvCopy(
         msg,
         sensor_msgs::image_encodings::RGB8);
-    cv::cvtColor(cv_ptr->image, cv_ptr->image, cv::COLOR_BGR2RGB);
   }
   catch (cv_bridge::Exception &e)
   {
@@ -267,7 +266,7 @@ void QNode::udp_receive_loop()
 
             cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
             QImage qimage(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
-            if ((camera_1_state - 1 == img_id || camera_2_state - 1 == img_id)&&(camera_1_state != 4 || camera_2_state != 4))
+            if ((camera_1_state - 1 == img_id || camera_2_state - 1 == img_id)&&img_id!=3)
               emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
           }
         }

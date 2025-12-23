@@ -127,18 +127,10 @@ void MainWindow::combine_callback()
     ui->dial->setValue(imu_yaw);
     ui->dial_localang->setValue(imu_yaw_local);
     // psd
-    if (psd_flag[0] == 1)
-        ui->label_p_forward->setText("왼쪽 장애물!");
-    else
-        ui->label_p_forward->clear();
-    if (psd_flag[1] == 1)
-        ui->label_p_left->setText("정면 장애물!");
-    else
-        ui->label_p_left->clear();
-    if (psd_flag[2] == 1)
-        ui->label_p_right->setText("우측 장애물!");
-    else
-        ui->label_p_right->clear();
+    
+    ui->label_p_forward->setText(std::to_string(psd_flag[1]).c_str());
+    ui->label_p_left->setText(std::to_string(psd_flag[0]).c_str());
+    ui->label_p_right->setText(std::to_string(psd_flag[2]).c_str());
     // 신호등
     if (traffic_state == 1)
     {
@@ -147,10 +139,6 @@ void MainWindow::combine_callback()
     else if (traffic_state == 2)
     {
         ui->label_f_traf->setText("파란불");
-    }
-    else if (traffic_state == 3)
-    {
-        ui->label_f_traf->setText("노란불! 감속?");
     }
     else
     {

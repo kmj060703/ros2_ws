@@ -130,7 +130,7 @@ private:
   int green_threshold = 5;
   int yellow_threshold = 300;
   int park_whiteLine_threshold = 20000;
-  int bar_red_red_threshold = 2000;
+  int bar_red_red_threshold = 5000;
   
 };
 

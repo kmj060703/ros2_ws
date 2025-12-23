@@ -142,14 +142,14 @@ void gui_thread()
                 cv::Scalar(0, 255, 0),
                 1);
 
-            cv::imshow("Spedal Feed", frame_display);
+            //cv::imshow("Spedal Feed", frame_display);
         }
 
         if (!bird_display.empty())
-            cv::imshow("Bird's-Eye View", bird_display);
+            //cv::imshow("Bird's-Eye View", bird_display);
 
         // if (!brown_mask.empty())
-        //     cv::imshow("brown_mask", brown_mask);
+             //cv::imshow("brown_mask", brown_mask);
 
         cv::waitKey(1);
     }
@@ -166,8 +166,8 @@ ImageViewer::ImageViewer()
         std::bind(&ImageViewer::image_callback, this, std::placeholders::_1));
 
     publisher_ = this->create_publisher<sensor_msgs::msg::Image>("/vision/image_processed", qos_profile);
-    publisher_2 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_raw", qos_profile);
-    publisher_3 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_total", qos_profile);
+    // publisher_2 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_raw", qos_profile);
+    // publisher_3 = this->create_publisher<sensor_msgs::msg::Image>("/vision/birdeye_total", qos_profile);
     publisher_4 = this->create_publisher<autorace_interfaces::msg::VisionHyun>("/vision/line_diff_info", qos_profile);
 
     // RCLCPP_INFO(this->get_logger(), "Image viewer node started.");
@@ -275,7 +275,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
             
             detect_x_start = 0;
-            detect_y_start = 90;
+            detect_y_start = 0;
             detect_y_end = 360;
 
 
@@ -290,9 +290,9 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 }
             }
             // std::cout <<"레드 아래:"<< red_pixel_count << std::endl;
-            cv::imshow("red", red_mask);
-            cv::imshow("green", green_mask);
-            cv::imshow("bar_temp_frame", bar_temp_frame);
+            //cv::imshow("red", red_mask);
+            //cv::imshow("green", green_mask);
+            //cv::imshow("bar_temp_frame", bar_temp_frame);
 
             std::cout <<"레드:"<< bar_red_pixel_count << std::endl;
             std::cout <<"레드라인:"<< redline_pixel_count << std::endl;
