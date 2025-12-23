@@ -705,7 +705,8 @@ void DrivingYY::Parking_tune()
 void DrivingYY::Level_crossing()
 {
     RCLCPP_INFO(this->get_logger(), "traffic_light_status_: %d", traffic_light_status_);
-    if (mission_flag_ == 5&&gooutcom==2)
+    RCLCPP_INFO(this->get_logger(), "gooutcom: %d", gooutcom);
+    if (mission_flag_ == 5&&gooutcom==1)
     {
 
         if (traffic_light_status_ == 4||brown_count>10000)

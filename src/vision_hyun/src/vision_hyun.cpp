@@ -294,9 +294,9 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             //cv::imshow("green", green_mask);
             //cv::imshow("bar_temp_frame", bar_temp_frame);
 
-            std::cout <<"레드:"<< bar_red_pixel_count << std::endl;
-            std::cout <<"레드라인:"<< redline_pixel_count << std::endl;
-            std::cout <<"그린:"<< green_pixel_count << std::endl;
+            //std::cout <<"레드:"<< bar_red_pixel_count << std::endl;
+            //std::cout <<"레드라인:"<< redline_pixel_count << std::endl;
+            //std::cout <<"그린:"<< green_pixel_count << std::endl;
 
             if (red_pixel_count>100) // 300 픽셀 이상
           
