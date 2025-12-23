@@ -18,11 +18,12 @@ extern cv::Mat latest_frame;
 extern cv::Mat latest_birdeye;
 extern cv::Mat yellow_mask;
 extern cv::Mat white_mask;
-extern cv::Mat red_mask;
+extern cv::Mat red_mask,red_mask2;
 extern cv::Mat green_mask;
 extern cv::Mat red_and_green_mask;
 extern cv::Mat brown_mask, brown_mask_2;
 extern cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy, red_and_green_mask_copy, brown_copy;
+
 
 // 전역 변수 추가
 extern int global_center_x;
@@ -61,26 +62,20 @@ private:
   cv::Scalar upper_white = cv::Scalar(180, 50, 255);
   cv::Scalar lower_yellow = cv::Scalar(20, 100, 100); // H 179 // S 225 // V 225
   cv::Scalar upper_yellow = cv::Scalar(30, 255, 255);
-  cv::Scalar lower_red = cv::Scalar(0, 80, 80);
-  cv::Scalar upper_red = cv::Scalar(0, 100, 200);
-  cv::Scalar lower_t_yellow = cv::Scalar(150, 3, 70);
-  cv::Scalar upper_t_yellow = cv::Scalar(175, 8, 255);
-  //  cv::Scalar lower_green = cv::Scalar(140, 35, 27);
-  //  cv::Scalar upper_grㅑeen = cv::Scalar(170, 160, 190); // ㅈㄴ 신기하네이건
 
-  cv::Scalar lower_green = cv::Scalar(160, 50, 50);
-  cv::Scalar upper_green = cv::Scalar(179, 255, 255);
+  cv::Scalar lower_green = cv::Scalar(45, 80, 50);
+  cv::Scalar upper_green = cv::Scalar(80, 190, 180);
 
   cv::Scalar lower_brown = cv::Scalar(0, 60, 46);
   cv::Scalar upper_brown = cv::Scalar(7, 190, 195);
   cv::Scalar lower_brown_2 = cv::Scalar(173, 60, 46);
   cv::Scalar upper_brown_2 = cv::Scalar(180, 190, 195);
 
-  cv::Scalar bar_lower_red = cv::Scalar(0, 111, 0);
-  cv::Scalar bar_upper_red = cv::Scalar(17, 255, 255);
+  cv::Scalar bar_lower_red = cv::Scalar(0, 111, 50);
+  cv::Scalar bar_upper_red = cv::Scalar(5, 255, 255);
 
-  cv::Scalar bar_lower_red_2 = cv::Scalar(150, 111, 0);
-  cv::Scalar bar_upper_red_2 = cv::Scalar(255, 255, 255);
+  cv::Scalar bar_lower_red_2 = cv::Scalar(175, 111, 50);
+  cv::Scalar bar_upper_red_2 = cv::Scalar(180, 255, 255);
 
   // 사다리꼴 원본 좌표 (feed 640x360 기준)
   float distort_L_top_x = 160.0;
@@ -123,6 +118,7 @@ private:
   int green_pixel_count = 0;
   int yellow_pixel_count = 0;
   int bar_red_pixel_count = 0;
+  int redline_pixel_count = 0;
 
   int brown_pixel_count = 0;
   int yellowline_pixel_count_low = 0;
@@ -134,7 +130,7 @@ private:
   int green_threshold = 5;
   int yellow_threshold = 300;
   int park_whiteLine_threshold = 20000;
-  int bar_red_red_threshold = 5000;
+  int bar_red_red_threshold = 2000;
   
 };
 

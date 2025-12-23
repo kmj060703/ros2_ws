@@ -11,7 +11,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <math.h>
 
-#define REMOTE_IP "192.168.0.38"
+#define REMOTE_IP "127.0.0.1"
 #define REMOTE_PORT 9999 // UI용 포트 하나만 사용
 #define PACKET_SIZE 4096
 
@@ -24,13 +24,13 @@ cv::Mat latest_frame;
 cv::Mat latest_birdeye;
 cv::Mat yellow_mask;
 cv::Mat white_mask;
-cv::Mat red_mask;
+cv::Mat red_mask, red_mask2;
 cv::Mat green_mask;
 cv::Mat red_and_green_mask;
 cv::Mat brown_mask, brown_mask_2;
 cv::Mat bar_red_mask, bar_red_mask2;
 cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy, red_and_green_mask_copy;
-cv::Mat bar_temp_frame1, bar_temp_frame2;
+cv::Mat bar_temp_frame,bar_temp_frame1, bar_temp_frame2;
 
 
 // 전역 변수 추가
@@ -58,8 +58,6 @@ int detect_y_end = 150;
 int line_d_top = 250;
 int line_d_bottom = 110;
 
-bool start_line = false;
-bool detect_red_light = false;
 int start_red_threshold = 3000;
 
 void send_udp_image(cv::Mat &img, int id)
@@ -150,10 +148,8 @@ void gui_thread()
         if (!bird_display.empty())
             cv::imshow("Bird's-Eye View", bird_display);
 
-        if (!red_and_green_mask.empty())
-            cv::imshow("traffic_mask", red_and_green_mask);
-        if (!brown_mask.empty())
-            cv::imshow("brown_mask", brown_mask);
+        // if (!brown_mask.empty())
+        //     cv::imshow("brown_mask", brown_mask);
 
         cv::waitKey(1);
     }
@@ -176,12 +172,6 @@ ImageViewer::ImageViewer()
 
     // RCLCPP_INFO(this->get_logger(), "Image viewer node started.");
 
-    cv::namedWindow("Spedal Feed");
-    // cv::namedWindow("Bird-Eye View");
-    // cv::namedWindow("yellow_mask");
-    // cv::namedWindow("white_mask");
-    cv::namedWindow("traffic_mask");
-    cv::namedWindow("brown_mask");
 }
 
 void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
@@ -236,129 +226,87 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
             cv::inRange(birdeye_hsv, lower_white, upper_white, white_mask);
             cv::inRange(birdeye_hsv, lower_yellow, upper_yellow, yellow_mask);
-
-
-            cv::inRange(latest_frame, lower_green, upper_green, green_mask);
+        
+            cv::inRange(frame_hsv, lower_green, upper_green, green_mask);
+            
             cv::inRange(frame_hsv, bar_lower_red, bar_upper_red, bar_temp_frame1);
             cv::inRange(frame_hsv, bar_lower_red_2, bar_upper_red_2, bar_temp_frame2);
+            cv::add(bar_temp_frame1, bar_temp_frame2, bar_temp_frame);
+
+            cv::inRange(birdeye_hsv, bar_lower_red, bar_upper_red, red_mask);
+            cv::inRange(birdeye_hsv, bar_lower_red_2, bar_upper_red_2, red_mask2);
+            cv::add(red_mask, red_mask2, red_mask);
             
             // 침식/팽창
             cv::Mat k = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
+            
+            cv::dilate(red_mask, red_mask, k, cv::Point(-1, -1), 5);
+            cv::erode(red_mask, red_mask, k, cv::Point(-1, -1), 6);
+            cv::dilate(bar_temp_frame, bar_temp_frame, k, cv::Point(-1, -1), 5);
+            cv::erode(bar_temp_frame, bar_temp_frame, k, cv::Point(-1, -1), 6);
+            cv::dilate(green_mask, green_mask, k, cv::Point(-1, -1), 5);
+            cv::erode(green_mask, green_mask, k, cv::Point(-1, -1), 6);
+            
             cv::dilate(yellow_mask, yellow_mask, k, cv::Point(-1, -1), 5);
             cv::dilate(white_mask, white_mask, k, cv::Point(-1, -1), 5);
             cv::dilate(brown_mask, brown_mask, k, cv::Point(-1, -1), 5);
-
-            // 신호등 감지 범위 및 플래그
-
-            /*
-            channels[0]  Blue 채널
-
-            channels[1]  Green 채널
-
-            channels[2]  Red 채널
-            */
-
-            // 아니 이거 신호등 불빛이 너무 강해서 hsv로 못따옴 그래서 bgr로 받아옴 에라이 시간만 날렸내
-            std::vector<cv::Mat> channels;
-            cv::split(latest_frame, channels); // BGR 형식으로 분리할 때 cv::split()
-
-            cv::Mat red_mask = (channels[2] > channels[0] + 30) &
-                               (channels[2] > channels[1] + 30) &
-                               (channels[2] > 150);
-
-            // 노이즈 제거
-            cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5));
-            cv::morphologyEx(red_mask, red_mask, cv::MORPH_OPEN, kernel);
-
-            cv::Mat green_temp_mask = (channels[1] > channels[0] + 30) &
-                                      (channels[1] > channels[2] + 30) &
-                                      (channels[1] > 100);
-
-            green_temp_mask.convertTo(green_mask, CV_8U, 255);
-            green_mask = green_temp_mask.clone();
-
-         
-
-            cv::split(birdeye_blurred, channels);
-            cv::Mat start_red_mask = (channels[2] > channels[0] + 30) &
-                                     (channels[2] > channels[1] + 30) &
-                                     (channels[2] > 150);
-            cv::morphologyEx(start_red_mask, start_red_mask, cv::MORPH_OPEN, kernel);
 
             bar_red_pixel_count = 0;
             red_pixel_count = 0;
             yellow_pixel_count = 0;
             green_pixel_count = 0;
+            redline_pixel_count=0;
             red_and_green_mask = red_mask + green_mask;
 
             detect_x_start = 320;
             detect_x_end = 640;
             detect_y_start = 0;
             detect_y_end = 250;
-
-            if (traffic_light_state != 1)
-            {
-                for (int i = 180; i < 360; i++)
-                {
-                    for (int j = 0; j < 640; j++)
-                    {
-                        if (start_red_mask.at<uchar>(i, j) > 0)
-                            red_pixel_count++;
-                    }
-                }
-                if (red_pixel_count > start_red_threshold) // 3000 픽셀 이상
-                {
-                    start_line = true;
-                }
-                else
-                    start_line = false;
-            }
-            if (traffic_light_state)
-            {
-
-                for (int i = detect_y_start; i < detect_y_end; i++)
+            for (int i = detect_y_start; i < detect_y_end; i++)
                 {
                     for (int j = detect_x_start; j < detect_x_end; j++)
                     {
-                        if (red_mask.at<uchar>(i, j) > 0)
+                        if (bar_temp_frame.at<uchar>(i, j) > 0)
                             red_pixel_count++;
                         if (green_mask.at<uchar>(i, j) > 0)
                             green_pixel_count++;
                     }
                 }
-                if (red_pixel_count > red_threshold)
-                {
-                    detect_red_light = true;
-                }
-            }
-            std::cout <<"레드:"<< red_pixel_count << std::endl;
-            std::cout <<"그린:"<< green_pixel_count << std::endl;
-            cv::imshow("red_traffic", red_mask);
+
+            
             detect_x_start = 0;
             detect_y_start = 90;
             detect_y_end = 360;
 
-            
-            cv::Mat red_bar_frame = bar_temp_frame1 + bar_temp_frame2;
 
             for (int i = detect_y_start; i < detect_y_end; i++)
             {
                 for (int j = detect_x_start; j < detect_x_end; j++)
                 {
-                    if (red_bar_frame.at<uchar>(i, j) > 0)
+                    if (red_mask.at<uchar>(i, j) > 0)
+                        redline_pixel_count++;
+                    if (bar_temp_frame.at<uchar>(i, j) > 0)
                         bar_red_pixel_count++;
                 }
             }
+            // std::cout <<"레드 아래:"<< red_pixel_count << std::endl;
+            cv::imshow("red", red_mask);
+            cv::imshow("green", green_mask);
+            cv::imshow("bar_temp_frame", bar_temp_frame);
 
-            if ((green_pixel_count > green_threshold) && detect_red_light) // 300 픽셀 이상
+            std::cout <<"레드:"<< bar_red_pixel_count << std::endl;
+            std::cout <<"레드라인:"<< redline_pixel_count << std::endl;
+            std::cout <<"그린:"<< green_pixel_count << std::endl;
+
+            if (red_pixel_count>100) // 300 픽셀 이상
           
-            {
-                traffic_light_state = 2;
-            }
-          
-            else if (start_line) // 150 픽셀 이상
             {
                 traffic_light_state = 1;
+            }
+          
+            else if (green_pixel_count>30) // 150 픽셀 이상
+            {
+                traffic_light_state = 2;
             }
             else if (bar_red_pixel_count > bar_red_red_threshold)
             {
@@ -510,6 +458,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
         msg_data->yellow_x = global_yellow_x;
         msg_data->white_x = global_white_x;
         msg_data->traffic_light = traffic_light_state;
+        msg_data->redline = redline_pixel_count;
         msg_data->brown_count = brown_pixel_count;
         msg_data->yellowline_count_low = yellowline_pixel_count_low;
         msg_data->whiteline_count_low = whiteline_pixel_count_low;

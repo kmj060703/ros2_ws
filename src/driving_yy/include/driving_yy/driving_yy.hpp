@@ -99,6 +99,7 @@ private:
     int vision_valid_=1;
     int traffic_mission_comp=0;
     int traffic_red=0;
+    int redline=0;
     int only_y=0;
     int avoid_mem=0;
     int yellow_flag=0;

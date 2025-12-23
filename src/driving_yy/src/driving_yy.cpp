@@ -107,6 +107,8 @@ void DrivingYY::pixel_diff_callback(const autorace_interfaces::msg::MasterJo::Sh
     error_yw = msg->pixel_diff;
     error_y = msg->yellow_diff;
     error_w = msg->white_diff;
+    
+
 
     // RCLCPP_INFO(this->get_logger(), "Pixel Diff: %f", error);
 }
@@ -122,19 +124,6 @@ void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHy
     white_count_low = msg->whiteline_count_low;
     yellow_count_top = msg->yellowline_count_top;
     white_count_top = msg->whiteline_count_top;
-
-    if (traffic_light_status_ == 1)
-    {
-        // RCLCPP_INFO(this->get_logger(), "빨간불 감지 %d", traffic_light_status_);
-    }
-    else if (traffic_light_status_ == 2)
-    {
-        // RCLCPP_INFO(this->get_logger(), "초록불 감지 %d", traffic_light_status_);
-    }
-    else
-    {
-        // RCLCPP_INFO(this->get_logger(), "감지 안됨 혹은 노란색 %d", traffic_light_status_);
-    }
 }
 void DrivingYY::PD_control()
 {
@@ -239,31 +228,20 @@ void DrivingYY::Fast_PD()
 
 void DrivingYY::Traffic_light()
 {
-    if (traffic_mission_comp == 0)
-    {
-        if (mission_flag_ == 0)
+    if (mission_flag_ == 0){
+        if(brown_count>10000&&traffic_mission_comp==0){
+            traffic_mission_comp=1;
+        }
+        if(traffic_light_status_==1&&traffic_mission_comp==1){
+            traffic_mission_comp=2;
+        }
+        if(traffic_light_status_==2&&traffic_mission_comp==2){
+            traffic_mission_comp=3;
+        }
+        if (traffic_mission_comp>=1&&traffic_mission_comp<=2)
         {
-
-            if (traffic_light_status_ != 0)
-            {
-                switch (traffic_light_status_)
-                {
-                case 1:
-                {
-                    traffic_red = 1;
-                    driving_msg.linear.x = 0;
-                    driving_msg.angular.z = 0;
-                }
-                break;
-
-                default:
-                {
-                    if (traffic_red == 1 && traffic_mission_comp == 0)
-                        traffic_mission_comp = 1;
-                } // 노란색 감지를 위해 비워 놓는 것이다...
-                break;
-                }
-            }
+                driving_msg.linear.x = 0;
+                driving_msg.angular.z = 0;
         }
     }
     // RCLCPP_INFO(this->get_logger(), "drivingggg: %d",traffic_light_status_ );
@@ -515,19 +493,21 @@ void DrivingYY::Parking_tune()
                 driving_msg.linear.x = 0.07;
                 driving_msg.angular.z = 0.0;
             }
-            if ((is_left_danger_ > 400))
-            {
-                pstate_ = AVOID_RIGHT;
-                std::cout << "오른쪽으로피하기 시작" << std::endl;
-            }
-            else if ((is_right_danger_ > 400))
-            {
-                pstate_ = AVOID_LEFT;
-                std::cout << "왼쪽으로피하기 시작" << std::endl;
-            }
-            if (white_count_low > 20000 && is_left_danger_ < 300 && is_right_danger_ < 300)
-            {
-                pstate_ = PSD_AGAIN;
+            if(set_yaw_com==1){
+                if ((is_left_danger_ > 400))
+                {
+                    pstate_ = AVOID_RIGHT;
+                    std::cout << "오른쪽으로피하기 시작" << std::endl;
+                }
+                else if ((is_right_danger_ > 400))
+                {
+                    pstate_ = AVOID_LEFT;
+                    std::cout << "왼쪽으로피하기 시작" << std::endl;
+                }
+                if (white_count_low > 20000 && is_left_danger_ < 300 && is_right_danger_ < 300)
+                {
+                    pstate_ = PSD_AGAIN;
+                }
             }
         }
         break;
@@ -676,7 +656,7 @@ void DrivingYY::Parking_tune()
                     last_time = park_time;
                     time_flag = 1;
                 }
-                if (gooutcom == 0 && park_time - last_time < 35)
+                if (gooutcom == 0 && white_count_low>200)
                 {
                     std::cout << "pd안함 오른쪽앞으로가기, " << park_time - last_time << std::endl;
                     driving_msg.linear.x = 0.04;
@@ -725,16 +705,21 @@ void DrivingYY::Parking_tune()
 void DrivingYY::Level_crossing()
 {
     RCLCPP_INFO(this->get_logger(), "traffic_light_status_: %d", traffic_light_status_);
-    if (mission_flag_ == 5 && gooutcom == 2)
+    if (mission_flag_ == 5)
     {
 
-        if (traffic_light_status_ == 4 || traffic_light_status_ == 1)
+        if (traffic_light_status_ == 4||brown_count>10000)
         {
             driving_msg.linear.x = 0;
             driving_msg.angular.z = 0;
             passed_Level = 1;
         }
     }
+    if(passed_Level==1&&brown_count>10000){
+        driving_msg.linear.x = 0;
+        driving_msg.angular.z = 0;
+    }
+    
 }
 void DrivingYY::total_driving()
 {
@@ -746,7 +731,7 @@ void DrivingYY::drive_callback()
     if (l_start_flag == 1)
     {
 
-        if ((mission_flag_ < 4 || passed_Level == 1) && traffic_mission_comp == 1)
+        if (mission_flag_ < 4 || passed_Level == 1)
         {
             Fast_PD();
         }
@@ -754,18 +739,11 @@ void DrivingYY::drive_callback()
         {
             PD_control();
         }
-        // std::cout << "pd안함 뒤로가기1, " << "white_low:" << white_count_low << "white_top:" << white_count_top << "yellow_low:" << yellow_count_low << "yellow_top:" << yellow_count_top << std::endl;
         Traffic_light();
-        //  if(mission_flag_==1||mission_flag_==2||mission_flag_==3)
         Itersection();
-        // if(mission_flag_==4)
         Construction();
-        // else if(mission_flag_==5)
         Parking_tune();
-        // else
         Level_crossing();
-        //     Level_crossing();
-        // }
     }
     else
     {
