@@ -24,7 +24,7 @@ private:
     double front_lpf=0;
     double right_lpf=0;
     double left_lpf=0;
-    double alpha=0.2;
+    double alpha=0.35;
 
     int idx = 0;
 };

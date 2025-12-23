@@ -31,8 +31,8 @@ cv::Mat brown_mask, brown_mask_2;
 cv::Mat bar_red_mask, bar_red_mask2;
 cv::Mat frame_copy, bird_copy, yellow_mask_copy, white_mask_copy, red_and_green_mask_copy;
 cv::Mat bar_temp_frame1, bar_temp_frame2;
-cv::Mat start_red_mask;
-cv::Mat start_red_mask;
+
+
 // 전역 변수 추가
 int detect_line = 350;
 int global_center_x = -1;
@@ -52,7 +52,6 @@ int brown_pixel_count = 0;
 int detect_x_start = 320;
 int detect_x_end = 640;
 int detect_y_start = 0;
-int detect_y_end = 150;
 int detect_y_end = 150;
 
 // 장애물용 line 탐지 범위
@@ -278,11 +277,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             green_temp_mask.convertTo(green_mask, CV_8U, 255);
             green_mask = green_temp_mask.clone();
 
-            cv::split(birdeye_blurred, channels);
-            cv::Mat start_red_mask = (channels[2] > channels[0] + 30) &
-                                     (channels[2] > channels[1] + 30) &
-                                     (channels[2] > 150);
-            cv::morphologyEx(start_red_mask, start_red_mask, cv::MORPH_OPEN, kernel);
+         
 
             cv::split(birdeye_blurred, channels);
             cv::Mat start_red_mask = (channels[2] > channels[0] + 30) &
@@ -336,12 +331,14 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                     detect_red_light = true;
                 }
             }
-            // std::cerr << red_pixel_count << std::endl;
+            std::cout <<"레드:"<< red_pixel_count << std::endl;
+            std::cout <<"그린:"<< green_pixel_count << std::endl;
             cv::imshow("red_traffic", red_mask);
             detect_x_start = 0;
             detect_y_start = 90;
             detect_y_end = 360;
 
+            
             cv::Mat red_bar_frame = bar_temp_frame1 + bar_temp_frame2;
 
             for (int i = detect_y_start; i < detect_y_end; i++)
@@ -353,12 +350,12 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                 }
             }
 
-            if (green_pixel_count > green_threshold && detect_red_light) // 300 픽셀 이상
-            if (green_pixel_count > green_threshold && detect_red_light) // 300 픽셀 이상
+            if ((green_pixel_count > green_threshold) && detect_red_light) // 300 픽셀 이상
+          
             {
                 traffic_light_state = 2;
             }
-            else if (start_line) // 150 픽셀 이상
+          
             else if (start_line) // 150 픽셀 이상
             {
                 traffic_light_state = 1;

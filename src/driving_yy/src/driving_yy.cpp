@@ -210,9 +210,9 @@ void DrivingYY::Fast_PD()
     //     error = error_y;
     // }
 
-    kp = 0.01;
-    kd = 0.0065;
-    max_x = 0.6;
+    kp = 0.007;
+    kd = 0.003;
+    max_x = 0.55;
     def_turn_z = 0.8;
     z = kp * error + kd * (error - last_error);
 
@@ -472,7 +472,7 @@ void DrivingYY::Parking_tune()
         {
         case PARK_PD:
         {
-            if (error_y > 250)
+            if (error_y > 240)
             {
                 error_y = -321;
             }
@@ -553,12 +553,12 @@ void DrivingYY::Parking_tune()
             }
             if (only_y == 2)
             {
-                if (is_right_danger_ > 300)
+                if (is_right_danger_ > 600)
                 {
                     pstate_ = AVOID_LEFT;
                     std::cout << "왼쪽으로피하기 시작" << std::endl;
                 }
-                else if (is_left_danger_ > 300)
+                else if (is_left_danger_ > 550)
                 {
                     pstate_ = AVOID_RIGHT;
                     std::cout << "오른쪽으로피하기 시작" << std::endl;
@@ -651,6 +651,7 @@ void DrivingYY::Parking_tune()
                     pstate_ = GO_OUT;
                     driving_msg.linear.x = 0.0;
                     driving_msg.angular.z = 0.0;
+                    time_flag=0;
                 }
                 else if (local_diff > 0)
                 {
@@ -670,18 +671,34 @@ void DrivingYY::Parking_tune()
         {
             if (gooutcom != 2)
             {
-                if (yellow_count_low < 4000 && gooutcom == 0)
+                if (time_flag == 0)
                 {
-                    driving_msg.linear.x = 0.07;
-                    driving_msg.angular.z = 0.0;
+                    last_time = park_time;
+                    time_flag = 1;
                 }
-                else
+                if (gooutcom == 0 && park_time - last_time < 35)
+                {
+                    std::cout << "pd안함 오른쪽앞으로가기, " << park_time - last_time << std::endl;
+                    driving_msg.linear.x = 0.04;
+                    driving_msg.angular.z = 0.05;
+                    return;
+                }
+                else if (gooutcom == 0 && park_time - last_time >= 20)
                 {
                     gooutcom = 1;
                 }
+                // if (yellow_count_low < 4000 && gooutcom == 0)
+                // {
+                //     driving_msg.linear.x = 0.07;
+                //     driving_msg.angular.z = 0.0;
+                // }
+                // else
+                // {
+                //     gooutcom = 1;
+                // }
                 if (gooutcom == 1)
                 {
-                    if (error_y > 290)
+                    if (error_y > 270)
                     {
                         error_y = -321;
                     }
@@ -708,10 +725,10 @@ void DrivingYY::Parking_tune()
 void DrivingYY::Level_crossing()
 {
     RCLCPP_INFO(this->get_logger(), "traffic_light_status_: %d", traffic_light_status_);
-    if (mission_flag_ == 5&&gooutcom==2)
+    if (mission_flag_ == 5 && gooutcom == 2)
     {
-        
-        if (traffic_light_status_ == 4||traffic_light_status_==1)
+
+        if (traffic_light_status_ == 4 || traffic_light_status_ == 1)
         {
             driving_msg.linear.x = 0;
             driving_msg.angular.z = 0;
@@ -729,7 +746,7 @@ void DrivingYY::drive_callback()
     if (l_start_flag == 1)
     {
 
-        if ((mission_flag_ < 4 || passed_Level == 1)&&traffic_mission_comp==1)
+        if ((mission_flag_ < 4 || passed_Level == 1) && traffic_mission_comp == 1)
         {
             Fast_PD();
         }
