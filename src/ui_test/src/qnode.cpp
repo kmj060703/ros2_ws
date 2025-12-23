@@ -75,6 +75,14 @@ QNode::QNode()
 
 QNode::~QNode()
 {
+  auto msg = geometry_msgs::msg::Twist();
+  msg.linear.x = 0;
+  msg.angular.z = 0;
+  msg.linear.y = 0;
+  msg.linear.z = 0;
+  msg.angular.x = 0;
+  msg.angular.y = 0;
+  publisher_drive->publish(msg);
   is_running_ = false;
   if (sockfd_ > 0)
     close(sockfd_);
@@ -142,10 +150,12 @@ void QNode::vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::
 
 void QNode::yolo_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
+  // std::cout << "욜로 받는중" << std::endl;
   img_id = 3;
   cv_bridge::CvImagePtr cv_ptr;
   try
   {
+    // std::cout << "받아야한다..." << std::endl;
     cv_ptr = cv_bridge::toCvCopy(
         msg,
         sensor_msgs::image_encodings::RGB8);
@@ -164,7 +174,9 @@ void QNode::yolo_callback(const sensor_msgs::msg::Image::SharedPtr msg)
       frame.rows,
       frame.step,
       QImage::Format_RGB888);
-  emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
+
+  if (camera_1_state == 4 || camera_2_state == 4)
+    emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
 }
 
 // UDP 수신 및 이미지 처리
@@ -176,6 +188,17 @@ void QNode::udp_receive_loop()
   if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
   {
     RCLCPP_ERROR(node->get_logger(), "소켓 생성 실패");
+    return;
+  }
+
+  // Timeout 설정
+  struct timeval tv;
+  tv.tv_sec = 1; // 1초
+  tv.tv_usec = 0;
+  if (setsockopt(sockfd_, SOL_SOCKET, SO_RCVTIMEO, (const char *)&tv, sizeof tv) < 0)
+  {
+    RCLCPP_ERROR(node->get_logger(), "Failed to set socket timeout");
+    close(sockfd_);
     return;
   }
 
@@ -194,6 +217,7 @@ void QNode::udp_receive_loop()
 
   RCLCPP_INFO(node->get_logger(), "UDP Start Port %d", UDP_PORT);
 
+  std::cout << "받기전, " << is_running_ << "," << rclcpp::ok() << std::endl;
   while (is_running_ && rclcpp::ok())
   {
     int header[2]; // ID, Size
@@ -202,13 +226,16 @@ void QNode::udp_receive_loop()
     // ID와 크기 수신
     int n = recvfrom(sockfd_, header, sizeof(header), 0, (struct sockaddr *)&cliaddr, &len);
 
+    std::cout << "id랑 크기 수신중, " << n << ", " << sizeof(header) << std::endl;
     if (n == sizeof(header))
     {
+      std::cout << "헤더 크기가 맞나봄" << std::endl;
       img_id = header[0];
       int total_size = header[1];
 
       if (total_size > 0 && total_size < 10000000)
       {
+        std::cout << "전체 사이즈도 맞나봄" << std::endl;
         std::vector<uchar> buffer(total_size);
         int received_bytes = 0;
         bool packet_loss = false;
@@ -216,6 +243,7 @@ void QNode::udp_receive_loop()
         // 2. 이미지 데이터 조각 수신
         while (received_bytes < total_size)
         {
+          std::cout << "지금은 데이터 수신 중" << std::endl;
           int chunk_size = std::min(PACKET_SIZE, total_size - received_bytes);
           n = recvfrom(sockfd_, &buffer[received_bytes], chunk_size, 0, (struct sockaddr *)&cliaddr, &len);
           if (n < 0)
@@ -229,7 +257,9 @@ void QNode::udp_receive_loop()
         // 디코딩 및 UI 업데이트
         if (!packet_loss && received_bytes == total_size)
         {
+          std::cout << "디코딩 중" << std::endl;
           frame = cv::imdecode(buffer, cv::IMREAD_COLOR); // mat 형태로 변환..
+          // cv::imshow(std::to_string(header[0]), frame);
           vision_helper(frame, img_id);
           if (!frame.empty())
           {
@@ -237,7 +267,8 @@ void QNode::udp_receive_loop()
 
             cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
             QImage qimage(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
-            emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
+            if (camera_1_state - 1 == img_id || camera_2_state - 1 == img_id)
+              emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
           }
         }
       }
@@ -318,7 +349,7 @@ void QNode::vision_helper(cv::Mat image, int img_id)
 {
   if (image.empty())
   {
-   
+
     return;
   }
 
@@ -371,7 +402,8 @@ void QNode::vision_helper(cv::Mat image, int img_id)
                     image.step,
                     QImage::Format_Grayscale8);
 
-      emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
+      if (vision_hsv_state + 3 == img_id)
+        emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
     }
   }
   else if (img_id == 0)
@@ -440,7 +472,8 @@ void QNode::vision_helper(cv::Mat image, int img_id)
                     image.step,
                     QImage::Format_Grayscale8);
 
-      emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
+      if (vision_hsv_state + 3 == img_id)
+        emit imageReceived(QPixmap::fromImage(qimage.copy()), img_id);
     }
   }
 }

@@ -26,8 +26,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // 초기값 설정
     imshow_flag_1 = 1;
     imshow_flag_2 = 1;
-    camera_1_state = 1; // index 0
-    camera_2_state = 2; // index 1
+    camera_1_state = 4; // index 0
+    camera_2_state = 1; // index 1
     ui->comboBox_camera1->addItem("raw_camera");
     ui->comboBox_camera2->addItem("raw_camera");
     ui->comboBox_camera1->addItem("raw_bird");
@@ -858,6 +858,7 @@ void MainWindow::updateImage(const QPixmap &pixmap, int index)
         ui->label_19->setPixmap(
             pixmap.scaled(640, 360, Qt::KeepAspectRatio, Qt::SmoothTransformation)
         );
+        
     }
 
     if (index == 4) ui->label_wl->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
@@ -1678,12 +1679,14 @@ void MainWindow::on_comboBox_camera1_currentIndexChanged(int index)
 {
     // camera_choose1
     camera_1_state = index;
+    std::cout<<"camera1 changed"<<camera_1_state<<std::endl;
 }
 
 void MainWindow::on_comboBox_camera2_currentIndexChanged(int index)
 {
     // camera_choose2
     camera_2_state = index;
+    std::cout<<"camera2 changed"<<camera_1_state<<std::endl;
 }
 
 // 밑에 키보드 구현-->w s a d home탭에서 이동, space: 정지 enter: pd start
