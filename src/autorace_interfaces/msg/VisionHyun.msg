@@ -5,7 +5,7 @@ int32 white_x
 int32 yellow_diff
 int32 white_diff
 int32 traffic_light
-int32 redline
+int32 redcount
 int32 brown_count
 int32 yellowline_count_low
 int32 whiteline_count_low

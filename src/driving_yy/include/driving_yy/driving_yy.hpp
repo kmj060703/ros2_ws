@@ -89,6 +89,7 @@ private:
     double current_pixel_diff_ = 0;
     int traffic_light_status_ = 0;
     int brown_count = 0;
+    int red_count=0;
     int yellow_count_low =0;
     int white_count_low =0;
     int yellow_count_top =0;
