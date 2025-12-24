@@ -289,7 +289,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                         bar_red_pixel_count++;
                 }
             }
-            // std::cout <<"레드 아래:"<< red_pixel_count << std::endl;
+            std::cout <<"레드 아래:"<< red_pixel_count << std::endl;
             //cv::imshow("red", red_mask);
             //cv::imshow("green", green_mask);
             //cv::imshow("bar_temp_frame", bar_temp_frame);
@@ -298,23 +298,18 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             //std::cout <<"레드라인:"<< redline_pixel_count << std::endl;
             //std::cout <<"그린:"<< green_pixel_count << std::endl;
 
+            traffic_light_state=0;
             if (red_pixel_count>100) // 300 픽셀 이상
-          
             {
                 traffic_light_state = 1;
             }
-          
-            else if (green_pixel_count>30) // 150 픽셀 이상
+            if (green_pixel_count>30) // 150 픽셀 이상
             {
                 traffic_light_state = 2;
             }
             else if (bar_red_pixel_count > bar_red_red_threshold)
             {
                 traffic_light_state = 4;
-            }
-            else
-            {
-                traffic_light_state = 0;
             }
             //  std::cerr << traffic_light_state << std::endl;
             //  갈색

@@ -112,7 +112,8 @@ void DrivingYY::pixel_diff_callback(const autorace_interfaces::msg::MasterJo::Sh
 }
 void DrivingYY::park_callback()
 {
-    park_time++;
+    if(startflag)
+        park_time++;
 }
 void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg)
 {
@@ -129,7 +130,7 @@ void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHy
     last_time_ = now;
 
     double hz = 1.0 / dt;
-    RCLCPP_INFO(this->get_logger(), "Current Hz: %.2f", hz);
+    //RCLCPP_INFO(this->get_logger(), "Current Hz: %.2f", hz);
     if(hz<=10){
         startflag=0;
     }
@@ -247,7 +248,7 @@ void DrivingYY::Traffic_light()
 {
     if (mission_flag_ == 0)
     {
-        if (brown_count > 10000 && traffic_mission_comp == 0)
+        if (brown_count > 2000 && traffic_mission_comp == 0)
         {
             traffic_mission_comp = 1;
         }
@@ -344,7 +345,7 @@ void DrivingYY::Construction()
             {
                 Construction_mem = 0;
             }
-            //RCLCPP_INFO(this->get_logger(), "s0, Construction_mem:%d, ", Construction_mem);
+            RCLCPP_INFO(this->get_logger(), "s0, Construction_mem:%d, ", Construction_mem);
             if (brown_count > 42000 || is_front_danger_ >= 720)
             {
                 state = 1;
@@ -354,14 +355,14 @@ void DrivingYY::Construction()
 
         else if (state == 1)
         {
-            //RCLCPP_INFO(this->get_logger(), "s2, Construction_mem:%d", Construction_mem);
+            RCLCPP_INFO(this->get_logger(), "s2, Construction_mem:%d", Construction_mem);
             if (Construction_mem == 1)
             {
                 if (local_diff < 90 && local_diff > 78)
                 {
                     driving_msg.linear.x = 0.12;
                     driving_msg.angular.z = 0.0;
-                    //RCLCPP_INFO(this->get_logger(), "s3, yellow: %d", yellow_count_low);
+                    RCLCPP_INFO(this->get_logger(), "s3, yellow: %d", yellow_count_low);
                     if (yellow_count_low >= 4000)
                     {
                         Construction_mem = 0;
@@ -385,7 +386,7 @@ void DrivingYY::Construction()
                 {
                     driving_msg.linear.x = 0.12;
                     driving_msg.angular.z = 0.0;
-                    //RCLCPP_INFO(this->get_logger(), "s4, white: %d", white_count_low);
+                    RCLCPP_INFO(this->get_logger(), "s4, white: %d", white_count_low);
                     if (white_count_low >= 4000)
                     {
                         Construction_mem = 1;
@@ -726,8 +727,8 @@ void DrivingYY::Parking_tune()
 
 void DrivingYY::Level_crossing()
 {
-    //RCLCPP_INFO(this->get_logger(), "traffic_light_status_: %d", traffic_light_status_);
-    //RCLCPP_INFO(this->get_logger(), "gooutcom: %d", gooutcom);
+    RCLCPP_INFO(this->get_logger(), "traffic_light_status_: %d", traffic_light_status_);
+    RCLCPP_INFO(this->get_logger(), "gooutcom: %d", gooutcom);
     if (mission_flag_ == 5 && gooutcom == 1)
     {
 
@@ -750,7 +751,7 @@ void DrivingYY::total_driving()
 }
 void DrivingYY::drive_callback()
 {
-    // RCLCPP_INFO(this->get_logger(), "current_yaw: %f", current_yaw_);
+    //RCLCPP_INFO(this->get_logger(), "current_yaw: %f", current_yaw_);
     if (l_start_flag == 1&&startflag==1)
     {
 
