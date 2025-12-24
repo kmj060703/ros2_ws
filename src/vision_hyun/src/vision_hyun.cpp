@@ -297,8 +297,8 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             //std::cout <<"레드:"<< bar_red_pixel_count << std::endl;
             //std::cout <<"레드라인:"<< redline_pixel_count << std::endl;
             //std::cout <<"그린:"<< green_pixel_count << std::endl;
-
             traffic_light_state=0;
+
             if (red_pixel_count>100) // 300 픽셀 이상
             {
                 traffic_light_state = 1;
@@ -453,7 +453,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
         msg_data->yellow_x = global_yellow_x;
         msg_data->white_x = global_white_x;
         msg_data->traffic_light = traffic_light_state;
-        msg_data->redline = redline_pixel_count;
+        msg_data->redcount = bar_red_pixel_count;
         msg_data->brown_count = brown_pixel_count;
         msg_data->yellowline_count_low = yellowline_pixel_count_low;
         msg_data->whiteline_count_low = whiteline_pixel_count_low;

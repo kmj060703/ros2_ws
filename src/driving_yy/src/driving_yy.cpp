@@ -138,6 +138,7 @@ void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHy
 
     traffic_light_status_ = msg->traffic_light;
     brown_count = msg->brown_count;
+    red_count=msg->redcount;
     yellow_count_low = msg->yellowline_count_low;
     white_count_low = msg->whiteline_count_low;
     yellow_count_top = msg->yellowline_count_top;
@@ -248,7 +249,7 @@ void DrivingYY::Traffic_light()
 {
     if (mission_flag_ == 0)
     {
-        if (brown_count > 2000 && traffic_mission_comp == 0)
+        if (brown_count > 12000 && traffic_mission_comp == 0)
         {
             traffic_mission_comp = 1;
         }
@@ -690,15 +691,6 @@ void DrivingYY::Parking_tune()
                 {
                     gooutcom = 1;
                 }
-                // if (yellow_count_low < 4000 && gooutcom == 0)
-                // {
-                //     driving_msg.linear.x = 0.07;
-                //     driving_msg.angular.z = 0.0;
-                // }
-                // else
-                // {
-                //     gooutcom = 1;
-                // }
                 if (gooutcom == 1)
                 {
                     if (error_y > 270)
@@ -711,12 +703,13 @@ void DrivingYY::Parking_tune()
                         driving_msg.angular.z = 0.65;
                     }
                 }
+                if (gooutcom == 1 && white_count_low > 1000 && yellow_count_low > 1000)
+                {
+                    std::cout << "aaaaaaaaaaaaaaaaaaaa " << std::endl;
+                    gooutcom = 2;
+                }
             }
-            // if (gooutcom == 2 || (gooutcom == 1 && white_count_low > 2000 && yellow_count_low > 2000))
-            // {
-            //     std::cout << "aaaaaaaaaaaaaaaaaaaa " << std::endl;
-            //     gooutcom = 2;
-            // }
+
         }
         break;
         default:
@@ -727,10 +720,15 @@ void DrivingYY::Parking_tune()
 
 void DrivingYY::Level_crossing()
 {
-    RCLCPP_INFO(this->get_logger(), "traffic_light_status_: %d", traffic_light_status_);
-    RCLCPP_INFO(this->get_logger(), "gooutcom: %d", gooutcom);
-    if (mission_flag_ == 5 && gooutcom == 1)
+    //RCLCPP_INFO(this->get_logger(), "traffic_light_status_: %d", traffic_light_status_);
+    //RCLCPP_INFO(this->get_logger(), "gooutcom: %d", gooutcom);
+    if (mission_flag_ == 5 && gooutcom == 2)
+
     {
+        if(red_count>5000){
+            red_count=5000;
+        }
+        driving_msg.linear.x-= red_count/250000;
 
         if (traffic_light_status_ == 4 || brown_count > 10000)
         {
