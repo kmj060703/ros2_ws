@@ -80,7 +80,7 @@ private:
     rclcpp::Subscription<autorace_interfaces::msg::VisionHyun>::SharedPtr vision_traffic_sub_; // 신호등
 
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_drive;
-
+    rclcpp::Time last_time_;
     double current_yaw_ = 0.0;
     int is_front_danger_ = 0;
     int is_left_danger_ = 0;
@@ -112,6 +112,7 @@ private:
     int passed_Level=0;
     int set_yaw_com=0;
     int gooutcom=0;
+    int startflag=1;
 
 
       //장애물용 기억
