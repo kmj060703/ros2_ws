@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     imshow_flag_2 = 1;
     camera_1_state = 4; // index 0
     camera_2_state = 1; // index 1
+    ui->tabWidget->setCurrentIndex(1);
     ui->comboBox_camera1->addItem("raw_camera");
     ui->comboBox_camera2->addItem("raw_camera");
     ui->comboBox_camera1->addItem("raw_bird");
@@ -119,6 +120,15 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 MainWindow::~MainWindow()
 {
+    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_drive = qnode->getNode()->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
+    auto msg = geometry_msgs::msg::Twist();
+    msg.linear.x = 0;
+    msg.angular.z = 0;
+    msg.linear.y = 0;
+    msg.linear.z = 0;
+    msg.angular.x = 0;
+    msg.angular.y = 0;
+    publisher_drive->publish(msg);
     delete ui;
 }
 
@@ -127,7 +137,7 @@ void MainWindow::combine_callback()
     ui->dial->setValue(imu_yaw);
     ui->dial_localang->setValue(imu_yaw_local);
     // psd
-    
+
     ui->label_p_forward->setText(std::to_string(psd_flag[1]).c_str());
     ui->label_p_left->setText(std::to_string(psd_flag[0]).c_str());
     ui->label_p_right->setText(std::to_string(psd_flag[2]).c_str());
@@ -829,39 +839,44 @@ void MainWindow::on_doubleSpinBox_7_valueChanged(double arg1)
 
 void MainWindow::updateImage(const QPixmap &pixmap, int index)
 {
-    if (pixmap.isNull()) return;
-    if (index < 0 || index >= 11) return;
+    if (pixmap.isNull())
+        return;
+    if (index < 0 || index >= 11)
+        return;
 
     m_img[index] = pixmap;
 
     if (imshow_flag_1 == 1 && index == camera_1_state - 1)
     {
         ui->label_18->setPixmap(
-            pixmap.scaled(640, 360, Qt::KeepAspectRatio, Qt::SmoothTransformation)
-        );
+            pixmap.scaled(640, 360, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
 
     if (imshow_flag_2 == 1 && index == camera_2_state - 1)
     {
         ui->label_19->setPixmap(
-            pixmap.scaled(640, 360, Qt::KeepAspectRatio, Qt::SmoothTransformation)
-        );
-        
+            pixmap.scaled(640, 360, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
 
-    if (index == 4) ui->label_wl->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
-    if (index == 5) ui->label_yl->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
-    if (index == 6) ui->label_rl->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
-    if (index == 7) ui->label_rt->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
-    if (index == 8) ui->label_yt->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
-    if (index == 9) ui->label_gt->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
-    if (index == 10) ui->label_bb->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
+    if (index == 4)
+        ui->label_wl->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
+    if (index == 5)
+        ui->label_yl->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
+    if (index == 6)
+        ui->label_rl->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
+    if (index == 7)
+        ui->label_rt->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
+    if (index == 8)
+        ui->label_yt->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
+    if (index == 9)
+        ui->label_gt->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
+    if (index == 10)
+        ui->label_bb->setPixmap(pixmap.scaled(290, 163, Qt::KeepAspectRatio));
 }
-
 
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
-    std::cout<<"h_high:"<<position<<std::endl;
+    std::cout << "h_high:" << position << std::endl;
     // hue_high
     switch (vision_hsv_state)
     {
@@ -893,7 +908,7 @@ void MainWindow::on_horizontalSlider_sliderMoved(int position)
 
 void MainWindow::on_horizontalSlider_2_sliderMoved(int position)
 {
-    std::cout<<"h_low:"<<position<<std::endl;
+    std::cout << "h_low:" << position << std::endl;
     // hue_low
     switch (vision_hsv_state)
     {
@@ -925,7 +940,7 @@ void MainWindow::on_horizontalSlider_2_sliderMoved(int position)
 
 void MainWindow::on_horizontalSlider_4_sliderMoved(int position)
 {
-    std::cout<<"s_high:"<<position<<std::endl;
+    std::cout << "s_high:" << position << std::endl;
     // S_high
     switch (vision_hsv_state)
     {
@@ -957,7 +972,7 @@ void MainWindow::on_horizontalSlider_4_sliderMoved(int position)
 
 void MainWindow::on_horizontalSlider_3_sliderMoved(int position)
 {
-    std::cout<<"s_low:"<<position<<std::endl;
+    std::cout << "s_low:" << position << std::endl;
     // S_low
     switch (vision_hsv_state)
     {
@@ -988,7 +1003,7 @@ void MainWindow::on_horizontalSlider_3_sliderMoved(int position)
 }
 void MainWindow::on_horizontalSlider_6_sliderMoved(int position)
 {
-    std::cout<<"v_high:"<<position<<std::endl;
+    std::cout << "v_high:" << position << std::endl;
     // V_high
     switch (vision_hsv_state)
     {
@@ -1020,7 +1035,7 @@ void MainWindow::on_horizontalSlider_6_sliderMoved(int position)
 
 void MainWindow::on_horizontalSlider_5_sliderMoved(int position)
 {
-    std::cout<<"v_low:"<<position<<std::endl;
+    std::cout << "v_low:" << position << std::endl;
     // V_low
     switch (vision_hsv_state)
     {
@@ -1385,7 +1400,7 @@ void MainWindow::on_pushButton_51_clicked()
 void MainWindow::on_pushButton_52_clicked()
 {
     // vision_save1
-    QString path= QDir::homePath()+"/ros2_ws/src/ui_test/tmp/vision_set1.txt";
+    QString path = QDir::homePath() + "/ros2_ws/src/ui_test/tmp/vision_set1.txt";
     QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
@@ -1407,7 +1422,7 @@ void MainWindow::on_pushButton_52_clicked()
 void MainWindow::on_pushButton_53_clicked()
 {
     // vision_save2
-    QString path= QDir::homePath()+"/ros2_ws/src/ui_test/tmp/vision_set2.txt";
+    QString path = QDir::homePath() + "/ros2_ws/src/ui_test/tmp/vision_set2.txt";
     QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
@@ -1429,7 +1444,7 @@ void MainWindow::on_pushButton_53_clicked()
 void MainWindow::on_pushButton_55_clicked()
 {
     // vision_save3
-    QString path= QDir::homePath()+"/ros2_ws/src/ui_test/tmp/vision_set3.txt";
+    QString path = QDir::homePath() + "/ros2_ws/src/ui_test/tmp/vision_set3.txt";
     QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
@@ -1452,7 +1467,7 @@ void MainWindow::on_pushButton_55_clicked()
 void MainWindow::on_pushButton_50_clicked()
 {
     // vision_set1
-    QString path= QDir::homePath()+"/ros2_ws/src/ui_test/tmp/vision_set1.txt";
+    QString path = QDir::homePath() + "/ros2_ws/src/ui_test/tmp/vision_set1.txt";
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -1489,7 +1504,7 @@ void MainWindow::on_pushButton_50_clicked()
 void MainWindow::on_pushButton_54_clicked()
 {
     // vision_set2
-    QString path= QDir::homePath()+"/ros2_ws/src/ui_test/tmp/vision_set2.txt";
+    QString path = QDir::homePath() + "/ros2_ws/src/ui_test/tmp/vision_set2.txt";
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -1527,7 +1542,7 @@ void MainWindow::on_pushButton_54_clicked()
 void MainWindow::on_pushButton_56_clicked()
 {
     // vision_set3
-    QString path= QDir::homePath()+"/ros2_ws/src/ui_test/tmp/vision_set3.txt";
+    QString path = QDir::homePath() + "/ros2_ws/src/ui_test/tmp/vision_set3.txt";
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -1667,14 +1682,14 @@ void MainWindow::on_comboBox_camera1_currentIndexChanged(int index)
 {
     // camera_choose1
     camera_1_state = index;
-    std::cout<<"camera1 changed"<<camera_1_state<<std::endl;
+    std::cout << "camera1 changed" << camera_1_state << std::endl;
 }
 
 void MainWindow::on_comboBox_camera2_currentIndexChanged(int index)
 {
     // camera_choose2
     camera_2_state = index;
-    std::cout<<"camera2 changed"<<camera_1_state<<std::endl;
+    std::cout << "camera2 changed" << camera_1_state << std::endl;
 }
 
 // 밑에 키보드 구현-->w s a d home탭에서 이동, space: 정지 enter: pd start
@@ -1779,14 +1794,18 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
     else if (event->key() == Qt::Key_Space)
     {
-        if(start_flag_ == 0)state_flag_=1;
-        else start_flag_ = 0;
+        if (start_flag_ == 0)
+            state_flag_ = 1;
+        else
+            start_flag_ = 0;
         std::cout << "space key pressed" << std::endl;
     }
     else if (event->key() == Qt::Key_G)
     {
-        if(start_flag_ == 0)state_flag_=1;
-        else start_flag_ = 0;
+        if (start_flag_ == 0)
+            state_flag_ = 1;
+        else
+            start_flag_ = 0;
         std::cout << "space key pressed" << std::endl;
     }
 

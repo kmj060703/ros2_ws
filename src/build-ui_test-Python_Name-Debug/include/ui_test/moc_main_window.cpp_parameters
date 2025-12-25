@@ -1,0 +1,5 @@
+-I/home/syu/ros2_ws/src/ui_test
+-I/home/syu/ros2_ws/src/build-ui_test-Python_Name-Debug
+-o
+/home/syu/ros2_ws/src/build-ui_test-Python_Name-Debug/include/ui_test/moc_main_window.cpp
+/home/syu/ros2_ws/src/ui_test/include/ui_test/main_window.hpp

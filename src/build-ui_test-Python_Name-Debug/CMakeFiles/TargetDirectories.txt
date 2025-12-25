@@ -1,0 +1,10 @@
+/home/syu/ros2_ws/src/build-ui_test-Python_Name-Debug/CMakeFiles/uninstall.dir
+/home/syu/ros2_ws/src/build-ui_test-Python_Name-Debug/CMakeFiles/ui_test_uninstall.dir
+/home/syu/ros2_ws/src/build-ui_test-Python_Name-Debug/CMakeFiles/ui_test.dir
+/home/syu/ros2_ws/src/build-ui_test-Python_Name-Debug/CMakeFiles/test.dir
+/home/syu/ros2_ws/src/build-ui_test-Python_Name-Debug/CMakeFiles/edit_cache.dir
+/home/syu/ros2_ws/src/build-ui_test-Python_Name-Debug/CMakeFiles/rebuild_cache.dir
+/home/syu/ros2_ws/src/build-ui_test-Python_Name-Debug/CMakeFiles/list_install_components.dir
+/home/syu/ros2_ws/src/build-ui_test-Python_Name-Debug/CMakeFiles/install.dir
+/home/syu/ros2_ws/src/build-ui_test-Python_Name-Debug/CMakeFiles/install/local.dir
+/home/syu/ros2_ws/src/build-ui_test-Python_Name-Debug/CMakeFiles/install/strip.dir
