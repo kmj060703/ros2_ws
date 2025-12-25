@@ -296,7 +296,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
             //std::cout <<"레드:"<< bar_red_pixel_count << std::endl;
             //std::cout <<"레드라인:"<< redline_pixel_count << std::endl;
-            //std::cout <<"그린:"<< green_pixel_count << std::endl;
+            std::cout <<"그린:"<< green_pixel_count << std::endl;
             traffic_light_state=0;
 
             if (red_pixel_count>100) // 300 픽셀 이상
@@ -307,11 +307,11 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             {
                 traffic_light_state = 2;
             }
-            else if (bar_red_pixel_count > bar_red_red_threshold)
-            {
-                traffic_light_state = 4;
-            }
-            //  std::cerr << traffic_light_state << std::endl;
+            // else if (bar_red_pixel_count > bar_red_red_threshold)
+            // {
+            //     traffic_light_state = 4;
+            // }
+            std::cout << traffic_light_state << std::endl;
             //  갈색
             brown_pixel_count = 0;
             yellowline_pixel_count_low = 0;

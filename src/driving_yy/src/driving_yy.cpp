@@ -480,7 +480,7 @@ void DrivingYY::Parking_tune()
             if ((error_y == -321 && error_w == -321) || (error_y == -321 && z <= 0.25))
             {
                 driving_msg.linear.x = 0.09;
-                driving_msg.angular.z = 0.31;
+                driving_msg.angular.z = 0.28;
             }
             if (yellow_count_top > 8000 && yellow_count_low > 8000)
             {
@@ -518,7 +518,7 @@ void DrivingYY::Parking_tune()
             }
             if (set_yaw_com == 1)
             {
-                if ((is_left_danger_ > 450))
+                if ((is_left_danger_ > 425))
                 {
                     pstate_ = AVOID_RIGHT;
                     std::cout << "오른쪽으로피하기 시작" << std::endl;
@@ -547,7 +547,7 @@ void DrivingYY::Parking_tune()
 
             if (only_y == 1)
             {
-                if (white_count_low < 20000 || is_right_danger_ < 250 || is_left_danger_ < 250)
+                if (white_count_low < 20000)
                 {
                     driving_msg.linear.x = -0.07;
                     driving_msg.angular.z = 0.0;
@@ -557,12 +557,12 @@ void DrivingYY::Parking_tune()
             }
             if (only_y == 2)
             {
-                if (is_right_danger_ > 600)
+                if (is_right_danger_ > 250)
                 {
                     pstate_ = AVOID_LEFT;
                     std::cout << "왼쪽으로피하기 시작" << std::endl;
                 }
-                else if (is_left_danger_ > 550)
+                else if (is_left_danger_ > 250)
                 {
                     pstate_ = AVOID_RIGHT;
                     std::cout << "오른쪽으로피하기 시작" << std::endl;
@@ -687,13 +687,13 @@ void DrivingYY::Parking_tune()
                     driving_msg.angular.z = 0.05;
                     return;
                 }
-                else if (gooutcom == 0 && park_time - last_time >= 20)
+                else if (gooutcom == 0 && park_time - last_time >= 10)
                 {
                     gooutcom = 1;
                 }
                 if (gooutcom == 1)
                 {
-                    if (error_y > 270)
+                    if (error_y > 240)
                     {
                         error_y = -321;
                     }
@@ -725,16 +725,18 @@ void DrivingYY::Level_crossing()
     if (mission_flag_ == 5 && gooutcom == 2)
 
     {
-        if(red_count>5000){
-            red_count=5000;
-        }
-        driving_msg.linear.x-= red_count/250000;
+        
 
-        if (traffic_light_status_ == 4 || brown_count > 10000)
+        if ( red_count > 7000)
         {
             driving_msg.linear.x = 0;
             driving_msg.angular.z = 0;
             passed_Level = 1;
+        }else {
+            if(red_count>5000){
+                double gap=7000-red_count;
+                driving_msg.linear.x=(driving_msg.linear.x/2000.0)*gap;
+            }
         }
     }
     if (passed_Level == 1 && brown_count > 10000)
