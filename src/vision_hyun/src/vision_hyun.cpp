@@ -110,10 +110,11 @@ void gui_thread()
                 frame_display = latest_frame.clone();
             if (!bird_copy.empty())
                 bird_display = bird_copy.clone();
-            // if (!yellow_mask.empty())
-            //     yellow_display = yellow_mask.clone();
-            // if (!white_mask.empty())
-            //     white_display = white_mask.clone();
+            if (!yellow_mask.empty())
+                yellow_display = yellow_mask.clone();
+            if (!white_mask.empty())
+                white_display = white_mask.clone();
+            
             if (!red_and_green_mask.empty())
                 red_and_green_mask_copy = red_and_green_mask.clone();
             if (!brown_mask.empty())
@@ -226,7 +227,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 
             cv::inRange(birdeye_hsv, lower_white, upper_white, white_mask);
             cv::inRange(birdeye_hsv, lower_yellow, upper_yellow, yellow_mask);
-        
+                
             cv::inRange(frame_hsv, lower_green, upper_green, green_mask);
             
             cv::inRange(frame_hsv, bar_lower_red, bar_upper_red, bar_temp_frame1);
@@ -236,6 +237,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             cv::inRange(birdeye_hsv, bar_lower_red, bar_upper_red, red_mask);
             cv::inRange(birdeye_hsv, bar_lower_red_2, bar_upper_red_2, red_mask2);
             cv::add(red_mask, red_mask2, red_mask);
+            
             
             // 침식/팽창
             cv::Mat k = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));

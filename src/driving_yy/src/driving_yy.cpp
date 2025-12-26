@@ -52,7 +52,7 @@ DrivingYY::DrivingYY() : Node("driving_yy")
         std::bind(&DrivingYY::vision_traffic_callback, this, _1));
 
     publisher_drive = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", sensor_qos);
-    drive_timer = this->create_wall_timer(100ms, std::bind(&DrivingYY::drive_callback, this));
+    drive_timer = this->create_wall_timer(25ms, std::bind(&DrivingYY::drive_callback, this));
     park_timer = this->create_wall_timer(100ms, std::bind(&DrivingYY::park_callback, this));
 
     RCLCPP_INFO(this->get_logger(), "DrivingYY Start");
@@ -112,7 +112,7 @@ void DrivingYY::pixel_diff_callback(const autorace_interfaces::msg::MasterJo::Sh
 }
 void DrivingYY::park_callback()
 {
-    if(startflag)
+    if (startflag)
         park_time++;
 }
 void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHyun::SharedPtr msg)
@@ -130,15 +130,17 @@ void DrivingYY::vision_traffic_callback(const autorace_interfaces::msg::VisionHy
     last_time_ = now;
 
     double hz = 1.0 / dt;
-    //RCLCPP_INFO(this->get_logger(), "Current Hz: %.2f", hz);
-    if(hz<=10){
-        startflag=0;
+    // RCLCPP_INFO(this->get_logger(), "Current Hz: %.2f", hz);
+    if (hz <= 10)
+    {
+        startflag = 0;
     }
-    else startflag=1;
+    else
+        startflag = 1;
 
     traffic_light_status_ = msg->traffic_light;
     brown_count = msg->brown_count;
-    red_count=msg->redcount;
+    red_count = msg->redcount;
     yellow_count_low = msg->yellowline_count_low;
     white_count_low = msg->whiteline_count_low;
     yellow_count_top = msg->yellowline_count_top;
@@ -460,13 +462,13 @@ bool near(double a, double b, double eps = 2.0) { return fabs(a - b) < eps; }
 
 void DrivingYY::Parking_tune()
 {
-    //RCLCPP_INFO(this->get_logger(), "local_diff: %f", local_diff);
+    // RCLCPP_INFO(this->get_logger(), "local_diff: %f", local_diff);
     if (timer == count)
     {
         local_diff = degreecal(local_yaw - current_yaw_);
     }
 
-    if (mission_flag_ == 5)
+    if (mission_flag_ == 5 && passed_Level == 0)
     {
 
         switch (pstate_)
@@ -709,7 +711,6 @@ void DrivingYY::Parking_tune()
                     gooutcom = 2;
                 }
             }
-
         }
         break;
         default:
@@ -720,22 +721,24 @@ void DrivingYY::Parking_tune()
 
 void DrivingYY::Level_crossing()
 {
-    //RCLCPP_INFO(this->get_logger(), "traffic_light_status_: %d", traffic_light_status_);
-    //RCLCPP_INFO(this->get_logger(), "gooutcom: %d", gooutcom);
+    // RCLCPP_INFO(this->get_logger(), "traffic_light_status_: %d", traffic_light_status_);
+    // RCLCPP_INFO(this->get_logger(), "gooutcom: %d", gooutcom);
     if (mission_flag_ == 5 && gooutcom == 2)
 
     {
-        
 
-        if ( red_count > 7000)
+        if (red_count > 7000)
         {
             driving_msg.linear.x = 0;
             driving_msg.angular.z = 0;
             passed_Level = 1;
-        }else {
-            if(red_count>5000){
-                double gap=7000-red_count;
-                driving_msg.linear.x=(driving_msg.linear.x/2000.0)*gap;
+        }
+        else
+        {
+            if (red_count > 5000)
+            {
+                double gap = 7000 - red_count;
+                driving_msg.linear.x = (driving_msg.linear.x / 2000.0) * gap;
             }
         }
     }
@@ -751,8 +754,8 @@ void DrivingYY::total_driving()
 }
 void DrivingYY::drive_callback()
 {
-    //RCLCPP_INFO(this->get_logger(), "current_yaw: %f", current_yaw_);
-    if (l_start_flag == 1&&startflag==1)
+    // RCLCPP_INFO(this->get_logger(), "current_yaw: %f", current_yaw_);
+    if (l_start_flag == 1 && startflag == 1)
     {
 
         if (mission_flag_ < 4 || passed_Level == 1)

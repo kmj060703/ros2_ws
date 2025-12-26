@@ -59,8 +59,8 @@ private:
       publisher_4;
 
   cv::Scalar lower_white = cv::Scalar(0, 0, 155);
-  cv::Scalar upper_white = cv::Scalar(180, 50, 255);
-  cv::Scalar lower_yellow = cv::Scalar(20, 100, 100); // H 179 // S 225 // V 225
+  cv::Scalar upper_white = cv::Scalar(180, 40, 255);
+  cv::Scalar lower_yellow = cv::Scalar(20, 50, 100); // H 179 // S 225 // V 225
   cv::Scalar upper_yellow = cv::Scalar(30, 255, 255);
 
   cv::Scalar lower_green = cv::Scalar(45, 80, 50);
