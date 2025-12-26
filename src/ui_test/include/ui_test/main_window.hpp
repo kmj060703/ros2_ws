@@ -178,14 +178,11 @@ private slots:
   void on_pushButton_drive_clicked();
   void on_pushButton_stop_clicked();
 
-  void on_pushButton_p90_2_clicked();
-  void on_pushButton_m90_2_clicked();
-  void on_pushButton_p180_2_clicked();
-  void on_pushButton_setYaw_2_clicked();
-  void on_dial_localang_valueChanged(int value);
   void on_dial_valueChanged(int value);
   void on_comboBox_camera1_currentIndexChanged(int index);
   void on_comboBox_camera2_currentIndexChanged(int index);
+
+  void on_pushButton_46_clicked();
 
 private:
   Ui::MainWindowDesign *ui;

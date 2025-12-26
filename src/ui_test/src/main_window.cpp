@@ -27,8 +27,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     imshow_flag_1 = 1;
     imshow_flag_2 = 1;
     camera_1_state = 4; // index 0
-    camera_2_state = 1; // index 1
-    ui->tabWidget->setCurrentIndex(1);
+    camera_2_state = 2; // index 1
+    ui->tabWidget->setCurrentIndex(3);
     ui->comboBox_camera1->addItem("raw_camera");
     ui->comboBox_camera2->addItem("raw_camera");
     ui->comboBox_camera1->addItem("raw_bird");
@@ -54,8 +54,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->dial->setRange(-180, 180); // yaw
     ui->dial->setWrapping(true);
-    ui->dial_localang->setRange(-180, 180); // local_yaw
-    ui->dial_localang->setWrapping(true);
 
     // ui->dial_5->setRange(0, 1);  // x
     // ui->dial_6->setRange(-5, 5); // z
@@ -135,7 +133,6 @@ MainWindow::~MainWindow()
 void MainWindow::combine_callback()
 { // imu
     ui->dial->setValue(imu_yaw);
-    ui->dial_localang->setValue(imu_yaw_local);
     // psd
 
     ui->label_p_forward->setText(std::to_string(psd_flag[1]).c_str());
@@ -570,6 +567,71 @@ void MainWindow::on_pushButton_29_clicked()
     qDebug() << "loaded from" << filePath;
 }
 
+void MainWindow::on_pushButton_46_clicked()
+{
+    QString path = QDir::homePath() + "/ros2_ws/src/ui_test/work_pd/";
+    QDir().mkpath(path);
+    QString filePath = QFileDialog::getOpenFileName(
+        this,
+        "파일 열기",
+        path,
+        "Text Files (*.txt)");
+
+    if (filePath.isEmpty())
+        return;
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug() << "cannot open file";
+        return;
+    }
+
+    QTextStream in(&file);
+    while (!in.atEnd())
+    {
+        QString line = in.readLine();
+
+        if (line.startsWith("kp="))
+        {
+            kp_ = line.split("=")[1].toDouble();
+            ui->doubleSpinBox_3->setValue(kp_);
+        }
+        else if (line.startsWith("kd="))
+        {
+            kd_ = line.split("=")[1].toDouble();
+            ui->doubleSpinBox_4->setValue(kd_);
+        }
+        else if (line.startsWith("l_state_flag="))
+        {
+            l_state_flag_ = line.split("=")[1].toInt();
+        }
+        else if (line.startsWith("l_x="))
+        {
+            l_x_ = line.split("=")[1].toDouble();
+            ui->doubleSpinBox_5->setValue(l_x_);
+        }
+        else if (line.startsWith("l_z="))
+        {
+            l_z_ = line.split("=")[1].toDouble();
+            ui->doubleSpinBox_6->setValue(l_z_);
+        }
+        else if (line.startsWith("max_vel="))
+        {
+            max_vel_ = line.split("=")[1].toDouble();
+            ui->doubleSpinBox_7->setValue(max_vel_);
+        }
+        else if (line.startsWith("comment:"))
+        {
+            QString comment = line.split("comment:")[1].trimmed();
+            ui->plainTextEdit->setPlainText(comment);
+        }
+    }
+
+    file.close();
+    qDebug() << "loaded from" << filePath;
+}
+
 void MainWindow::on_pushButton_34_clicked()
 {
     // set0
@@ -795,41 +857,6 @@ void MainWindow::on_pushButton_43_clicked()
     std::cout << "lane-detecting work stop" << std::endl;
 }
 
-// void MainWindow::on_radioButton_3_clicked()
-// {
-//     // raw_bird1
-//     camera_1_state = 2;
-// }
-
-// void MainWindow::on_radioButton_clicked()
-// {
-//     // raw1
-//     camera_1_state = 1;
-// }
-
-// void MainWindow::on_radioButton_2_clicked()
-// {
-//     // mask_bird1
-//     camera_1_state = 3;
-// }
-
-// void MainWindow::on_radioButton_6_clicked()
-// {
-//     // raw_bird2
-//     camera_2_state = 2;
-// }
-
-// void MainWindow::on_radioButton_5_clicked()
-// {
-//     // raw2
-//     camera_2_state = 1;
-// }
-
-// void MainWindow::on_radioButton_4_clicked()
-// {
-//     // mask_bird2
-//     camera_2_state = 3;
-// }
 
 void MainWindow::on_doubleSpinBox_7_valueChanged(double arg1)
 {
@@ -1642,36 +1669,6 @@ void MainWindow::on_pushButton_stop_clicked()
     l_start_flag_ = 0;
 }
 
-void MainWindow::on_pushButton_p90_2_clicked()
-{
-    //+90local
-    imu_yaw_local += 90;
-}
-
-void MainWindow::on_pushButton_m90_2_clicked()
-{
-    //-90local
-    imu_yaw_local -= 90;
-}
-
-void MainWindow::on_pushButton_p180_2_clicked()
-{
-    //+180local
-    imu_yaw_local += 180;
-}
-
-void MainWindow::on_pushButton_setYaw_2_clicked()
-{
-    // set yaw local
-    imu_yaw_local = 0;
-}
-
-void MainWindow::on_dial_localang_valueChanged(int value)
-{
-    // value표시?
-    ui->label_l_ang->setText(std::to_string(imu_yaw_local).c_str());
-}
-
 void MainWindow::on_dial_valueChanged(int value)
 {
     // value 표시
@@ -1817,3 +1814,5 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             << "enter key pressed" << std::endl;
     }
 }
+
+
