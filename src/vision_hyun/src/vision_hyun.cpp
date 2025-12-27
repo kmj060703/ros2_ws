@@ -263,7 +263,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             detect_x_start = 320;
             detect_x_end = 640;
             detect_y_start = 0;
-            detect_y_end = 250;
+            detect_y_end = 180;
             for (int i = detect_y_start; i < detect_y_end; i++)
                 {
                     for (int j = detect_x_start; j < detect_x_end; j++)
@@ -291,14 +291,14 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
                         bar_red_pixel_count++;
                 }
             }
-            std::cout <<"레드 아래:"<< red_pixel_count << std::endl;
+            // std::cout <<"레드 아래:"<< red_pixel_count << std::endl;
             //cv::imshow("red", red_mask);
             //cv::imshow("green", green_mask);
             //cv::imshow("bar_temp_frame", bar_temp_frame);
 
             //std::cout <<"레드:"<< bar_red_pixel_count << std::endl;
             //std::cout <<"레드라인:"<< redline_pixel_count << std::endl;
-            std::cout <<"그린:"<< green_pixel_count << std::endl;
+            // std::cout <<"그린:"<< green_pixel_count << std::endl;
             traffic_light_state=0;
 
             if (red_pixel_count>100) // 300 픽셀 이상
@@ -313,7 +313,7 @@ void ImageViewer::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
             // {
             //     traffic_light_state = 4;
             // }
-            std::cout << traffic_light_state << std::endl;
+            // std::cout << traffic_light_state << std::endl;
             //  갈색
             brown_pixel_count = 0;
             yellowline_pixel_count_low = 0;

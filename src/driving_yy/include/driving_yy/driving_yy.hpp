@@ -26,7 +26,7 @@ public:
     void Parking();
     void Parking_tune();
     void Level_crossing();
-    void total_driving();
+    void finish_driving();
 
     
 
@@ -115,11 +115,13 @@ private:
     int gooutcom=0;
     int startflag=1;
 
+    int finish=0;
+
 
       //장애물용 기억
-    int count=10; //local_yaw 정하기
+    int count=8; //local_yaw 정하기
     int Construction_mem = 1 ;//(0=노랑 중심, 1=하양 중심)
-    double local_yaw = 0 ;
+    double local_yaw = 180 ;
     double local_diff =0;
     int state=0; //상태: 0= 주행, 1= 정렬, 2= 회전, 3= 선 직진, 4= 선 직진 ...
     rclcpp::TimerBase::SharedPtr drive_timer;

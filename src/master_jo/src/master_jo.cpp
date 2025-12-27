@@ -34,7 +34,7 @@ void MasterJo::yolo_callback(const std_msgs::msg::String::SharedPtr msg)
   {
     float confidence = std::stof(conf_str);
 
-    if (confidence >= 0.87)
+    if (confidence >= 0.85)
     {
       int detected_flag = 0;
 
